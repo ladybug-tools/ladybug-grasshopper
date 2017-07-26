@@ -17,7 +17,7 @@ Use this component to generate colors based on values and legend parameters.
         colors: The colors associated with each input value.
 """
 
-ghenv.Component.Name = "Ladybug_Generate Colors"
+ghenv.Component.Name = "LadybugPlus_Generate Colors"
 ghenv.Component.NickName = 'genColors'
 ghenv.Component.Message = 'VER 0.0.01\nJUL_21_2017'
 ghenv.Component.Category = "LadybugPlus"

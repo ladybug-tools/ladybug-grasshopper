@@ -27,7 +27,7 @@ for a presentation or for synchonizing the numerical range and colors between La
         legendPar: A legend parameters to be plugged into any of the Ladybug components with a legend.
 """
 
-ghenv.Component.Name = "Ladybug_Legend Parameters"
+ghenv.Component.Name = "LadybugPlus_Legend Parameters"
 ghenv.Component.NickName = 'legendPar'
 ghenv.Component.Message = 'VER 0.0.01\nJUL_21_2017'
 ghenv.Component.Category = "LadybugPlus"
