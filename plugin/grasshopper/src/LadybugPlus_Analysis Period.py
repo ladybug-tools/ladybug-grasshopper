@@ -27,13 +27,14 @@ Analysis Period.
 
 ghenv.Component.Name = "LadybugPlus_Analysis Period"
 ghenv.Component.NickName = 'analysisPeriod'
-ghenv.Component.Message = 'VER 0.0.01\nJUL_21_2017'
+ghenv.Component.Message = 'VER 0.0.01\nJUL_28_2017'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
 
 try:
     import ladybug.analysisperiod as ap
+    import ladybug.output as output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
@@ -43,5 +44,5 @@ anp = ap.AnalysisPeriod(
 
 if anp:
     analysisPeriod = anp
-    dates = anp.datetimes
-    hoys = anp.hoys
+    dates = output.wrap(anp.datetimes)
+    hoys = output.wrap(anp.hoys)

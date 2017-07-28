@@ -36,31 +36,32 @@ Import epw.
 
 ghenv.Component.Name = "LadybugPlus_Import EPW"
 ghenv.Component.NickName = 'importEpw'
-ghenv.Component.Message = 'VER 0.0.01\nJUL_21_2017'
+ghenv.Component.Message = 'VER 0.0.01\nJUL_28_2017'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
 
 try:
-    from ladybug.epw import EPW
+    import ladybug.epw as epw
+    import ladybug.output as output
 except ImportError:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 if _epwFile:
-    epwData = EPW(_epwFile)
+    epwData = epw.EPW(_epwFile)
     location = epwData.location
-    dryBulbTemperature = epwData.dryBulbTemperature.values
-    dewPointTemperature = epwData.dewPointTemperature.values
-    relativeHumidity = epwData.relativeHumidity.values
-    windDirection = epwData.windDirection.values
-    windSpeed = epwData.windSpeed.values
-    directNormalRadiation = epwData.directNormalRadiation.values
-    diffuseHorizontalRadiation = epwData.diffuseHorizontalRadiation.values
-    globalHorizontalRadiation = epwData.globalHorizontalRadiation.values
-    directNormalIlluminance = epwData.directNormalIlluminance.values
-    diffuseHorizontalIlluminance = epwData.diffuseHorizontalIlluminance.values
-    globalHorizontalIlluminance = epwData.globalHorizontalIlluminance.values
-    totalSkyCover = epwData.totalSkyCover.values
-    liquidPrecipitationDepth = epwData.liquidPrecipitationDepth.values
-    barometricPressure = epwData.atmosphericStationPressure.values
-    modelYear = epwData.years.values
+    dryBulbTemperature = output.wrap(epwData.dryBulbTemperature.values)
+    dewPointTemperature = output.wrap(epwData.dewPointTemperature.values)
+    relativeHumidity = output.wrap(epwData.relativeHumidity.values)
+    windDirection = output.wrap(epwData.windDirection.values)
+    windSpeed = output.wrap(epwData.windSpeed.values)
+    directNormalRadiation = output.wrap(epwData.directNormalRadiation.values)
+    diffuseHorizontalRadiation = output.wrap(epwData.diffuseHorizontalRadiation.values)
+    globalHorizontalRadiation = output.wrap(epwData.globalHorizontalRadiation.values)
+    directNormalIlluminance = output.wrap(epwData.directNormalIlluminance.values)
+    diffuseHorizontalIlluminance = output.wrap(epwData.diffuseHorizontalIlluminance.values)
+    globalHorizontalIlluminance = output.wrap(epwData.globalHorizontalIlluminance.values)
+    totalSkyCover = output.wrap(epwData.totalSkyCover.values)
+    liquidPrecipitationDepth = output.wrap(epwData.liquidPrecipitationDepth.values)
+    barometricPressure = output.wrap(epwData.atmosphericStationPressure.values)
+    modelYear = output.wrap(epwData.years.values)
