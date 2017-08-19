@@ -19,16 +19,17 @@ Use this component to generate colors based on values and legend parameters.
 
 ghenv.Component.Name = "LadybugPlus_Generate Colors"
 ghenv.Component.NickName = 'genColors'
-ghenv.Component.Message = 'VER 0.0.01\nJUL_21_2017'
+ghenv.Component.Message = 'VER 0.0.01\nAUG_18_2017'
 ghenv.Component.Category = "LadybugPlus"
-ghenv.Component.SubCategory = "3 :: Extra"
+ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
 try:
     import ladybug.legendparameters as lpar
+    import ladybug.output as output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 if _values:
     legendPar = legendPar_ or lpar.LegendParameters()
-    colors = legendPar.calculateColors(_values)
+    colors = output.colorTocolor(legendPar.calculateColors(_values))

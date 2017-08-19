@@ -48,19 +48,17 @@ https://github.com/mostaphaRoudsari/ladybug/blob/master/resources/gradients.jpg
 
 ghenv.Component.Name = "LadybugPlus_Color Range"
 ghenv.Component.NickName = 'colRange'
-ghenv.Component.Message = 'VER 0.0.01\nJUL_21_2017'
+ghenv.Component.Message = 'VER 0.0.01\nAUG_18_2017'
 ghenv.Component.Category = "LadybugPlus"
-ghenv.Component.SubCategory = "3 :: Extra"
+ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
 try:
     import ladybug.color as col
+    import ladybug.output as output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 _index = _index or 0
 cs = col.Colorset()
-colors = cs[_index]
-
-# TODO: Add color convertor to plus libraries 
-# OUT = color.ColorConvertor.toDSColor(colors)
+colors = output.colorTocolor(cs[_index])

@@ -29,9 +29,9 @@ for a presentation or for synchonizing the numerical range and colors between La
 
 ghenv.Component.Name = "LadybugPlus_Legend Parameters"
 ghenv.Component.NickName = 'legendPar'
-ghenv.Component.Message = 'VER 0.0.01\nJUL_21_2017'
+ghenv.Component.Message = 'VER 0.0.01\nAUG_18_2017'
 ghenv.Component.Category = "LadybugPlus"
-ghenv.Component.SubCategory = "3 :: Extra"
+ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
 try:
@@ -39,11 +39,6 @@ try:
     import ladybug.color as col
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
-
-# TODO: Add color convertor to [+]
-if _colors_:
-    pass
-    # colors = tuple(col.ColorConvertor.toLBColor(_colors_))
 
 legendPar = lpar.LegendParameters(
     legendRange=_domain_, numberOfSegments=11,

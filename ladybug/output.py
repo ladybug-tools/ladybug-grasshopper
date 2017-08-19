@@ -9,6 +9,7 @@ except ImportError:
         "Failed to import Grasshopper. Make sure the path is added to sys.path.")
 try:
     from System import Object
+    from System.Drawing import Color
 except ImportError:
     print "Failed to import System."
 
@@ -119,3 +120,13 @@ def wrap(input):
         return (Goo(i) for i in input)
     except Exception as e:
         raise ValueError('Failed to wrap {}:\n{}.'.format(input, e))
+
+
+def colorTocolor(colors):
+    """Convert a ladybug color into Dynamo color."""
+    if not hasattr(colors, '__iter__'):
+        colors = (colors,)
+    try:
+        return tuple(Color.FromArgb(255, col.r, col.g, col.b) for col in colors)
+    except AttributeError as e:
+        raise AttributeError('Inputs must be of type of Color:\n{}'.format(e))
