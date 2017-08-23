@@ -36,7 +36,7 @@ Import epw.
 
 ghenv.Component.Name = "LadybugPlus_Import EPW"
 ghenv.Component.NickName = 'importEpw'
-ghenv.Component.Message = 'VER 0.0.01\nJUL_28_2017'
+ghenv.Component.Message = 'VER 0.0.01\nAUG_23_2017'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
