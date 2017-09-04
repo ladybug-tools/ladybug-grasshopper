@@ -1,8 +1,12 @@
 """Methods for drawing sunpath geometry."""
-import Rhino.Geometry as rg
+try:
+    import Rhino.Geometry as rg
+except ImportError:
+    raise ImportError(
+        "Failed to import Grasshopper. Make sure the path is added to sys.path.")
 
 
-def analemmaCurves(suns, origin, radius):
+def analemma_curves(suns, origin, radius):
     """Create analemma curves.
 
     Args:
@@ -30,16 +34,16 @@ def analemmaCurves(suns, origin, radius):
                                                    rg.CurveKnotStyle.ChordPeriodic)
 
 
-def baseCurves(origin, radius, northAngle):
+def base_curves(origin, radius, north_angle):
     origin = rg.Point3d(*origin)
-    innerCircle = rg.Circle(origin, radius)
-    middleCircle = rg.Circle(origin, 1.02 * radius)
-    outterCircle = rg.Circle(origin, 1.08 * radius)
+    inner_circle = rg.Circle(origin, radius)
+    middle_circle = rg.Circle(origin, 1.02 * radius)
+    outter_circle = rg.Circle(origin, 1.08 * radius)
 
-    return innerCircle, middleCircle, outterCircle
+    return inner_circle, middle_circle, outter_circle
 
 
-def dailyCurves(suns, origin, radius):
+def daily_curves(suns, origin, radius):
     """Create daily sunpath curves."""
     origin = rg.Point3d(*origin)
     for day, isArc in suns:
@@ -55,7 +59,7 @@ def dailyCurves(suns, origin, radius):
                 yield rg.Circle(*pts)
 
 
-def sunGeometry(suns, origin, radius):
+def sun_geometry(suns, origin, radius):
     """Get sun geometries as points."""
     origin = rg.Point3d(*origin)
     return tuple(
