@@ -29,7 +29,7 @@ for a presentation or for synchonizing the numerical range and colors between La
 
 ghenv.Component.Name = "LadybugPlus_Legend Parameters"
 ghenv.Component.NickName = 'legendPar'
-ghenv.Component.Message = 'VER 0.0.01\nAUG_18_2017'
+ghenv.Component.Message = 'VER 0.0.02\nNOV_16_2017'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
@@ -41,6 +41,6 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 legendPar = lpar.LegendParameters(
-    legendRange=_domain_, numberOfSegments=11,
-    colors=_colors_, chartType=_cType_
+    legend_range=_domain_, number_of_segments=11,
+    colors=_colors_, chart_type=_cType_
 )

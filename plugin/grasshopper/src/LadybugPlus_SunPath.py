@@ -51,7 +51,7 @@ analysis or shading design.
 
 ghenv.Component.Name = "LadybugPlus_SunPath"
 ghenv.Component.NickName = 'sunpath'
-ghenv.Component.Message = 'VER 0.0.01\nAUG_22_2017'
+ghenv.Component.Message = 'VER 0.0.02\nNOV_16_2017'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "02 :: VisualizeWeatherData"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -68,20 +68,20 @@ if _location:
     _hoys_ = _hoys_ or ()
 
     # initiate sunpath based on location
-    sp = Sunpath.fromLocation(_location, north_, daylightSavingPeriod)
+    sp = Sunpath.from_location(_location, north_, daylightSavingPeriod)
 
     # draw sunpath geometry
-    sunpathGeo = \
-        sp.drawSunpath(_hoys_, _centerPt_, _scale_, _sunScale_, _annual_)
+    sunpath_geo = \
+        sp.draw_sunpath(_hoys_, _centerPt_, _scale_, _sunScale_, _annual_)
     
-    analemma = sunpathGeo.analemmaCurves
-    compass = sunpathGeo.compassCurves
-    daily = sunpathGeo.dailyCurves
+    analemma = sunpath_geo.analemma_curves
+    compass = sunpath_geo.compass_curves
+    # daily = sunpath_geo.daily_curves
     
-    sunPts = sunpathGeo.sunGeos
+    sunPts = sunpath_geo.sun_geos
 
-    suns = sunpathGeo.suns
-    vectors = (geo.vector(*sun.sunVector) for sun in suns)
+    suns = sunpath_geo.suns
+    vectors = (geo.vector(*sun.sun_vector) for sun in suns)
     altitudes = (sun.altitude for sun in suns)
     azimuths = (sun.azimuth for sun in suns)
     centerPt = _centerPt_ or geo.point(0, 0, 0)

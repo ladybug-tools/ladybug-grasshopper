@@ -22,7 +22,7 @@ Construct location.
 
 ghenv.Component.Name = "LadybugPlus_Construct Location"
 ghenv.Component.NickName = 'constrLoc'
-ghenv.Component.Message = 'VER 0.0.01\nAUG_23_2017'
+ghenv.Component.Message = 'VER 0.0.02\nNOV_16_2017'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
@@ -32,4 +32,4 @@ try:
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-location = loc.Location(_name_, '', _latitude_, _longitude_, _timeZone_, _elevation_)
+location = loc.Location(_name_, _latitude_, _longitude_, _timeZone_, _elevation_)

@@ -22,7 +22,7 @@ Deconstruct location.
 
 ghenv.Component.Name = "LadybugPlus_Deconstruct Location"
 ghenv.Component.NickName = 'decnstrLoc'
-ghenv.Component.Message = 'VER 0.0.01\nJUL_21_2017'
+ghenv.Component.Message = 'VER 0.0.02\nNOV_16_2017'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
@@ -34,9 +34,9 @@ except ImportError as e:
 
 if _location:
     # in case someone uses the input from an older version of ladybug
-    location = loc.Location.fromLocation(_location)
+    location = loc.Location.from_location(_location)
     name = location.city
     latitude = location.latitude
     longitude = location.longitude
-    timeZone = location.timezone
+    timeZone = location.time_zone
     elevation = location.elevation

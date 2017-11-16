@@ -27,7 +27,7 @@ Analysis Period.
 
 ghenv.Component.Name = "LadybugPlus_Analysis Period"
 ghenv.Component.NickName = 'analysisPeriod'
-ghenv.Component.Message = 'VER 0.0.01\nJUL_28_2017'
+ghenv.Component.Message = 'VER 0.0.02\nNOV_16_2017'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
