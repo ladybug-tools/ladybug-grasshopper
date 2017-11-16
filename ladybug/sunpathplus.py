@@ -20,18 +20,18 @@ def analemma_curves(suns, origin, radius):
     for hour in suns:
         try:
             pts = tuple(
-                origin.Add(origin,
-                           rg.Vector3d(sun.sunVector.x,
-                                       sun.sunVector.y, sun.sunVector.z) *
-                           -radius)
+                origin.Add(
+                    origin, rg.Vector3d(
+                        sun.sun_vector.x, sun.sun_vector.y, sun.sun_vector.z) * -radius)
                 for sun in hour)
         except AttributeError:
             # no sun poistion / all night
             continue
         else:
             # create the analemma curve and send it back
-            yield rg.Curve.CreateInterpolatedCurve(pts, 3,
-                                                   rg.CurveKnotStyle.ChordPeriodic)
+            yield rg.Curve.CreateInterpolatedCurve(
+                pts, 3, rg.CurveKnotStyle.ChordPeriodic
+            )
 
 
 def base_curves(origin, radius, north_angle):
@@ -48,9 +48,10 @@ def daily_curves(suns, origin, radius):
     origin = rg.Point3d(*origin)
     for day, isArc in suns:
         pts = tuple(
-            origin.Add(origin,
-                       rg.Vector3d(sun.sunVector.x, sun.sunVector.y, sun.sunVector.z) *
-                       -radius)
+            origin.Add(
+                origin,
+                rg.Vector3d(sun.sun_vector.x, sun.sun_vector.y, sun.sun_vector.z) *
+                -radius)
             for sun in day)
         if isArc:
             yield rg.Arc(*pts)
@@ -64,6 +65,6 @@ def sun_geometry(suns, origin, radius):
     origin = rg.Point3d(*origin)
     return tuple(
         origin.Add(origin,
-                   rg.Vector3d(sun.sunVector.x, sun.sunVector.y, sun.sunVector.z) *
+                   rg.Vector3d(sun.sun_vector.x, sun.sun_vector.y, sun.sun_vector.z) *
                    -radius)
         for sun in suns)

@@ -122,8 +122,8 @@ def wrap(input):
         raise ValueError('Failed to wrap {}:\n{}.'.format(input, e))
 
 
-def color_tocolor(colors):
-    """Convert a ladybug color into Dynamo color."""
+def color_to_color(colors):
+    """Convert a ladybug color into Grasshopper color."""
     if not hasattr(colors, '__iter__'):
         colors = (colors,)
     try:
