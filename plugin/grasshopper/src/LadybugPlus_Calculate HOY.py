@@ -24,7 +24,7 @@ Calculate hour of the year.
 
 ghenv.Component.Name = "LadybugPlus_Calculate HOY"
 ghenv.Component.NickName = 'hoy'
-ghenv.Component.Message = 'VER 0.0.01\nJUL_21_2017'
+ghenv.Component.Message = 'VER 0.0.02\nNOV_16_2017'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
