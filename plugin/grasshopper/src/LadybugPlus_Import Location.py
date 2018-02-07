@@ -18,7 +18,7 @@ Import location.
 
 ghenv.Component.Name = "LadybugPlus_Import Location"
 ghenv.Component.NickName = 'importLoc'
-ghenv.Component.Message = 'VER 0.0.02\nNOV_16_2017'
+ghenv.Component.Message = 'VER 0.0.04\nFEB_07_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
