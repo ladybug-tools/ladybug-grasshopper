@@ -21,11 +21,11 @@ analysis or shading design.
             earth.
         _hoys_: A list or a single number that respresent an hour of the year.
             Use Analysis Period or HOY nodes to generate the numbers.
-        _centerPt_: Input a point here to change the location of the sun path.
+        _center_pt_: Input a point here to change the location of the sun path.
             The default is set to the Dynamo model origin (0,0,0).
         _scale_: Input a number here to change the scale of the sun path.
             The default is set to 1.
-        _sunScale_: Input a number here to change the scale of the sun spheres
+        _sun_scale_: Input a number here to change the scale of the sun spheres
             located along the sun path.  The default is set to 1.
         _annual_: By default, this value is set to "True" (or 1) which
             will produce a sun path for the whole year. Set this input to "False"
@@ -33,25 +33,27 @@ analysis or shading design.
             several days if multiple days are included in the analysis period).
 
     Returns:
-        sunVectors: Vector(s) indicating the direction of sunlight for each sun
+        vectors: Vector(s) indicating the direction of sunlight for each sun
             position on the sun path.
-        sunAltitudes: Number(s) indicating the sun altitude(s) in degrees for
+        altitudes: Number(s) indicating the sun altitude(s) in degrees for
             each sun position on the sun path.
-        sunAzimuths: Number(s) indicating the sun azimuths in degrees for each
+        azimuths: Number(s) indicating the sun azimuths in degrees for each
             sun position on the sun path.
-        sunSpheres: A colored mesh of spheres representing sun positions.
-        geometry: A set of curves that mark the path of the sun across the sky
-            dome.
-        centerPt: The center point of the sun path
-        sunPositions: Point(s) idicating the location on the sun path of each
-            sun position.
+        sun_pts: Point(s) representing the location of the sun on the sunpath.
+        analemma: A set of curves that mark the hourly positions of the sun
+            throughout the different months of the year.
+        compass: A set of curves that mark the cardinal directions in relation
+            to the sun.
+        daily: A set of curves that mark the path of the sun across the sky
+            dome over the course of a day.
+        center_pt: The center point of the sun path
         hoys: The hour of the year for each sun position on the sun path.
         datetimes: The date and info for each sun position on the sun path.
 """
 
 ghenv.Component.Name = "LadybugPlus_SunPath"
 ghenv.Component.NickName = 'sunpath'
-ghenv.Component.Message = 'VER 0.0.04\nFEB_07_2018'
+ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "02 :: VisualizeWeatherData"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -64,15 +66,15 @@ except ImportError as e:
 
 if _location:
     
-    daylightSavingPeriod = None  # temporary until we fully implement it
+    daylight_saving_period = None  # temporary until we fully implement it
     _hoys_ = _hoys_ or ()
 
     # initiate sunpath based on location
-    sp = Sunpath.from_location(_location, north_, daylightSavingPeriod)
+    sp = Sunpath.from_location(_location, north_, daylight_saving_period)
 
     # draw sunpath geometry
     sunpath_geo = \
-        sp.draw_sunpath(_hoys_, _centerPt_, _scale_, _sunScale_, _annual_)
+        sp.draw_sunpath(_hoys_, _center_pt_, _scale_, _sun_scale_, _annual_)
     
     analemma = sunpath_geo.analemma_curves
     compass = sunpath_geo.compass_curves
@@ -84,6 +86,6 @@ if _location:
     vectors = (geo.vector(*sun.sun_vector) for sun in suns)
     altitudes = (sun.altitude for sun in suns)
     azimuths = (sun.azimuth for sun in suns)
-    centerPt = _centerPt_ or geo.point(0, 0, 0)
+    center_pt = _center_pt_ or geo.point(0, 0, 0)
     hoys = (sun.hoy for sun in suns)
     datetimes = (sun.datetime for sun in suns)

@@ -16,16 +16,16 @@ Deconstruct location.
         locationName: Name of the location.
         latitude: Latitude of the location.
         longitude: Longitude of the location.
-        timeZone: Time zone of the location.
+        time_zone: Time zone of the location.
         elevation: Elevation of the location.
 """
 
 ghenv.Component.Name = "LadybugPlus_Deconstruct Location"
 ghenv.Component.NickName = 'decnstrLoc'
-ghenv.Component.Message = 'VER 0.0.04\nFEB_07_2018'
+ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
-ghenv.Component.AdditionalHelpFromDocStrings = "2"
+ghenv.Component.AdditionalHelpFromDocStrings = "3"
 
 try:
     import ladybug.location as loc
@@ -38,5 +38,5 @@ if _location:
     name = location.city
     latitude = location.latitude
     longitude = location.longitude
-    timeZone = location.time_zone
+    time_zone = location.time_zone
     elevation = location.elevation

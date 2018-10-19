@@ -12,14 +12,14 @@ Use this component to generate colors based on values and legend parameters.
 -
     Args:
         _values: A numerical data set.
-        legendPar_: Optional legend parameters from the Ladybug Legend Parameters component.
+        legend_par_: Optional legend parameters from the Ladybug Legend Parameters component.
     Returns:
         colors: The colors associated with each input value.
 """
 
 ghenv.Component.Name = "LadybugPlus_Generate Colors"
 ghenv.Component.NickName = 'genColors'
-ghenv.Component.Message = 'VER 0.0.04\nFEB_07_2018'
+ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
@@ -31,5 +31,5 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 if _values:
-    legendPar = legendPar_ or lpar.LegendParameters()
-    colors = output.color_to_color(legendPar.calculate_colors(_values))
+    legend_par = legend_par_ or lpar.LegendParameters()
+    colors = output.color_to_color(legend_par.calculate_colors(_values))
