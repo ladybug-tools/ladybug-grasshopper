@@ -35,7 +35,7 @@ ghenv.Component.AdditionalHelpFromDocStrings = "1"
 
 import os
 try:
-    from ladybug.futil import download_file
+    from ladybug.dotnet import download_file
     from ladybug.futil import unzip_file
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))

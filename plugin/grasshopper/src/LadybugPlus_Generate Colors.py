@@ -26,10 +26,10 @@ ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
 try:
     import ladybug.legendparameters as lpar
-    import ladybug.output as output
+    import ladybug.dotnet as dotnet
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 if _values:
     legend_par = legend_par_ or lpar.LegendParameters()
-    colors = output.color_to_color(legend_par.calculate_colors(_values))
+    colors = dotnet.color_to_color(legend_par.calculate_colors(_values))
