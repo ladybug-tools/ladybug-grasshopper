@@ -7,7 +7,7 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Import climate data from a standard .epw file.
+Construct a design day from a set of parameters.
 
 -
 
@@ -33,9 +33,9 @@ Import climate data from a standard .epw file.
         _design_days: A DesignDay object to deconstruct.
 """
 
-ghenv.Component.Name = "LadybugPlus_Constrct Design Day"
+ghenv.Component.Name = "LadybugPlus_Construct Design Day"
 ghenv.Component.NickName = 'constrDesignDay'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nOCT_22_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "0"

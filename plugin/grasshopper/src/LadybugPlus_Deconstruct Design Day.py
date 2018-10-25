@@ -7,7 +7,7 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Import climate data from a standard .epw file.
+Deconstruct design day into parameters.
 
 -
 
@@ -33,15 +33,15 @@ Import climate data from a standard .epw file.
             For ASHRAETau, this is the tau_beam and tau_diffuse.
 """
 
-ghenv.Component.Name = "LadybugPlus_Deconstrct Design Day"
+ghenv.Component.Name = "LadybugPlus_Deconstruct Design Day"
 ghenv.Component.NickName = 'decnstrDesignDay'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nOCT_22_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "0"
 
 
-if _design_day and hasattr(_design_day, 'isDesignDay'):
+if _design_day:
     name = _design_day.name
     day_type = _design_day.day_type
     location  = _design_day.location
