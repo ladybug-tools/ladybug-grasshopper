@@ -12,25 +12,25 @@ Analysis Period.
 -
 
     Args:
-        _startMonth_: Start month (1-12).
-        _startDay_: Start day (1-31).
-        _startHour_: Start hour (0-23).
-        _endMonth_: End month (1-12).
-        _endDay_: End day (1-31).
-        _endHour_: End hour (0-23).
+        _start_month_: Start month (1-12).
+        _start_day_: Start day (1-31).
+        _start_hour_: Start hour (0-23).
+        _end_month_: End month (1-12).
+        _end_day_: End day (1-31).
+        _end_hour_: End hour (0-23).
         _timestep_: An integer number from 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60
     Returns:
-        analysisPeriod: Analysis period.
+        analysis_period: Analysis period.
         hoys: List of dates in this analysis period.
         dates: List of hours of the year in this analysis period.
 """
 
 ghenv.Component.Name = "LadybugPlus_Analysis Period"
 ghenv.Component.NickName = 'analysisPeriod'
-ghenv.Component.Message = 'VER 0.0.04\nFEB_07_2018'
+ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
-ghenv.Component.AdditionalHelpFromDocStrings = "1"
+ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
 try:
     import ladybug.analysisperiod as ap
@@ -39,10 +39,10 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 anp = ap.AnalysisPeriod(
-    _startMonth_, _startDay_, _startHour_,
-    _endMonth_, _endDay_, _endHour_, _timestep_)
+    _start_month_, _start_day_, _start_hour_,
+    _end_month_, _end_day_, _end_hour_, _timestep_)
 
 if anp:
-    analysisPeriod = anp
+    analysis_period = anp
     dates = output.wrap(anp.datetimes)
     hoys = output.wrap(anp.hoys)

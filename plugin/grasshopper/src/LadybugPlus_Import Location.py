@@ -7,11 +7,12 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Import location.
+Import location from an epw
 -
 
     Args:
-        _epwFile: An epw file path on your system as a string.
+        _epw_file: An epw file path on your system as a string.
+        
     Returns:
         location: Location data (use this output to construct the sun path).
 """
@@ -28,6 +29,6 @@ try:
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _epwFile:
-    ep = epw.EPW(_epwFile)
+if _epw_file:
+    ep = epw.EPW(_epw_file)
     location = ep.location

@@ -21,15 +21,15 @@ for a presentation or for synchonizing the numerical range and colors between La
 
     Args:
         _domain_: A number representing the higher boundary of the legend's numerical range. The default is set to the highest value of the data stream that the legend refers to.
-        _cType_:
+        _c_type_:
         _colors_: A list of colors that will be used to re-color the legend and the corresponding colored mesh(es).  The number of colors input here should match the numSegments_ value input above.  An easy way to generate a list of colors to input here is with the Grasshopper "Gradient" component and a Grasshopper "Series" component connected to the Gradient component's "t" input.  A bunch of Grasshopper "Swatch" components is another way to generate a list of custom colors.  The default colors are a gradient spectrum from blue to yellow to red.
     Returns:
-        legendPar: A legend parameters to be plugged into any of the Ladybug components with a legend.
+        legend_par: A legend parameters to be plugged into any of the Ladybug components with a legend.
 """
 
 ghenv.Component.Name = "LadybugPlus_Legend Parameters"
 ghenv.Component.NickName = 'legendPar'
-ghenv.Component.Message = 'VER 0.0.04\nFEB_07_2018'
+ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
@@ -40,7 +40,7 @@ try:
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-legendPar = lpar.LegendParameters(
+legend_par = lpar.LegendParameters(
     legend_range=_domain_, number_of_segments=11,
-    colors=_colors_, chart_type=_cType_
+    colors=_colors_, chart_type=_c_type_
 )
