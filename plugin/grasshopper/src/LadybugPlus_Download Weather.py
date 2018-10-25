@@ -52,6 +52,14 @@ if _weather_URL is not None:
     # create default working_dir
     if _folder_ is None:
         _folder_ = os.path.join(os.environ['USERPROFILE'], 'ladybug', _folder_name)
+    try:
+        _folder_.decode('ascii')
+    except UnicodeDecodeError:
+        raise UnicodeDecodeError('\nYour USERNAME contains a non-ASCII character, meaning files are downloaded to: \n {}'
+            '\nUse the _folder_ input to this component to download EPW files to a valid location.'.format(_folder_))
+    else:
+        print 'Files will be downloaded to: {}'.format(_folder_)
+    
     
     # default file names
     epw = os.path.join(_folder_, _folder_name + '.epw')
