@@ -53,7 +53,7 @@ analysis or shading design.
 
 ghenv.Component.Name = "LadybugPlus_SunPath"
 ghenv.Component.NickName = 'sunpath'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nJAN_14_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "02 :: VisualizeWeatherData"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -80,7 +80,7 @@ if _location:
     compass = sunpath_geo.compass_curves
     daily = sunpath_geo.daily_curves
     
-    sunPts = sunpath_geo.sun_geos
+    sun_pts = sunpath_geo.sun_geos
 
     suns = sunpath_geo.suns
     vectors = (geo.vector(*sun.sun_vector) for sun in suns)
