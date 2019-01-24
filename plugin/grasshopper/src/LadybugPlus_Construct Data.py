@@ -7,36 +7,28 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Construct a Ladybug DataCollection from values and metadata.
+Construct a Ladybug data collection from header and values.
 -
 
     Args:
-        _values: The numerical values of the DataCollection.
-        _a_period: A Ladybug AnalysisPeriod object that corresponds with the _values
-        location_: Location data as a ladybug Location or location string
-            (Default: unknown).
-        data_type_: Type of data (e.g. Temperature) (Default: unknown).
-        unit_: Units of the data_type (e.g. C) (Default: unknown).
+        _header:A Ladybug header object describing the data of the data collection.
+        _values: A list of numerical values for the data collection.
     Returns:
-        data: A Ladybug DataCollection object.
+        data: A Ladybug data collection object.
 """
 
 ghenv.Component.Name = "LadybugPlus_Construct Data"
 ghenv.Component.NickName = 'constrData'
-ghenv.Component.Message = 'VER 0.0.04\nDEC_21_2018'
+ghenv.Component.Message = 'VER 0.0.04\nJAN_24_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
 
 try:
-    from ladybug.datatypenew import DataTypes
-    from ladybug.header import Header
-    from ladybug.datacollection import DataCollection
+    from ladybug.datacollection import HourlyContinuousCollection
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 
-if _values != [] and _values[0] is not None and _a_period:
-    data_type = DataTypes.type_by_name_and_unit(data_type_, unit_)
-    header = Header(location=location_, data_type=data_type, unit=unit_)
-    data = DataCollection.from_data_and_analysis_period(_values, _a_period, header)
+if _header and _values != [] and _values[0] is not None:
+    data = HourlyContinuousCollection(_header, _values)

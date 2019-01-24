@@ -22,15 +22,21 @@ Convert a value or list of values from one unit to another.
 
 ghenv.Component.Name = "LadybugPlus_Unit Converter"
 ghenv.Component.NickName = 'Units'
-ghenv.Component.Message = 'VER 0.0.04\nDEC_21_2018'
+ghenv.Component.Message = 'VER 0.0.04\nJAN_24_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
 
-from ladybug.datatypenew import DataTypes
+import ladybug.datatype
 
-all_u = DataTypes.all_possible_units()
+all_u = [': '.join([key, ', '.join(val)]) for key, val in ladybug.datatype.UNITS.items()]
 
 if _values != [] and _values[0] and _from_u and _to_u:
-    data_type = DataTypes.type_by_unit(_from_u)
-    values = data_type.to_unit(_values, _to_u, _from_u)
+    base_type = None
+    for key in ladybug.datatype.UNITS:
+        if _from_u in ladybug.datatype.UNITS[key]:
+            base_type = ladybug.datatype.TYPESDICT[key]()
+    assert base_type, 'Input _from_u "{}" is not recgonized as a valid unit.\n' \
+        'Check all_u for acceptable units'.format(_from_u)
+    
+    values = base_type.to_unit(_values, _to_u, _from_u)
