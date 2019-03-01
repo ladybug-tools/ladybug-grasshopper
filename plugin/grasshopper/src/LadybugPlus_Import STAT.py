@@ -35,14 +35,26 @@ Import data from a standard .stat file.
             coldest week within the corresponding EPW.
         extreme_hot_week: A Ladybug AnalysisPeriod object representing the
             hottest week within the corresponding EPW.
-        seasonal_weeks: A list of 4 Ladybug AnalysisPeriod objects representing
-            typical weeks for each of the 4 seasons within the corresponding EPW.
-            Weeks are ordered as follows: Spring, Summer, Autumn, Winter
+        typical_weeks: A list of Ladybug AnalysisPeriod objects representing
+            typical weeks within the corresponding EPW.
+            The type of week can vary depending on the climate.
+            _
+            For mid and high lattitude climates with 4 seasons (ie. New York),
+            these week are for each of the 4 seasons ordered as follows:
+            Winter, Spring, Summer, Autumn
+            _
+            For low lattitude climates with wet/dry seasons (ie. Mumbai),
+            these weeks might also include:
+            Wet Season, Dry Season
+            _
+            For equitorial climates with no seasons (ie. Singapore),
+            This output is usually a single week representing typical
+            conditions of the entire year.
 """
 
 ghenv.Component.Name = "LadybugPlus_Import STAT"
 ghenv.Component.NickName = 'importSTAT'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nFEB_03_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "4"
@@ -55,19 +67,28 @@ except ImportError as e:
 
 if _stat_file:
     stat_obj = STAT(_stat_file)
+    
+    # output location and climate zone
     location = stat_obj.location
     ashrae_climate_zone = stat_obj.ashrae_climate_zone
     koppen_climate_zone = stat_obj.koppen_climate_zone
+    
+    # output design day objects
     ann_heating_dday_996 = stat_obj.annual_heating_design_day_996
     ann_heating_dday_990 = stat_obj.annual_heating_design_day_990
     ann_cooling_dday_004 = stat_obj.annual_cooling_design_day_004
     ann_cooling_dday_010 = stat_obj.annual_cooling_design_day_010
     monthly_ddays_050 = stat_obj.monthly_cooling_design_days_050
     monthly_ddays_100 = stat_obj.monthly_cooling_design_days_100
+    
+    # output extreme and typical weeks
     extreme_cold_week = stat_obj.extreme_cold_week
     extreme_hot_week = stat_obj.extreme_hot_week
-    seasonal_weeks = \
-        [stat_obj.typical_winter_week,
-        stat_obj.typical_spring_week,
-        stat_obj.typical_summer_week,
-        stat_obj.typical_autumn_week]
+    
+    typical_weeks = []
+    seasonal_wks = [stat_obj.typical_winter_week, stat_obj.typical_spring_week,
+                   stat_obj.typical_summer_week, stat_obj.typical_autumn_week]
+    for wk in seasonal_wks:
+        if wk is not None:
+            typical_weeks.append(wk)
+    typical_weeks.extend(stat_obj.other_typical_weeks)

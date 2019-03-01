@@ -35,10 +35,10 @@ Deconstruct design day into parameters.
 
 ghenv.Component.Name = "LadybugPlus_Deconstruct Design Day"
 ghenv.Component.NickName = 'decnstrDesignDay'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_22_2018'
+ghenv.Component.Message = 'VER 0.0.04\nNOV_17_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
-ghenv.Component.AdditionalHelpFromDocStrings = "0"
+ghenv.Component.AdditionalHelpFromDocStrings = "5"
 
 
 if _design_day:

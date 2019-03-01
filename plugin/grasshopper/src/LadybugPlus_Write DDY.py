@@ -26,10 +26,10 @@ Write Ladybug DesignDays a standard .ddy file.
 
 ghenv.Component.Name = "LadybugPlus_Write DDY"
 ghenv.Component.NickName = 'writeDDY'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nNOV_17_2018'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
-ghenv.Component.AdditionalHelpFromDocStrings = "5"
+ghenv.Component.AdditionalHelpFromDocStrings = "0"
 
 import os
 try:
