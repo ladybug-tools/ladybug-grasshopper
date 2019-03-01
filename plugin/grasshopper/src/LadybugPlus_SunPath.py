@@ -53,7 +53,7 @@ analysis or shading design.
 
 ghenv.Component.Name = "LadybugPlus_SunPath"
 ghenv.Component.NickName = 'sunpath'
-ghenv.Component.Message = 'VER 0.0.04\nFEB_03_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJAN_14_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "02 :: VisualizeWeatherData"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
