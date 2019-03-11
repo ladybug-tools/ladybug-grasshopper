@@ -18,9 +18,9 @@ Convert a DataCollection to IP values.
 
 ghenv.Component.Name = "LadybugPlus_To IP"
 ghenv.Component.NickName = 'toIP'
-ghenv.Component.Message = 'VER 0.0.04\nDEC_21_2018'
+ghenv.Component.Message = 'VER 0.0.04\nMAR_05_2019'
 ghenv.Component.Category = "LadybugPlus"
-ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
+ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
 
 
