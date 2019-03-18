@@ -21,9 +21,9 @@ Convert a DataCollection to the input _to_unit.
 
 ghenv.Component.Name = "LadybugPlus_To Unit"
 ghenv.Component.NickName = 'toUnit'
-ghenv.Component.Message = 'VER 0.0.04\nDEC_21_2018'
+ghenv.Component.Message = 'VER 0.0.04\nMAR_05_2019'
 ghenv.Component.Category = "LadybugPlus"
-ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
+ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
 
 

@@ -22,9 +22,9 @@ Convert a value or list of values from one unit to another.
 
 ghenv.Component.Name = "LadybugPlus_Unit Converter"
 ghenv.Component.NickName = 'Units'
-ghenv.Component.Message = 'VER 0.0.04\nJAN_24_2019'
+ghenv.Component.Message = 'VER 0.0.04\nMAR_05_2019'
 ghenv.Component.Category = "LadybugPlus"
-ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
+ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
 
 import ladybug.datatype
