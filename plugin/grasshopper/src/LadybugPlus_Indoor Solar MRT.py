@@ -22,12 +22,11 @@ radiant exchange.
             irradiance in W/m2.
         _diff_horiz_solar: Hourly Data Collection with diffuse horizontal solar
             irradiance in W/m2.
-        _horiz_infrared: Hourly Data Collection with the horizontal infrared
-            radiation intensity from the sky in W/m2.
-        _surface_temp: A single number or an hourly data collection with the
-            temperature of surfaces around the person in degrees C. This includes
-            the ground and any other surfaces blocking the view to the sky.
-            Typically, outdoor dry bulb temperature is used when such surface
+        _longwave_mrt: A single number or an hourly data collection with the
+            long wave mean radiant temperature around the person in degrees C.
+            This includes the temperature of the ground and any other surfaces
+            between the person and their view to the sky.
+            Typically, dry bulb temperature is used when such surface
             temperatures are unknown.
         fract_body_exp_: A single number between 0 and 1 or a data collection
             representing the fraction of the body exposed to direct sunlight.
@@ -39,42 +38,43 @@ radiant exchange.
             Default is 1 for a person standing in an open area.
         _ground_ref_: A single number between 0 and 1 or a data collection
             that represents the reflectance of the floor. Default is for 0.25
-            which is characteristic of outdoor grass or dry bare soil.
+            which is characteristic of concrete.
+        _window_trans_: A Data Collection or number between 0 and 1 that
+                represents the broadband solar transmittance of the window through which
+                the sun is coming. Such values tend to be slightly less than the
+                SHGC. Values might be as low as 0.2 and could be as high as 0.85
+                for a single pane of glass. Default is 0.4 assuming a double pane
+                window with a relatively mild low-e coating.
         _solar_body_par_: Optional Solar Body Parameter object to account for
             properties of the human geometry.
         _run: Set to True to run the component.
     Returns:
         report: Reports, errors, warnings, etc.
-        short_erf: Data collection of shortwave effective radiant field (ERF) in W/m2.
-        long_erf: Data collection of longwave effective radiant field (ERF) in W/m2.
-        short_dmrt: Data collection of shortwave mean radiant temperature delta in C.
-        long_dmrt: Data collection of longwave mean radiant temperature delta in C.
-        mrt: Data collection of mean radiant temperature in C.  This accounts for
-            both the shortwave solar shining directly onto people as well as
-            longwave radiant exchange with the sky.
+        erf: Data collection of effective radiant field (ERF) in W/m2.
+        dmrt: Data collection of mean radiant temperature delta in C.
+        mrt: Data collection of mean radiant temperature in C.
 """
 
-ghenv.Component.Name = "LadybugPlus_Outdoor Solar MRT"
-ghenv.Component.NickName = 'outdoorSolarMRT'
+ghenv.Component.Name = "LadybugPlus_Indoor Solar MRT"
+ghenv.Component.NickName = 'indoorSolarMRT'
 ghenv.Component.Message = 'VER 0.0.04\nAPR_27_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "5"
 
 try:
-    from ladybug_comfort.collection.solarcal import OutdoorSolarCal
+    from ladybug_comfort.collection.solarcal import IndoorSolarCal
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _run is True and _location and _diff_horiz_solar and _dir_norm_solar and \
-        _horiz_infrared and _surface_temp:
+if _run is True and _location and _dir_norm_solar and _diff_horiz_solar \
+        and _longwave_mrt:
     
-    solar_mrt_obj = OutdoorSolarCal(_location, _dir_norm_solar, _diff_horiz_solar,
-                                    _horiz_infrared, _surface_temp, fract_body_exp_,
-                                    sky_exposure_, _ground_ref_, _solar_body_par_)
+    solar_mrt_obj = IndoorSolarCal(_location, _dir_norm_solar,
+                                   _diff_horiz_solar, _longwave_mrt,
+                                   fract_body_exp_, sky_exposure_,
+                                   _ground_ref_, _window_trans_, _solar_body_par_)
     
-    short_erf = solar_mrt_obj.shortwave_effective_radiant_field
-    long_erf = solar_mrt_obj.longwave_effective_radiant_field
-    short_dmrt = solar_mrt_obj.shortwave_mrt_delta
-    long_dmrt = solar_mrt_obj.longwave_mrt_delta
+    erf = solar_mrt_obj.effective_radiant_field
+    dmrt = solar_mrt_obj.mrt_delta
     mrt = solar_mrt_obj.mean_radiant_temperature
