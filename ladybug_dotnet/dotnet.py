@@ -4,13 +4,13 @@ import os
 try:
     from ladybug.futil import preparedir
 except ImportError as e:
-    print "Failed to import ladybug.\n{}".format(e)
+    print("Failed to import ladybug.\n{}".format(e))
 
 try:
     from System.Drawing import Color
     import System.Net
 except ImportError as e:
-    print "Failed to import System.\n{}".format(e)
+    print("Ladybug_dotnet is only available when running on Windows/.NET\n{}".format(e))
 
 
 def download_file_by_name(url, target_folder, file_name, mkdir=False):

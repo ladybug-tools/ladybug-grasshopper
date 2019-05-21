@@ -10,6 +10,12 @@ try:
 except ImportError as e:
     raise ImportError(
         "Failed to import ladybug_dotnet.\n{}".format(e))
+try:
+    import scriptcontext
+    tolerance = scriptcontext.doc.ModelAbsoluteTolerance
+except ImportError as e:
+    raise ImportError(
+        "Failed to import scriptcontext.\n{}".format(e))
 
 
 """____________2D GEOMETRY TRANSLATORS____________"""
@@ -89,12 +95,20 @@ def from_mesh3d(mesh):
 def from_face3d(face):
     """Rhino Brep from ladybug Face3D."""
     segs = [from_linesegment3d(seg) for seg in face.boundary_segments]
-    brep = rg.Brep.CreateTrimmedPlane(from_plane(face.plane), segs)
+    brep = rg.Brep.	CreatePlanarBreps(segs, tolerance)[0]
     if face.has_holes:
         for hole in face.hole_segments:
             trim_crvs = [from_linesegment3d(seg) for seg in hole]
             brep.Loops.AddPlanarFaceLoop(0, rg.BrepLoopType.Inner, trim_crvs)
     return brep
+
+
+def from_polyface3d(polyface):
+    """Rhino Brep from ladybug Polyface3D."""
+    rh_faces = [from_face3d(face) for face in polyface.faces]
+    brep = rg.Brep.JoinBreps(rh_faces, tolerance)
+    if len(brep) == 1:
+        return brep[0]
 
 
 def _translate_mesh(mesh, pt_function):
