@@ -12,11 +12,12 @@ except ImportError as e:
     raise ImportError(
         "Failed to import ladybug.\n{}".format(e))
 try:
+    import Rhino.Geometry as rg
     import scriptcontext
     tolerance = scriptcontext.doc.ModelAbsoluteTolerance
 except ImportError as e:
     raise ImportError(
-        "Failed to import scriptcontext.\n{}".format(e))
+        "Failed to import Rhino.\n{}".format(e))
 
 
 """____________2D GEOMETRY TRANSLATORS____________"""
@@ -95,9 +96,16 @@ def to_mesh3d(mesh, color_by_face=True):
     return lb3.mesh.Mesh3D(lb_verts, lb_faces, colors)
 
 
-def to_face3d(brep):
-    """List of Ladybug Face3D objects from a Rhino Brep."""
-    curved_error = 'to_face3d has not yet been implemented for curved breps.'
+def to_face3d(brep, meshing_parameters=None):
+    """List of Ladybug Face3D objects from a Rhino Brep.
+
+    Args:
+        brep: A Rhino Brep that will be converted into a list of Ladybug Face3D.
+        meshing_parameters: Optional Rhino Meshing Parameters to describe how
+            curved faces should be convereted into planar elements. If None,
+            Rhino's Default Meshing Parameters will be used.
+    """
+    meshing_parameters = meshing_parameters or rg.MeshingParameters.Default
     faces = []
     for b_face in brep.Faces:
         if b_face.IsPlanar(tolerance):
@@ -105,18 +113,70 @@ def to_face3d(brep):
             for count in range(b_face.Loops.Count):  # Each loop is a face boundary/hole
                 success, loop_pline = \
                     b_face.Loops.Item[count].To3dCurve().TryGetPolyline()
-                if not success:  # If we failed to get a polyline, an edge is curved
-                    raise NotImplementedError(curved_error)
-                all_verts.append([to_point3d(loop_pline.Item[i])
-                                  for i in range(loop_pline.Count - 1)])
+                if not success:  # If we failed to get a polyline, there are curved edges
+                    loop_pcrv = b_face.Loops.Item[count].To3dCurve()
+                    f_norm = b_face.NormalAt(0, 0)
+                    if f_norm.Z < 0:
+                        loop_pcrv.Reverse()
+                    loop_verts = []
+                    for i in range(loop_pcrv.SegmentCount):
+                        seg = loop_pcrv.SegmentCurve(i)
+                        if seg.Degree == 1:
+                            loop_verts.append(to_point3d(seg.PointAtStart))
+                        else:
+                            # Ensure curve subdivisions align with adjacent curved faces
+                            seg_mesh = rg.Mesh.CreateFromSurface(
+                                rg.Surface.CreateExtrusion(seg, f_norm),
+                                meshing_parameters)
+                            for i in range(seg_mesh.Vertices.Count / 2 - 1):
+                                loop_verts.append(to_point3d(seg_mesh.Vertices[i]))
+                    all_verts.append(loop_verts)
+                else:
+                    all_verts.append([to_point3d(loop_pline.Item[i])
+                                      for i in range(loop_pline.Count - 1)])
             if len(all_verts) == 1:  # No holes in the shape
                 faces.append(lb3.face.Face3D.from_vertices(all_verts[0]))
             else:  # There's at least one hole in the shape
                 faces.append(
                     lb3.face.Face3D.from_shape_with_holes(all_verts[0], all_verts[1:]))
         else:
-            raise NotImplementedError(curved_error)
+            if b_face.OrientationIsReversed:
+                b_face.Reverse(0, True)
+            meshed_brep = rg.Mesh.CreateFromBrep(b_face.ToBrep(), meshing_parameters)[0]
+            for m_face in meshed_brep.Faces:
+                if m_face.IsQuad:
+                    lb_face = lb3.face.Face3D.from_vertices(
+                        tuple(to_point3d(meshed_brep.Vertices[i]) for i in
+                              (m_face.A, m_face.B, m_face.C, m_face.D)))
+                    if lb_face.validate_planarity(tolerance, False):
+                        faces.append(lb_face)
+                    else:
+                        lb_face_1 = lb3.face.Face3D.from_vertices(
+                            tuple(to_point3d(meshed_brep.Vertices[i]) for i in
+                                  (m_face.A, m_face.B, m_face.C)))
+                        lb_face_2 = lb3.face.Face3D.from_vertices(
+                            tuple(to_point3d(meshed_brep.Vertices[i]) for i in
+                                  (m_face.C, m_face.D, m_face.A)))
+                        faces.extend([lb_face_1, lb_face_2])
+                else:
+                    lb_face = lb3.face.Face3D.from_vertices(
+                        tuple(to_point3d(meshed_brep.Vertices[i]) for i in
+                              (m_face.A, m_face.B, m_face.C)))
+                    faces.append(lb_face)
     return faces
+
+
+def to_polyface3d(brep, meshing_parameters=None):
+    """A Ladybug Polyface3D object from a Rhino Brep.
+
+    Args:
+        brep: A Rhino Brep that will be converted into a list of Ladybug Face3D.
+        meshing_parameters: Optional Rhino Meshing Parameters to describe how
+            curved faces should be convereted into planar elements. If None,
+            Rhino's Default Meshing Parameters will be used.
+    """
+    lb_faces = to_face3d(brep)
+    return lb3.polyface.Polyface3D.from_faces_tolerance(lb_faces, tolerance)
 
 
 def _extract_mesh_faces_colors(mesh, color_by_face):
