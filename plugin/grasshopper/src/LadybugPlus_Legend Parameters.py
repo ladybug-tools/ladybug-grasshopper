@@ -13,34 +13,72 @@ of any Ladybug legend along with the corresponding colored mesh that the legend 
 
 Any Ladybug component that outputs a colored mesh and a legend will have an input
 that can accept Legend Parameters from this component.
-
-This component particularly helpful in making the colors of Ladybug graphics consistent
-for a presentation or for synchonizing the numerical range and colors between Ladybug graphics.
 -
 
-
     Args:
-        _domain_: A number representing the higher boundary of the legend's numerical range. The default is set to the highest value of the data stream that the legend refers to.
-        _c_type_:
-        _colors_: A list of colors that will be used to re-color the legend and the corresponding colored mesh(es).  The number of colors input here should match the numSegments_ value input above.  An easy way to generate a list of colors to input here is with the Grasshopper "Gradient" component and a Grasshopper "Series" component connected to the Gradient component's "t" input.  A bunch of Grasshopper "Swatch" components is another way to generate a list of custom colors.  The default colors are a gradient spectrum from blue to yellow to red.
+        min_: A number to set the lower boundary of the legend. If None, the
+            minimum of the values associated with the legend will be used.
+        max_: A number to set the upper boundary of the legend. If None, the
+            maximum of the values associated with the legend will be used.
+        num_segs_: An interger representing the number of steps between
+            the high and low boundary of the legend. The default is set to 11
+            and any custom values input in here should always be greater than or
+            equal to 2.
+        colors_: An list of color objects. Default is Ladybug's original colorset.
+        continuous_col_: Boolean. If True, the colors along the legend will be in
+            a continuous gradient. If False, they will be categorized in
+            incremental groups according to the number_of_segments.
+            Default is False for depicting discrete categories.
+        num_decimals_: An optional integer to set the number of decimal
+            places for the numbers in the legend text. Default is 2.
+        larger_smaller_: Boolean noting whether to include larger than and
+            smaller than (> and <) values after the upper and lower legend segment
+            text. Default is False.
+        vert_or_horiz_: Boolean. If True, the legend mesh and text points
+            will be generated vertically.  If False, they will genrate a
+            horizontal legend. Default is True for a vertically-oriented legend.
+        base_plane_: A Plane to note the starting point and orientation from
+            where the legend will be genrated. The default is the world XY plane
+            at origin (0, 0, 0).
+        seg_height_: An optional number to set the height of each of the legend
+            segments. Default is 1.
+        seg_width_: An optional number to set the width of each of the legend
+            segments. Default is 1 when legend is vertical. When horizontal, the
+            default is (text_height * (number_decimal_places + 2)).
+        text_height_: An optional number to set the size of the text in model units.
+            Default is half of the segment_height.
+        font_: An optional text string to specify the font to be used for the text.
+            Examples include "Arial", "Times New Roman", "Courier" (all without
+            quotations). Default is "Arial".
     Returns:
-        legend_par: A legend parameters to be plugged into any of the Ladybug components with a legend.
+        leg_par: A legend parameter object that can be plugged into any of the
+            Ladybug components with a legend.
 """
 
 ghenv.Component.Name = "LadybugPlus_Legend Parameters"
 ghenv.Component.NickName = 'legendPar'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nMAY_31_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
-ghenv.Component.AdditionalHelpFromDocStrings = "2"
+ghenv.Component.AdditionalHelpFromDocStrings = "1"
+
 
 try:
-    import ladybug.legendparameters as lpar
-    import ladybug.color as col
+    from ladybug.legend import LegendParameters
+    from ladybug_rhino.togeometry import to_plane
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-legend_par = lpar.LegendParameters(
-    legend_range=_domain_, number_of_segments=11,
-    colors=_colors_, chart_type=_c_type_
-)
+if colors_ == []:
+    colors_ = None
+if base_plane_:
+    base_plane_ = to_plane(base_plane_)
+
+leg_par = LegendParameters(min=min_, max=max_, number_of_segments=num_segs_,
+                           colors=colors_, continuous_legend=continuous_col_,
+                           number_decimal_places=num_decimals_,
+                           include_larger_smaller=larger_smaller_,
+                           vertical_or_horizontal=vert_or_horiz_,
+                           base_plane=base_plane_,
+                           segment_height=seg_height_, segment_width=seg_width_,
+                           text_height=text_height_, font=font_)
