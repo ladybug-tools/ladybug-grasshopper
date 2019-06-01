@@ -19,7 +19,7 @@ Open EPWmap in web browser.
 
 ghenv.Component.Name = "LadybugPlus_EPWmap"
 ghenv.Component.NickName = 'epwMap'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nMAY_31_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -47,7 +47,8 @@ if _epw_map:
             wb.get(browser[0]).open(url, 2, True)
             print "Opening epwmap."
     if broswer_found == False:
-       print "An accepable broswer was not found on your machine. Therefore, the default browser will be used."
+       print "An accepable broswer was not found on your machine.\n" \
+        "The default browser will be used but epwmap may not display correctly there."
        wb.open(url, 2, True)
 else:
     print "Set _epw_map to True."
