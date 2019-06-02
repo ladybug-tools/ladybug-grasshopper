@@ -25,7 +25,7 @@ that can accept Legend Parameters from this component.
             and any custom values input in here should always be greater than or
             equal to 2.
         colors_: An list of color objects. Default is Ladybug's original colorset.
-        continuous_col_: Boolean. If True, the colors along the legend will be in
+        continuous_leg_: Boolean. If True, the colors along the legend will be in
             a continuous gradient. If False, they will be categorized in
             incremental groups according to the number_of_segments.
             Default is False for depicting discrete categories.
@@ -75,7 +75,7 @@ if base_plane_:
     base_plane_ = to_plane(base_plane_)
 
 leg_par = LegendParameters(min=min_, max=max_, number_of_segments=num_segs_,
-                           colors=colors_, continuous_legend=continuous_col_,
+                           colors=colors_, continuous_legend=continuous_leg_,
                            number_decimal_places=num_decimals_,
                            include_larger_smaller=larger_smaller_,
                            vertical_or_horizontal=vert_or_horiz_,
