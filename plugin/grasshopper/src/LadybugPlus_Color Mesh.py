@@ -16,6 +16,9 @@ Use this component to generate colors based on values and legend parameters.
             in the mesh.
         _mesh: A Mesh object, with a number of faces or vertices that match
             the number of input values and will be colored with restults.
+        offset_domain_: Optional domain (or number for distance), which will
+            be used to offset the mesh faces or verticesto according to the
+            values. Higher values will be offset further.
         legend_par_: Optional legend parameters from the Ladybug
             'Legend Parameters' component.
         legend_title_: A text string for Legend title. Typically, the units
@@ -35,7 +38,7 @@ Use this component to generate colors based on values and legend parameters.
 
 ghenv.Component.Name = "LadybugPlus_Color Mesh"
 ghenv.Component.NickName = 'colorMesh'
-ghenv.Component.Message = 'VER 0.0.04\nMAY_31_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_03_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -52,7 +55,11 @@ except ImportError as e:
 
 if len(_values) != 0 and _values[0] is not None and _mesh:
     # generate Ladybug objects
-    res_mesh = ResultMesh(_values, to_mesh3d(_mesh), legend_par_)
+    lb_mesh = to_mesh3d(_mesh)
+    if offset_dom_:
+        lb_mesh = lb_mesh.height_field_mesh(
+            _values, (offset_dom_.T0, offset_dom_.T1))
+    res_mesh = ResultMesh(_values, lb_mesh, legend_par_)
     
     # generate titles
     if legend_title_ is not None:
