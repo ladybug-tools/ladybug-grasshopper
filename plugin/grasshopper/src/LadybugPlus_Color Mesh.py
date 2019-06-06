@@ -38,13 +38,13 @@ Use this component to generate colors based on values and legend parameters.
 
 ghenv.Component.Name = "LadybugPlus_Color Mesh"
 ghenv.Component.NickName = 'colorMesh'
-ghenv.Component.Message = 'VER 0.0.04\nJUN_03_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_06_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
 
 try:
-    from ladybug.resultmesh import ResultMesh
+    from ladybug.graphic import GraphicContainer
     from ladybug_rhino.togeometry import to_mesh3d
     from ladybug_rhino.fromgeometry import from_mesh3d
     from ladybug_rhino.fromobjects import legend_objects
@@ -59,19 +59,19 @@ if len(_values) != 0 and _values[0] is not None and _mesh:
     if offset_dom_:
         lb_mesh = lb_mesh.height_field_mesh(
             _values, (offset_dom_.T0, offset_dom_.T1))
-    res_mesh = ResultMesh(_values, lb_mesh, legend_par_)
+    graphic = GraphicContainer(_values, lb_mesh.min, lb_mesh.max, legend_par_)
     
     # generate titles
     if legend_title_ is not None:
-        res_mesh.legend_parameters.title = legend_title_
+        graphic.legend_parameters.title = legend_title_
     if global_title_ is not None:
-        title = text_objects(global_title_, res_mesh.lower_title_location,
-                             res_mesh.legend_parameters.text_height,
-                             res_mesh.legend_parameters.font)
+        title = text_objects(global_title_, graphic.lower_title_location,
+                             graphic.legend_parameters.text_height,
+                             graphic.legend_parameters.font)
     
     # draw rhino objects
-    lb_mesh = res_mesh.colored_mesh
+    lb_mesh.colors = graphic.value_colors
     mesh = from_mesh3d(lb_mesh)
-    legend = legend_objects(res_mesh.legend)
+    legend = legend_objects(graphic.legend)
     colors = [color_to_color(col) for col in lb_mesh.colors]
-    legend_par = res_mesh.legend_parameters
+    legend_par = graphic.legend_parameters
