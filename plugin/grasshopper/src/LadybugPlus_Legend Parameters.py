@@ -20,7 +20,7 @@ that can accept Legend Parameters from this component.
             minimum of the values associated with the legend will be used.
         max_: A number to set the upper boundary of the legend. If None, the
             maximum of the values associated with the legend will be used.
-        num_segs_: An interger representing the number of steps between
+        seg_count_: An interger representing the number of steps between
             the high and low boundary of the legend. The default is set to 11
             and any custom values input in here should always be greater than or
             equal to 2.
@@ -57,7 +57,7 @@ that can accept Legend Parameters from this component.
 
 ghenv.Component.Name = "LadybugPlus_Legend Parameters"
 ghenv.Component.NickName = 'legendPar'
-ghenv.Component.Message = 'VER 0.0.04\nMAY_31_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_06_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -74,11 +74,14 @@ if colors_ == []:
 if base_plane_:
     base_plane_ = to_plane(base_plane_)
 
-leg_par = LegendParameters(min=min_, max=max_, number_of_segments=num_segs_,
-                           colors=colors_, continuous_legend=continuous_leg_,
-                           number_decimal_places=num_decimals_,
-                           include_larger_smaller=larger_smaller_,
-                           vertical_or_horizontal=vert_or_horiz_,
-                           base_plane=base_plane_,
-                           segment_height=seg_height_, segment_width=seg_width_,
-                           text_height=text_height_, font=font_)
+leg_par = LegendParameters(min=min_, max=max_, segment_count=seg_count_,
+                           colors=colors_, base_plane=base_plane_)
+
+leg_par.continuous_legend = continuous_leg_
+leg_par.decimal_count = num_decimals_
+leg_par.include_larger_smaller = larger_smaller_
+leg_par.vertical = vert_or_horiz_
+leg_par.segment_height = seg_height_
+leg_par.segment_width = seg_width_
+leg_par.text_height = text_height_
+leg_par.font = font_
