@@ -16,7 +16,7 @@ Use this component to generate colors based on values and legend parameters.
             in the mesh.
         _mesh: A Mesh object, with a number of faces or vertices that match
             the number of input values and will be colored with restults.
-        offset_domain_: Optional domain (or number for distance), which will
+        offset_dom_: Optional domain (or number for distance), which will
             be used to offset the mesh faces or verticesto according to the
             values. Higher values will be offset further.
         legend_par_: Optional legend parameters from the Ladybug
@@ -66,7 +66,7 @@ if len(_values) != 0 and _values[0] is not None and _mesh:
         graphic.legend_parameters.title = legend_title_
     if global_title_ is not None:
         title = text_objects(global_title_, graphic.lower_title_location,
-                             graphic.legend_parameters.text_height,
+                             graphic.legend_parameters.text_height * 1.5,
                              graphic.legend_parameters.font)
     
     # draw rhino objects
