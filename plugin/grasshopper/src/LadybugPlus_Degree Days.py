@@ -35,7 +35,7 @@ Calculate humidity metrics from relative humidity, dry bulb temperature and
 
 ghenv.Component.Name = "LadybugPlus_Degree Days"
 ghenv.Component.NickName = 'HDD_CDD'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_11_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
@@ -44,10 +44,11 @@ try:
     from ladybug_comfort.degreetime import heating_degree_time, cooling_degree_time
     from ladybug.datacollection import HourlyContinuousCollection
     from ladybug.datatype.temperaturetime import HeatingDegreeTime, CoolingDegreeTime
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _dry_bulb:
+if all_required_inputs(ghenv.Component):
     if _heat_base_ is None:
         _heat_base_ = 18
     if _cool_base_ is None:

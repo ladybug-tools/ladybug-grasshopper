@@ -54,7 +54,7 @@ Import data from a standard .stat file.
 
 ghenv.Component.Name = "LadybugPlus_Import STAT"
 ghenv.Component.NickName = 'importSTAT'
-ghenv.Component.Message = 'VER 0.0.04\nFEB_03_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "4"
@@ -62,10 +62,11 @@ ghenv.Component.AdditionalHelpFromDocStrings = "4"
 
 try:
     from ladybug.stat import STAT
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _stat_file:
+if all_required_inputs(ghenv.Component):
     stat_obj = STAT(_stat_file)
     
     # output location and climate zone

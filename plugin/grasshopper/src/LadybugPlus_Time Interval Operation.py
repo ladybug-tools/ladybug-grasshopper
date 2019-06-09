@@ -47,14 +47,21 @@ These actions can be performed over the following time intervals:
 
 ghenv.Component.Name = "LadybugPlus_Time Interval Operation"
 ghenv.Component.NickName = 'timeOp'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_11_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
+try:
+    from ladybug.datacollection import HourlyDiscontinuousCollection
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _data:
-    assert hasattr(_data, 'isHourly'), '_data must be an hourly data collection.' \
+
+if all_required_inputs(ghenv.Component):
+    assert isinstance(_data, HourlyDiscontinuousCollection), \
+        '_data must be an Hourly Data Collection.' \
         ' Got {}.'.format(type(_data))
     
     if _operation_ is None or _operation_.lower() == 'average':

@@ -11,7 +11,6 @@ Construct a Ladybug Header.
 -
 
     Args:
-        
         _data_type: Text representing the type of data (e.g. Temperature).
         _unit_: Units of the data_type (e.g. C). Default is to use the
             base unit of the connected_data_type.
@@ -19,13 +18,14 @@ Construct a Ladybug Header.
         metadata_: Optional metadata to be associated with the Header.
             Input should be text strings with a property name and value
             for the property separated by a colon. (eg. 'source: TMY3')
+    
     Returns:
         header: A Ladybug Header object.
 """
 
 ghenv.Component.Name = "LadybugPlus_Construct Header"
 ghenv.Component.NickName = 'constrHeader'
-ghenv.Component.Message = 'VER 0.0.04\nJAN_24_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "0"
@@ -34,11 +34,12 @@ try:
     import ladybug.datatype
     from ladybug.header import Header
     from ladybug.analysisperiod import AnalysisPeriod
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 
-if _data_type:
+if all_required_inputs(ghenv.Component):
     if hasattr(_data_type, 'isDataType'):
         pass
     elif isinstance(_data_type, str):

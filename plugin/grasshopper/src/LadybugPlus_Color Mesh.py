@@ -38,7 +38,7 @@ Use this component to generate colors based on values and legend parameters.
 
 ghenv.Component.Name = "LadybugPlus_Color Mesh"
 ghenv.Component.NickName = 'colorMesh'
-ghenv.Component.Message = 'VER 0.0.04\nJUN_06_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -50,17 +50,19 @@ try:
     from ladybug_rhino.fromobjects import legend_objects
     from ladybug_rhino.text import text_objects
     from ladybug_dotnet.color import color_to_color
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if len(_values) != 0 and _values[0] is not None and _mesh:
+
+if all_required_inputs(ghenv.Component):
     # generate Ladybug objects
     lb_mesh = to_mesh3d(_mesh)
     if offset_dom_:
         lb_mesh = lb_mesh.height_field_mesh(
             _values, (offset_dom_.T0, offset_dom_.T1))
     graphic = GraphicContainer(_values, lb_mesh.min, lb_mesh.max, legend_par_)
-    
+
     # generate titles
     if legend_title_ is not None:
         graphic.legend_parameters.title = legend_title_
@@ -68,7 +70,7 @@ if len(_values) != 0 and _values[0] is not None and _mesh:
         title = text_objects(global_title_, graphic.lower_title_location,
                              graphic.legend_parameters.text_height * 1.5,
                              graphic.legend_parameters.font)
-    
+
     # draw rhino objects
     lb_mesh.colors = graphic.value_colors
     mesh = from_mesh3d(lb_mesh)

@@ -18,9 +18,9 @@ radiant exchange.
 
     Args:
         _location: A Ladybug Location object.
-        _dir_norm_solar: Hourly Data Collection with the direct normal solar
+        _dir_norm_rad: Hourly Data Collection with the direct normal solar
             irradiance in W/m2.
-        _diff_horiz_solar: Hourly Data Collection with diffuse horizontal solar
+        _diff_horiz_rad: Hourly Data Collection with diffuse horizontal solar
             irradiance in W/m2.
         _horiz_infrared: Hourly Data Collection with the horizontal infrared
             radiation intensity from the sky in W/m2.
@@ -56,20 +56,19 @@ radiant exchange.
 
 ghenv.Component.Name = "LadybugPlus_Outdoor Solar MRT"
 ghenv.Component.NickName = 'outdoorSolarMRT'
-ghenv.Component.Message = 'VER 0.0.04\nAPR_27_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "5"
 
 try:
     from ladybug_comfort.collection.solarcal import OutdoorSolarCal
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _run is True and _location and _diff_horiz_solar and _dir_norm_solar and \
-        _horiz_infrared and _surface_temp:
-    
-    solar_mrt_obj = OutdoorSolarCal(_location, _dir_norm_solar, _diff_horiz_solar,
+if all_required_inputs(ghenv.Component) and _run is True:
+    solar_mrt_obj = OutdoorSolarCal(_location, _dir_norm_rad, _diff_horiz_rad,
                                     _horiz_infrared, _surface_temp, fract_body_exp_,
                                     sky_exposure_, _ground_ref_, _solar_body_par_)
     

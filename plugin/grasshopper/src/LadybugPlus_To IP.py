@@ -18,13 +18,19 @@ Convert a DataCollection to IP values.
 
 ghenv.Component.Name = "LadybugPlus_To IP"
 ghenv.Component.NickName = 'toIP'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_05_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
 
+try:
+    from ladybug.datacollection import BaseCollection
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _data_si:
-    assert hasattr(_data_si, 'isDataCollection'), \
-        'Expected DataCollection. Got {}.'.format(type(_data_si))
+
+if all_required_inputs(ghenv.Component):
+    assert isinstance(_data_si, BaseCollection), \
+        '_data_si must be a Data Collection. Got {}.'.format(type(_data_si))
     data_ip = _data_si.to_ip()

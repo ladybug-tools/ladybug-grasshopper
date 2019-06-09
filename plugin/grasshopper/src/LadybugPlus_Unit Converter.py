@@ -22,16 +22,21 @@ Convert a value or list of values from one unit to another.
 
 ghenv.Component.Name = "LadybugPlus_Unit Converter"
 ghenv.Component.NickName = 'Units'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_05_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
 
-import ladybug.datatype
+try:
+    import ladybug.datatype
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
+
 
 all_u = [': '.join([key, ', '.join(val)]) for key, val in ladybug.datatype.UNITS.items()]
 
-if _values != [] and _values[0] and _from_u and _to_u:
+if all_required_inputs(ghenv.Component):
     base_type = None
     for key in ladybug.datatype.UNITS:
         if _from_u in ladybug.datatype.UNITS[key]:

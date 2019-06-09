@@ -28,7 +28,7 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
 ghenv.Component.Name = "LadybugPlus_Download Weather"
 ghenv.Component.NickName = 'downloadWeather'
-ghenv.Component.Message = 'VER 0.0.04\nMAY_31_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -37,10 +37,12 @@ import os
 try:
     from ladybug_dotnet.download import download_file
     from ladybug.futil import unzip_file
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _weather_URL is not None:
+
+if all_required_inputs(ghenv.Component):
     # name for the weather files
     if _weather_URL.lower().endswith('.zip'):
         # onebuilding URL type

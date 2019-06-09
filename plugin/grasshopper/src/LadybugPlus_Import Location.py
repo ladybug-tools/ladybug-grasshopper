@@ -19,16 +19,17 @@ Import location from an epw
 
 ghenv.Component.Name = "LadybugPlus_Import Location"
 ghenv.Component.NickName = 'importLoc'
-ghenv.Component.Message = 'VER 0.0.04\nFEB_07_2018'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
 try:
     import ladybug.epw as epw
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _epw_file:
+if all_required_inputs(ghenv.Component):
     ep = epw.EPW(_epw_file)
     location = ep.location

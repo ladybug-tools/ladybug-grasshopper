@@ -22,17 +22,18 @@ Deconstruct location.
 
 ghenv.Component.Name = "LadybugPlus_Deconstruct Location"
 ghenv.Component.NickName = 'decnstrLoc'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
 
 try:
     import ladybug.location as loc
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _location:
+if all_required_inputs(ghenv.Component):
     # in case someone uses the input from an older version of ladybug
     location = loc.Location.from_location(_location)
     name = location.city
