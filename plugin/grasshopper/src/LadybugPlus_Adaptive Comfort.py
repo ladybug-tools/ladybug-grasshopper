@@ -68,7 +68,7 @@ comfort model should be used.
 
 ghenv.Component.Name = "LadybugPlus_Adaptive Comfort"
 ghenv.Component.NickName = 'Adaptive'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_11_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "4"
@@ -81,8 +81,11 @@ try:
         cooling_effect_ashrae55, cooling_effect_en15251, \
         adaptive_comfort_conditioned
     from ladybug.datatype.temperature import Temperature
+    from ladybug.datacollection import BaseCollection
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
+
 
 def extract_collections(input_list):
     """Process inputs into collections and floats."""
@@ -91,7 +94,7 @@ def extract_collections(input_list):
     for i, input in enumerate(input_list):
         if input is None:
             input_list[i] = defaults[i]
-        elif hasattr(input, 'isDataCollection'):
+        elif isinstance(input, BaseCollection):
             data_colls.append(input)
         else:
             try:
@@ -101,7 +104,7 @@ def extract_collections(input_list):
                                 'DataCollection. Got {}'.format(input, type(input)))
     return input_list, data_colls
 
-if _run is True and _out_temp is not None and _air_temp is not None:
+if all_required_inputs(ghenv.Component) and _run is True:
     # Process inputs and assign defaults.
     input_list = [_out_temp, _air_temp, _mrt_, _air_speed_]
     input, data_colls = extract_collections(input_list)
@@ -134,7 +137,7 @@ if _run is True and _out_temp is not None and _air_temp is not None:
         condition = adapt_par.thermal_condition(comf_result, ce)
     else:
         # The inputs include Data Collections.
-        if not hasattr(_air_temp, 'isDataCollection'):
+        if not isinstance(_air_temp, BaseCollection):
             _air_temp = data_colls[0].get_aligned_collection(
                 float(_air_temp), Temperature(), 'C')
         

@@ -30,15 +30,23 @@ the data set.
 
 ghenv.Component.Name = "LadybugPlus_Convert to Timestep"
 ghenv.Component.NickName = 'toStep'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_11_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "0"
 
-if _data:
+try:
+    from ladybug.datacollection import HourlyDiscontinuousCollection, \
+        HourlyContinuousCollection
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
+
+
+if all_required_inputs(ghenv.Component):
     # check the inputs
-    assert hasattr(_data, 'isHourly'), ' Connected _data is not a Hourly Data'\
-        ' Collection. Got{}'.format(type(_data))
+    assert isinstance(_data, HourlyDiscontinuousCollection), \
+        ' Connected _data is not a Hourly Data Collection. Got{}'.format(type(_data))
     if _time_st_ is not None:
         valid_timesteps = _data.header.analysis_period.VALIDTIMESTEPS
         assert _time_st_ in valid_timesteps, ' Connected _time_st_ is not a'\
@@ -46,7 +54,7 @@ if _data:
             _time_st_, sorted(valid_timesteps.keys()))
     
     # if the data is not continuous, interpolate over holes.
-    if not hasattr(_data, 'isContinuous'):
+    if not isinstance(_data, HourlyContinuousCollection):
         if _data.validated_a_period is False:
             _data = data.validate_analysis_period
         _data = _data.interpolate_holes()

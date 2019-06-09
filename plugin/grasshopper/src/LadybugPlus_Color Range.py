@@ -17,7 +17,7 @@ https://github.com/mostaphaRoudsari/ladybug/blob/master/resources/gradients.jpg
 -
 
     Args:
-        _index: An index refering to one of the following possible gradients:
+        _index_: An index refering to one of the following possible gradients:
             0 - Orignal Ladybug
             1 - Nuanced Ladybug
             2 - Multi-colored Ladybug
@@ -50,7 +50,7 @@ https://github.com/mostaphaRoudsari/ladybug/blob/master/resources/gradients.jpg
 
 ghenv.Component.Name = "LadybugPlus_Color Range"
 ghenv.Component.NickName = 'colRange'
-ghenv.Component.Message = 'VER 0.0.04\nJUN_02_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -61,6 +61,6 @@ try:
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-_index = _index or 0
+_index_ = _index_ or 0
 cs = Colorset()
-colors = [color_to_color(col) for col in cs[_index]]
+colors = [color_to_color(col) for col in cs[_index_]]

@@ -96,17 +96,19 @@ Import climate data from a standard .epw file.
 
 ghenv.Component.Name = "LadybugPlus_Import EPW"
 ghenv.Component.NickName = 'importEPW'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
 try:
     import ladybug.epw as epw
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _epw_file:
+
+if all_required_inputs(ghenv.Component):
     epw_data = epw.EPW(_epw_file)
     location = epw_data.location
     dry_bulb_temperature = epw_data.dry_bulb_temperature

@@ -21,15 +21,21 @@ Convert a DataCollection to the input _to_unit.
 
 ghenv.Component.Name = "LadybugPlus_To Unit"
 ghenv.Component.NickName = 'toUnit'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_05_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
 
+try:
+    from ladybug.datacollection import BaseCollection
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _data:
-    assert hasattr(_data, 'isDataCollection'), \
-        'Expected DataCollection. Got {}.'.format(type(_data_si))
+
+if all_required_inputs(ghenv.Component):
+    assert isinstance(_data, BaseCollection), \
+        '_data must be a Data Collection. Got {}.'.format(type(_data))
     all_unit = _data.header.data_type.units
     if _to_unit:
         data = _data.to_unit(_to_unit)

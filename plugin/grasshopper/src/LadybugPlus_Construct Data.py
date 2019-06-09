@@ -19,16 +19,17 @@ Construct a Ladybug data collection from header and values.
 
 ghenv.Component.Name = "LadybugPlus_Construct Data"
 ghenv.Component.NickName = '+Data'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_11_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
 
 try:
     from ladybug.datacollection import HourlyContinuousCollection
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 
-if _header and _values != [] and _values[0] is not None:
+if all_required_inputs(ghenv.Component):
     data = HourlyContinuousCollection(_header, _values)

@@ -53,7 +53,7 @@ analysis or shading design.
 
 ghenv.Component.Name = "LadybugPlus_SunPath"
 ghenv.Component.NickName = 'sunpath'
-ghenv.Component.Message = 'VER 0.0.04\nJAN_14_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "02 :: VisualizeWeatherData"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -61,11 +61,11 @@ ghenv.Component.AdditionalHelpFromDocStrings = "1"
 try:
     from ladybug.sunpath import Sunpath
     import ladybug.geometry as geo
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _location:
-    
+if all_required_inputs(ghenv.Component):
     daylight_saving_period = None  # temporary until we fully implement it
     _hoys_ = _hoys_ or ()
 

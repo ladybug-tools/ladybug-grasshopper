@@ -18,7 +18,8 @@ Analysis Period.
         _end_month_: End month (1-12).
         _end_day_: End day (1-31).
         _end_hour_: End hour (0-23).
-        _timestep_: An integer number from 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60
+        _timestep_: An integer number for the number of time steps per hours.
+            Acceptable inputs include: 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60
     Returns:
         analysis_period: Analysis period.
         hoys: List of dates in this analysis period.
@@ -27,14 +28,14 @@ Analysis Period.
 
 ghenv.Component.Name = "LadybugPlus_Analysis Period"
 ghenv.Component.NickName = 'analysisPeriod'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
 try:
     import ladybug.analysisperiod as ap
-    import ladybug.output as output
+    from ladybug_rhino.grasshopper import wrap_output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
@@ -44,5 +45,5 @@ anp = ap.AnalysisPeriod(
 
 if anp:
     analysis_period = anp
-    dates = output.wrap(anp.datetimes)
-    hoys = output.wrap(anp.hoys)
+    dates = wrap_output(anp.datetimes)
+    hoys = anp.hoys

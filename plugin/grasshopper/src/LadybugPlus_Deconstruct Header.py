@@ -21,13 +21,21 @@ Deconstruct a Ladybug Header into its components.
 
 ghenv.Component.Name = "LadybugPlus_Deconstruct Header"
 ghenv.Component.NickName = 'XHeader'
-ghenv.Component.Message = 'VER 0.0.04\nJAN_24_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "0"
 
+try:
+    from ladybug.header import Header
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _header and hasattr(_header, 'isHeader'):
+
+if all_required_inputs(ghenv.Component):
+    assert isinstance(_header, Header), 'Expected Ladybug Header. ' \
+        'Got {}.'.format(type(_header))
     data_type = _header.data_type
     unit = _header.unit
     a_period = _header.analysis_period

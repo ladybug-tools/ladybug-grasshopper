@@ -28,7 +28,7 @@ The resulting mesh will be in a format that the 'Color Mesh' component will acce
 
 ghenv.Component.Name = "Ladybug_Generate Point Grid"
 ghenv.Component.NickName = 'genPts'
-ghenv.Component.Message = 'VER 0.0.04\nMAY_31_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = "03 :: Extra"
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -37,13 +37,14 @@ try:
     from ladybug_rhino.togeometry import to_gridded_mesh3d
     from ladybug_rhino.fromgeometry import from_mesh3d
     from ladybug_rhino.fromgeometry import from_point3d, from_vector3d
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 import Rhino.Geometry as rg
 
 
-if _geometry and _grid_size is not None:
+if all_required_inputs(ghenv.Component):
     # check the input and generate the mesh.
     _dist_surface_ = _dist_surface_ or 0
     if type(_geometry) == rg.Brep:

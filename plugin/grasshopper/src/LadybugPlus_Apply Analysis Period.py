@@ -19,15 +19,22 @@ Apply an analysis period to a data collection.
 
 ghenv.Component.Name = "LadybugPlus_Apply Analysis Period"
 ghenv.Component.NickName = 'applyPer'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_11_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "2"
 
+try:
+    from ladybug.analysisperiod import AnalysisPeriod
+    from ladybug.datacollection import BaseCollection
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _data and _period:
-    assert hasattr(_data, 'isDataCollection'), '_data must be a data collection.' \
-        ' Got {}.'.format(type(_data))
-    assert hasattr(_period, 'isAnalysisPeriod'), '_period must be an analysis' \
-        ' period. Got {}.'.format(type(_period))
+
+if all_required_inputs(ghenv.Component):
+    assert isinstance(_data, BaseCollection), \
+        '_data must be a Data Collection. Got {}.'.format(type(_data))
+    assert isinstance(_period, AnalysisPeriod), '_period must be an Analysis' \
+        ' Period. Got {}.'.format(type(_period))
     data = _data.filter_by_analysis_period(_period)

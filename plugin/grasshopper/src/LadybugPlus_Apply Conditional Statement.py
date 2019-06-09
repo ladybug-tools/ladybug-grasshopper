@@ -36,21 +36,22 @@ the data set.
 """
 
 ghenv.Component.Name = "LadybugPlus_Apply Conditional Statement"
-ghenv.Component.NickName = 'applyState'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_11_2019'
+ghenv.Component.NickName = 'applyStmt'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "0"
 
 try:
-    from ladybug.datacollection import HourlyContinuousCollection
+    from ladybug.datacollection import BaseCollection
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _data != [] and _data[0] is not None and _statement:
+if all_required_inputs(ghenv.Component):
     for dat in _data:
-        assert hasattr(dat, 'isDataCollection'), '_data must be a data' \
+        assert isinstance(dat, BaseCollection), '_data must be a data' \
             ' collection. Got {}.'.format(type(dat))
     
-    data = HourlyContinuousCollection.filter_collections_by_statement(
+    data = BaseCollection.filter_collections_by_statement(
         _data, _statement)

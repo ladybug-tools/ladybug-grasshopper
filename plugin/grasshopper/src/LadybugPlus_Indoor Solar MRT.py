@@ -18,9 +18,9 @@ radiant exchange.
 
     Args:
         _location: A Ladybug Location object.
-        _dir_norm_solar: Hourly Data Collection with the direct normal solar
+        _dir_norm_rad: Hourly Data Collection with the direct normal solar
             irradiance in W/m2.
-        _diff_horiz_solar: Hourly Data Collection with diffuse horizontal solar
+        _diff_horiz_rad: Hourly Data Collection with diffuse horizontal solar
             irradiance in W/m2.
         _longwave_mrt: A single number or an hourly data collection with the
             long wave mean radiant temperature around the person in degrees C.
@@ -57,21 +57,20 @@ radiant exchange.
 
 ghenv.Component.Name = "LadybugPlus_Indoor Solar MRT"
 ghenv.Component.NickName = 'indoorSolarMRT'
-ghenv.Component.Message = 'VER 0.0.04\nAPR_27_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "5"
 
 try:
     from ladybug_comfort.collection.solarcal import IndoorSolarCal
+    from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _run is True and _location and _dir_norm_solar and _diff_horiz_solar \
-        and _longwave_mrt:
-    
-    solar_mrt_obj = IndoorSolarCal(_location, _dir_norm_solar,
-                                   _diff_horiz_solar, _longwave_mrt,
+if all_required_inputs(ghenv.Component) and _run is True:
+    solar_mrt_obj = IndoorSolarCal(_location, _dir_norm_rad,
+                                   _diff_horiz_rad, _longwave_mrt,
                                    fract_body_exp_, sky_exposure_,
                                    _ground_ref_, _window_trans_, _solar_body_par_)
     

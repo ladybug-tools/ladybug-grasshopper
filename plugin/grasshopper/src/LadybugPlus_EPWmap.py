@@ -19,13 +19,18 @@ Open EPWmap in web browser.
 
 ghenv.Component.Name = "LadybugPlus_EPWmap"
 ghenv.Component.NickName = 'epwMap'
-ghenv.Component.Message = 'VER 0.0.04\nMAY_31_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
 
 import webbrowser as wb
 import os
+try:
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
+
 
 # dictonary of accetable browsers and their default file paths.
 acceptable_browsers = [
@@ -37,7 +42,7 @@ acceptable_browsers = [
 # URL to epwmap.
 url = 'http://www.ladybug.tools/epwmap/'
 
-if _epw_map:
+if all_required_inputs(ghenv.Component) and _epw_map is True:
     broswer_found = False
     for browser in acceptable_browsers:
         browser_path = browser[1]

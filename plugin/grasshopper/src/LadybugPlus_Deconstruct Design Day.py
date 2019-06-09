@@ -35,13 +35,18 @@ Deconstruct design day into parameters.
 
 ghenv.Component.Name = "LadybugPlus_Deconstruct Design Day"
 ghenv.Component.NickName = 'decnstrDesignDay'
-ghenv.Component.Message = 'VER 0.0.04\nNOV_17_2018'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "5"
 
+try:
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
-if _design_day:
+
+if all_required_inputs(ghenv.Component):
     name = _design_day.name
     day_type = _design_day.day_type
     location  = _design_day.location

@@ -32,12 +32,18 @@ Import hourly climate data from a Ladybug DesignDay object.
 
 ghenv.Component.Name = "LadybugPlus_Import Design Day"
 ghenv.Component.NickName = 'importDesignDay'
-ghenv.Component.Message = 'VER 0.0.04\nOCT_14_2018'
+ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "5"
 
-if _design_day:
+try:
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
+
+
+if all_required_inputs(ghenv.Component):
     dry_bulb_temperature = _design_day.hourly_dry_bulb
     dew_point_temperature = _design_day.hourly_dew_point
     relative_humidity = _design_day.hourly_relative_humidity
