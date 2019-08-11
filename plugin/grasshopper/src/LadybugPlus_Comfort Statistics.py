@@ -21,13 +21,13 @@ Get statitics of thermal comfort from a Ladybug Comfort Object.
 
 ghenv.Component.Name = "LadybugPlus_Comfort Statistics"
 ghenv.Component.NickName = 'comfStat'
-ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
+ghenv.Component.Message = 'VER 0.0.04\nAUG_11_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "4"
 
 try:
-    from ladybug_comfort.collection._base import ComfortCollection
+    from ladybug_comfort.collection.base import ComfortCollection
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_comfort:\n\t{}'.format(e))
