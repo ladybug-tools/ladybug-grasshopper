@@ -19,7 +19,7 @@ Open EPWmap in web browser.
 
 ghenv.Component.Name = "LadybugPlus_EPWmap"
 ghenv.Component.NickName = 'epwMap'
-ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
+ghenv.Component.Message = 'VER 0.0.04\nSEP_10_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -42,6 +42,10 @@ acceptable_browsers = [
 # URL to epwmap.
 url = 'http://www.ladybug.tools/epwmap/'
 
+# function for opening a browser page on Mac
+def mac_open(url):
+    os.system("open \"\" " + url)
+
 if all_required_inputs(ghenv.Component) and _epw_map is True:
     broswer_found = False
     for browser in acceptable_browsers:
@@ -49,11 +53,17 @@ if all_required_inputs(ghenv.Component) and _epw_map is True:
         if broswer_found == False and os.path.isfile(browser_path) == True:
             broswer_found = True
             wb.register(browser[0],  None, wb.BackgroundBrowser(browser_path), 1)
-            wb.get(browser[0]).open(url, 2, True)
-            print "Opening epwmap."
+            try:
+                wb.get(browser[0]).open(url, 2, True)
+                print "Opening epwmap."
+            except ValueError:
+                mac_open(url)
     if broswer_found == False:
        print "An accepable broswer was not found on your machine.\n" \
-        "The default browser will be used but epwmap may not display correctly there."
-       wb.open(url, 2, True)
+       "The default browser will be used but epwmap may not display correctly there."
+       try:
+        wb.open(url, 2, True)
+       except ValueError:
+        mac_open(url)
 else:
     print "Set _epw_map to True."
