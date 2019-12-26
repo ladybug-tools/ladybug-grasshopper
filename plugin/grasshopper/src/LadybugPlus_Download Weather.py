@@ -28,7 +28,7 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
 ghenv.Component.Name = "LadybugPlus_Download Weather"
 ghenv.Component.NickName = 'downloadWeather'
-ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
+ghenv.Component.Message = 'VER 0.0.04\nDEC_25_2019'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "1"
@@ -38,6 +38,7 @@ try:
     from ladybug_dotnet.download import download_file
     from ladybug.futil import unzip_file
     from ladybug_rhino.grasshopper import all_required_inputs
+    from ladybug.config import folders
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
@@ -53,12 +54,14 @@ if all_required_inputs(ghenv.Component):
     
     # create default working_dir
     if _folder_ is None:
-        _folder_ = os.path.join(os.environ['USERPROFILE'], 'ladybug', _folder_name)
+        _folder_ = folders.default_epw_folder
     try:
         _folder_.decode('ascii')
     except UnicodeDecodeError:
-        raise UnicodeDecodeError('\nYour USERNAME contains a non-ASCII character, meaning files are downloaded to: \n {}'
-            '\nUse the _folder_ input to this component to download EPW files to a valid location.'.format(_folder_))
+        raise UnicodeDecodeError(
+            '\nYour download folder "{}" contains non-ASCII characters\n'
+            '\nUse the _folder_ input to this component to download EPW files'
+            ' to a valid location.'.format(_folder_))
     else:
         print 'Files will be downloaded to: {}'.format(_folder_)
     
