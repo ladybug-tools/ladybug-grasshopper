@@ -35,31 +35,41 @@ Deconstruct design day into parameters.
 
 ghenv.Component.Name = "LadybugPlus_Deconstruct Design Day"
 ghenv.Component.NickName = 'decnstrDesignDay'
-ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJAN_06_2020'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "5"
 
 try:
-    from ladybug_rhino.grasshopper import all_required_inputs
+    from ladybug.designday import ASHRAEClearSky, ASHRAETau
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
+try:
+    from ladybug_rhino.grasshopper import all_required_inputs
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+
 
 if all_required_inputs(ghenv.Component):
+    # extract typical design day properties
     name = _design_day.name
     day_type = _design_day.day_type
     location  = _design_day.location
     analysis_period = _design_day.analysis_period
     dry_bulb_max = _design_day.dry_bulb_condition.dry_bulb_max
     dry_bulb_range = _design_day.dry_bulb_condition.dry_bulb_range
-    humidity_type = _design_day.humidity_condition.hum_type
-    humidity_value = _design_day.humidity_condition.hum_value
+    humidity_type = _design_day.humidity_condition.humidity_type
+    humidity_value = _design_day.humidity_condition.humidity_value
     barometric_p = _design_day.humidity_condition.barometric_pressure
     wind_speed = _design_day.wind_condition.wind_speed
     wind_dir = _design_day.wind_condition.wind_direction
-    sky_type = _design_day.sky_condition.solar_model
-    if sky_type == 'ASHRAETau':
-        sky_properties = [_design_day.sky_condition.tau_b, _design_day.sky_condition.tau_d]
-    else:
+    
+    # extract properties of the sky condition
+    if isinstance(_design_day.sky_condition, ASHRAETau):
+        sky_type = 'ASHRAETau'
+        sky_properties = [_design_day.sky_condition.tau_b,
+                          _design_day.sky_condition.tau_d]
+    elif isinstance(_design_day.sky_condition, ASHRAEClearSky):
+        sky_type = 'ASHRAEClearSky'
         sky_properties = _design_day.sky_condition.clearness

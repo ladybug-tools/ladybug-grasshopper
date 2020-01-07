@@ -25,13 +25,14 @@ Construct a Ladybug Header.
 
 ghenv.Component.Name = "LadybugPlus_Construct Header"
 ghenv.Component.NickName = 'constrHeader'
-ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJAN_06_2020'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '01 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = "0"
 
 try:
     import ladybug.datatype
+    from ladybug.datatype.base import DataTypeBase
     from ladybug.header import Header
     from ladybug.analysisperiod import AnalysisPeriod
     from ladybug_rhino.grasshopper import all_required_inputs
@@ -40,7 +41,7 @@ except ImportError as e:
 
 
 if all_required_inputs(ghenv.Component):
-    if hasattr(_data_type, 'isDataType'):
+    if isinstance(_data_type, DataTypeBase):
         pass
     elif isinstance(_data_type, str):
         _data_type = _data_type.title().replace(' ', '')

@@ -22,13 +22,13 @@ Import data from a standard .ddy file.
 
 ghenv.Component.Name = "LadybugPlus_Import DDY"
 ghenv.Component.NickName = 'importDDY'
-ghenv.Component.Message = 'VER 0.0.04\nJUN_07_2019'
+ghenv.Component.Message = 'VER 0.0.04\nJAN_06_2020'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "4"
 
 try:
-    from ladybug.designday import DDY
+    from ladybug.ddy import DDY
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
