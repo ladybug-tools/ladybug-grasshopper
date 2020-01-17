@@ -19,7 +19,7 @@ Deconstruct design day into parameters.
         day_type: Text indicating the type of design day (ie. 'SummerDesignDay',
             'WinterDesignDay' or other EnergyPlus days).
         location: A Ladybug Location object describing the location of the design day.
-        analysis_period: Analysis period for the design day
+        date: Date for the day of the year the design day
         dry_bulb_max: Maximum dry bulb temperature over the design day (in C).
         dry_bulb_range: Dry bulb range over the design day (in C).
         humidity_type: Type of humidity to use. (ie. Wetbulb, Dewpoint, HumidityRatio, Enthalpy)
@@ -35,7 +35,7 @@ Deconstruct design day into parameters.
 
 ghenv.Component.Name = "LadybugPlus_Deconstruct Design Day"
 ghenv.Component.NickName = 'decnstrDesignDay'
-ghenv.Component.Message = 'VER 0.0.04\nJAN_06_2020'
+ghenv.Component.Message = 'VER 0.0.04\nJAN_17_2020'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "5"
@@ -56,7 +56,7 @@ if all_required_inputs(ghenv.Component):
     name = _design_day.name
     day_type = _design_day.day_type
     location  = _design_day.location
-    analysis_period = _design_day.analysis_period
+    date = _design_day.sky_condition.date
     dry_bulb_max = _design_day.dry_bulb_condition.dry_bulb_max
     dry_bulb_range = _design_day.dry_bulb_condition.dry_bulb_range
     humidity_type = _design_day.humidity_condition.humidity_type
