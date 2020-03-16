@@ -7,22 +7,26 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Construct location.
+Construct location from latitude, lognitude, and time zone data.
 -
 
     Args:
-        _name: A name for the location you are constructing. (ie. Steventon Island, Antarctica)
-        _latitude: The latitude of the location you are constructing. Values must be between -90 and 90. Default is set to the equator.
-        _longitude_: An optional numerical value representing the longitude of the location you are constructing. This can improve the accuracy of the resulting sun plot.
-        _time_zone_: An optional integer representing the time zone of the location you are constructing. This can improve the accuracy of the resulting sun plot.  The time zone should follow the epw convention and should be between -12 and +12, where 0 is at Greenwich, UK, positive values are to the East of Greenwich and negative values are to the West.
-        _elevation_: An optional numerical value representing the elevation of the location you are constructing.
+        _name_: A name for the location you are constructing. For example,
+            "Steventon Island, Antarctica". (Default: "-")
+        _latitude_: Location latitude between -90 and 90 (Default: 0).
+        _longitude_: Location longitude between -180 (west) and 180 (east) (Default: 0).
+        _time_zone_: Time zone between -12 hours (west) and 12 hours (east). If None,
+            the time zone will be an estimated integer value derived from the
+            longitude in accordance with solar time (Default: None).
+        _elevation_: A number for elevation of the location in meters. (Default: 0).
+    
     Returns:
         location: Location data (use this output to construct the sun path).
 """
 
 ghenv.Component.Name = "LadybugPlus_Construct Location"
 ghenv.Component.NickName = 'constrLoc'
-ghenv.Component.Message = 'VER 0.0.04\nMAR_01_2019'
+ghenv.Component.Message = 'VER 0.0.04\nMAR_15_2020'
 ghenv.Component.Category = "LadybugPlus"
 ghenv.Component.SubCategory = '00 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = "3"
