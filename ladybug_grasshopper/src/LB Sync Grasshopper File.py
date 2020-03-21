@@ -32,7 +32,7 @@ outputs have changed) will be circled in red and should be replaced manually.
 
 ghenv.Component.Name = 'LB Sync Grasshopper File'
 ghenv.Component.NickName = 'SyncGHFile'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -185,19 +185,21 @@ def update_component(component, uofolder):
 
     # identify the correct user object sub-folder to which the component belongs
     if str(component.Name).startswith('LB'):  # ladybug [+]
-        fp = os.path.join(uofolder, 'ladybug_grasshopper', '%s.ghuser' % component.Name)
+        fp = os.path.join(uofolder, 'ladybug_grasshopper', 'user_objects',
+                          '%s.ghuser' % component.Name)
     elif str(component.Name).startswith('HB'):  # honeybee[+]
         if str(component.Category) == 'Honeybee':
-            fp = os.path.join(uofolder, 'honeybee_grasshopper_core',
+            fp = os.path.join(uofolder, 'honeybee_grasshopper_core', 'user_objects',
                               '%s.ghuser' % component.Name)
         elif str(component.Category) == 'HB-Energy':
-            fp = os.path.join(uofolder, 'honeybee_grasshopper_energy',
+            fp = os.path.join(uofolder, 'honeybee_grasshopper_energy', 'user_objects',
                               '%s.ghuser' % component.Name)
         elif str(component.Category) == 'HB-Radiance':
-            fp = os.path.join(uofolder, 'honeybee_grasshopper_radiance',
+            fp = os.path.join(uofolder, 'honeybee_grasshopper_radiance', 'user_objects',
                               '%s.ghuser' % component.Name)
     elif str(component.Name).startswith('DF'):  # dragonfly [+]
-        fp = os.path.join(uofolder, 'dragonfly_grasshopper', '%s.ghuser' % component.Name)
+        fp = os.path.join(uofolder, 'dragonfly_grasshopper', 'user_objects',
+                          '%s.ghuser' % component.Name)
     elif str(component.Name).startswith('Ladybug'):  # ladybug legacy
         fp = os.path.join(uofolder, 'Ladybug', '%s.ghuser' % component.Name)
     elif str(component.Name).startswith('Honeybee'):  # honeybee legacy
