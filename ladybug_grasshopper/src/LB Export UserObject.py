@@ -14,7 +14,9 @@ be installed on other's machines.
 
     Args:
         _components: A Ladybug Tools GHPython component to be exported. This
-            can also be a list of of components to be exported together.
+            can also be a list of of components to be exported together. Lastly,
+            this can be a '*' and all of the Ladybug Tools components on the
+            Grasshopper canvass will be exported.
         _folder: Full path to folder to copy the updated UserObject and the
             source code. It is usually path to where you have cloned the
             repository from GitHub. Exported contents will be created under src
@@ -49,7 +51,7 @@ be installed on other's machines.
 
 ghenv.Component.Name = 'LB Export UserObject'
 ghenv.Component.NickName = 'ExportUO'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -83,6 +85,57 @@ folder_dict = {
 }
 
 UOFOLDER = Folders.UserObjectFolders[0]
+
+
+# Master array of all identifiers of Ladybug Tools components
+ladybug_tools = ('LB', 'HB', 'DF', 'Ladybug', 'Honeybee', 'Butterfly', 'HoneybeePlus')
+
+def is_ladybug_tools(component):
+    """Check if a component is a part of Ladybug Tools."""
+    return component.Name.split(' ')[0] in ladybug_tools or \
+        component.Name.split('_')[0] in ladybug_tools
+
+
+def get_all_components():
+    """Get all of the Ladybug Tools componentsfound on the canvass."""
+    components = []
+    document = ghenv.Component.OnPingDocument()
+    for component in document.Objects:
+        if type(component) == type(ghenv.Component):  # GHPython component
+            if is_ladybug_tools(component):  # Ladybug Tools component
+                components.append(component)
+
+    # remove this sync component from the array
+    components = tuple(comp for comp in components if \
+                       comp.InstanceGuid != ghenv.Component.InstanceGuid)
+
+    return components
+
+
+def get_components():
+    """Get list of GHPython components that are connected to this component."""
+    param = ghenv.Component.Params.Input[0]  # components input
+    sources = param.Sources
+
+    if sources.Count == 0:
+        # no component is connected
+        yield []
+    
+    for src in sources:
+        attr = src.Attributes
+        if attr is None or attr.GetTopLevel is None:
+            continue
+
+        #  collect components
+        component = attr.GetTopLevel.DocObject
+        if component is None:
+            continue
+        if type(component) != type(ghenv.Component):
+            # not a GHPython component
+            continue
+
+        yield component
+
 
 def create_userobject(component, move=True):
     """Create UserObject from a component.
@@ -125,31 +178,6 @@ def create_userobject(component, move=True):
 
     uo.SaveToFile()
     return uo
-
-
-def get_components():
-    """Get list of GHPython components that are connected to this component."""
-    param = ghenv.Component.Params.Input[0]  # components input
-    sources = param.Sources
-    
-    if sources.Count == 0:
-        # no component is connected
-        yield []
-    
-    for src in sources:
-        attr = src.Attributes
-        if attr is None or attr.GetTopLevel is None:
-            continue
-
-        #  collect components
-        component = attr.GetTopLevel.DocObject
-        if component is None:
-            continue
-        if type(component) != type(ghenv.Component):
-            # not a GHPython component
-            continue
-
-        yield component
 
 
 def validate_change_type(c_type):
@@ -273,7 +301,9 @@ def export_content(folder, uo):
 
 if _export and _folder and len(_components) != 0:
     change_type = validate_change_type(_change_type_)
-    for comp in get_components():
+    coomps_to_export = get_components() if str(_components[0]) != '*' else \
+        get_all_components()
+    for comp in coomps_to_export:
         print('Processing %s...' % comp.Name)
         current_version = get_current_version(comp)
         validate_version(current_version, comp.Message, change_type)
