@@ -66,6 +66,7 @@ analysis and shading design.
             each sun position on the sun path.
         azimuths: Number(s) indicating the sun azimuths in degrees for each
             sun position on the sun path.
+        hoys: The hour of the year for each sun positions on the sun path.
         sun_pts: Point(s) representing the location of the sun on the sunpath.
         analemma: A set of curves that mark the hourly positions of the sun
             throughout the different months of the year.
@@ -73,7 +74,6 @@ analysis and shading design.
             dome over the course of a day.
         compass: A set of circles, lines and text objects that mark the cardinal
             directions in relation to the sun.
-        datetimes: The date and info for each sun position on the sun path.
         legend: Geometry representing the legend for the input data_ will be None
             if no _data is connected.
         title: A text object for the global_title.
@@ -84,7 +84,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: VisualizeWeatherData'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -230,6 +230,7 @@ if all_required_inputs(ghenv.Component):
     azimuths = []
     datetimes = []
     moys = []
+    hoys = []
     vectors = []
     suns = []
     for hoy in _hoys_:
@@ -239,6 +240,7 @@ if all_required_inputs(ghenv.Component):
             azimuths.append(sun.azimuth)
             datetimes.append(sun.datetime)
             moys.append(sun.datetime.moy)
+            hoys.append(sun.datetime.hoy)
             vectors.append(from_vector3d(sun.sun_vector))
             suns.append(sun)
 
@@ -298,6 +300,3 @@ if all_required_inputs(ghenv.Component):
         font = legend_par_.font if legend_par_ is not None else 'Arial'
         compass = compass_objects(Compass(radius, center_pt, north_), z, None, projection_, font)
         ghenv.Component.Params.Output[5].Hidden = False  # show the points
-
-    # wrap the datetimes output for speed
-    datetimes = wrap_output(datetimes)
