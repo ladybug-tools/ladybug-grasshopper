@@ -28,7 +28,7 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
 ghenv.Component.Name = 'LB Download Weather'
 ghenv.Component.NickName = 'DownloadEPW'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Ladybug'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -72,13 +72,13 @@ if all_required_inputs(ghenv.Component):
     
     
     # default file names
-    epw = os.path.join(_folder_, _folder_name + '.epw')
-    stat = os.path.join(_folder_, _folder_name + '.stat')
-    ddy = os.path.join(_folder_, _folder_name + '.ddy')
+    epw = os.path.join(_folder_, _folder_name, _folder_name + '.epw')
+    stat = os.path.join(_folder_, _folder_name, _folder_name + '.stat')
+    ddy = os.path.join(_folder_, _folder_name, _folder_name + '.ddy')
     
     # download and unzip the files if they do not exist
     if not os.path.isfile(epw) or not os.path.isfile(stat) or not os.path.isfile(ddy):
-        zip_file_path = os.path.join(_folder_, _folder_name + '.zip')
+        zip_file_path = os.path.join(_folder_, _folder_name, _folder_name + '.zip')
         download_file(_weather_URL, zip_file_path, True)
         unzip_file(zip_file_path)
     
