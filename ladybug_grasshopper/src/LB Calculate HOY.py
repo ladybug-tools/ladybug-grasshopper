@@ -25,7 +25,7 @@ Calculate hour of the year, day of the year, and datetime.
 
 ghenv.Component.Name = 'LB Calculate HOY'
 ghenv.Component.NickName = 'HOY'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'

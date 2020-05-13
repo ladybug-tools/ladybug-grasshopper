@@ -13,12 +13,15 @@ Construct a Ladybug Header to be used to create a ladybug DataCollection.
 
     Args:
         _data_type: Text representing the type of data (e.g. Temperature).
+            This can also be a DataType object that has been created with
+            the "LB Construct Data Type" component.
         _unit_: Units of the data_type (e.g. C). Default is to use the
             base unit of the connected_data_type.
         _a_period: A Ladybug AnalysisPeriod object. (Default
         metadata_: Optional metadata to be associated with the Header.
-            Input should be text strings with a property name and value
-            for the property separated by a colon. (eg. 'source: TMY3')
+            Input should be a list of text strings with a property name
+            and value for the property separated by a colon.
+            (eg. ['source: TMY3', 'city: New York'])
     
     Returns:
         header: A Ladybug Header object.
@@ -26,7 +29,7 @@ Construct a Ladybug Header to be used to create a ladybug DataCollection.
 
 ghenv.Component.Name = "LB Construct Header"
 ghenv.Component.NickName = 'ConstrHeader'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -44,28 +47,33 @@ try:
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
+# error message if the data type is not recognized
+msg = 'The connected _data_type is not recognized.\nMake your own with ' \
+    'the "LB Construct Data Type" component or choose from the following:' \
+    '\n{}'.format('\n'.join(ladybug.datatype.BASETYPES))
+
 
 if all_required_inputs(ghenv.Component):
     if isinstance(_data_type, DataTypeBase):
         pass
     elif isinstance(_data_type, str):
         _data_type = _data_type.title().replace(' ', '')
-        assert _data_type in ladybug.datatype.TYPES, \
-            'The connected _data_type string "{}" was not recognized.'.format(_data_type)
+        if _data_type not in ladybug.datatype.TYPES:
+            raise TypeError(msg)
         _data_type = ladybug.datatype.TYPESDICT[_data_type]()
     else:
-        raise TypeError('The connected _data_type is invalid')
-    
+        raise TypeError(msg)
+
     if _unit_ is None:
         _unit_ = _data_type.units[0]
-    
+
     if _a_period_ is None:
         _a_period_ = AnalysisPeriod()
-    
+
     metadata_dict = {}
     if metadata_ != []:
         for prop in metadata_:
             key, value = prop.split(':')
             metadata_dict[key] = value.strip()
-    
+
     header = Header(_data_type, _unit_, _a_period_, metadata_dict)

@@ -23,10 +23,10 @@ Deconstruct a Ladybug Header into its components.
 
 ghenv.Component.Name = "LB Deconstruct Header"
 ghenv.Component.NickName = 'XHeader'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '1'
+ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:
     from ladybug.header import Header
