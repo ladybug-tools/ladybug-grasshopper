@@ -8,7 +8,7 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Perform simple arithmatic operations between Data Collections. For example,
+Perform simple arithmetic operations between Data Collections. For example,
 adding two Data Collections together, subtracting one collection from another,
 or multiplying/dividing a data in a collection by a factor.
 -
@@ -44,7 +44,7 @@ Grasshopper components, and rebuilding the collection.
             the two data inputs.
 """
 
-ghenv.Component.Name = "LB Arithmatic Operation"
+ghenv.Component.Name = "LB Arithmetic Operation"
 ghenv.Component.NickName = 'ArithOp'
 ghenv.Component.Message = '0.1.0'
 ghenv.Component.Category = 'Ladybug'
@@ -63,11 +63,11 @@ except ImportError:
 
 
 if all_required_inputs(ghenv.Component):
-    # build the arithmatic statement
+    # build the arithmetic statement
     operator = '+' if _operator_ is None else _operator_
     statement = 'data_1 {} data_2'.format(operator)
 
-    # perform the arithmatic operation
+    # perform the arithmetic operation
     data = []
     for data_1, data_2 in zip(_data_1, _data_2):
         result = eval(statement, {'data_1': data_1, 'data_2': data_2})  # I love Python!
