@@ -8,7 +8,7 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Perform a "mass" arithmatic operation between Data Collections. For example,
+Perform a "mass" arithmetic operation between Data Collections. For example,
 adding a list of Data Collections into one Data Collection.
 -
 Note that Data Collections must be aligned in order for this component to run
@@ -20,7 +20,7 @@ Grasshopper components, and rebuilding the collection.
 -
 
     Args:
-        _data: A list of Data Collections to be used in the arithmatic operation.
+        _data: A list of Data Collections to be used in the arithmetic operation.
         _operator_: Text for the operator to use between the Data Collections.
             Valid examples include (+, -, *, /). By default this is + for addition.
         type_: Optional text for a new "type" key in the Data Collection's metadata.
@@ -32,7 +32,7 @@ Grasshopper components, and rebuilding the collection.
             the two data inputs.
 """
 
-ghenv.Component.Name = "LB Mass Arithmatic Operation"
+ghenv.Component.Name = "LB Mass Arithmetic Operation"
 ghenv.Component.NickName = 'MassArithOp'
 ghenv.Component.Message = '0.1.0'
 ghenv.Component.Category = 'Ladybug'
@@ -46,11 +46,11 @@ except ImportError as e:
 
 
 if all_required_inputs(ghenv.Component):
-    # build the arithmatic statement
+    # build the arithmetic statement
     operator = '+' if _operator_ is None else _operator_
     statement = 'data {} data_i'.format(operator)
 
-    # perform the arithmatic operation
+    # perform the arithmetic operation
     data = _data[0]
     for data_i in _data[1:]:
         data = eval(statement, {'data': data, 'data_i': data_i})  # I love Python!
