@@ -29,10 +29,10 @@ Orient a series of geometries to the active viewport camera.
 
 ghenv.Component.Name = 'LB Orient to Camera'
 ghenv.Component.NickName = 'OrientCam'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
-ghenv.Component.AdditionalHelpFromDocStrings = '4'
+ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 import Rhino.Geometry as rg
 import Rhino.Display as rd
