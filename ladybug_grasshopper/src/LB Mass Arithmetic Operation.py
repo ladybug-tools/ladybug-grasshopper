@@ -34,7 +34,7 @@ Grasshopper components, and rebuilding the collection.
 
 ghenv.Component.Name = "LB Mass Arithmetic Operation"
 ghenv.Component.NickName = 'MassArithOp'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -61,5 +61,9 @@ if all_required_inputs(ghenv.Component):
             data.header.metadata['type'] = type_
         elif 'type' in data.header.metadata:
             del data.header.metadata['type']
+        if 'System' in data.header.metadata:
+            del data.header.metadata['System']
+        if 'Zone' in data.header.metadata:
+            del data.header.metadata['Zone']
     except AttributeError:
         pass  # data was not a data collection; just return it anyway
