@@ -52,7 +52,7 @@ https://github.com/mostaphaRoudsari/ladybug/blob/master/resources/gradients.jpg
 
 ghenv.Component.Name = 'LB Color Range'
 ghenv.Component.NickName = 'ColRange'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -63,9 +63,9 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
-    from ladybug_dotnet.color import color_to_color
+    from ladybug_rhino.color import color_to_color
 except ImportError as e:
-    raise ImportError('\nFailed to import ladybug_dotnet:\n\t{}'.format(e))
+    raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
 _index_ = _index_ or 0
