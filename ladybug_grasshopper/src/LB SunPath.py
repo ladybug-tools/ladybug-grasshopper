@@ -84,7 +84,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: VisualizeWeatherData'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -105,12 +105,8 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
-    from ladybug_dotnet.color import color_to_color
-except ImportError as e:
-    raise ImportError('\nFailed to import ladybug_dotnet:\n\t{}'.format(e))
-
-try:
     from ladybug_rhino.config import conversion_to_meters
+    from ladybug_rhino.color import color_to_color
     from ladybug_rhino.fromgeometry import from_polyline3d, from_polyline2d, \
         from_arc3d, from_vector3d, from_point3d, from_point2d
     from ladybug_rhino.fromobjects import legend_objects, compass_objects

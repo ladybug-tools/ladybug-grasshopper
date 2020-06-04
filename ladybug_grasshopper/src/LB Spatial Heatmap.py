@@ -40,7 +40,7 @@ Use this component to generate colors based on values and legend parameters.
 
 ghenv.Component.Name = 'LB Spatial Heatmap'
 ghenv.Component.NickName = 'Heatmap'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -55,14 +55,10 @@ try:
     from ladybug_rhino.fromgeometry import from_mesh3d
     from ladybug_rhino.fromobjects import legend_objects
     from ladybug_rhino.text import text_objects
+    from ladybug_rhino.color import color_to_color
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
-
-try:
-    from ladybug_dotnet.color import color_to_color
-except ImportError as e:
-    raise ImportError('\nFailed to import ladybug_dotnet:\n\t{}'.format(e))
 
 
 if all_required_inputs(ghenv.Component):
