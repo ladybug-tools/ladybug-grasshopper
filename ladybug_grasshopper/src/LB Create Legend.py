@@ -36,10 +36,10 @@ with the legends automatically output from different studies.
 
 ghenv.Component.Name = "LB Create Legend"
 ghenv.Component.NickName = 'CreateLegend'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
-ghenv.Component.AdditionalHelpFromDocStrings = '1'
+ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 
 try:
