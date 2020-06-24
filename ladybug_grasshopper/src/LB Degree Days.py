@@ -36,7 +36,7 @@ Calculate humidity metrics from relative humidity, dry bulb temperature and
 
 ghenv.Component.Name = 'LB Degree Days'
 ghenv.Component.NickName = 'HDD_CDD'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -70,5 +70,5 @@ if all_required_inputs(ghenv.Component):
         CoolingDegreeTime(), 'degC-hours')
     hourly_cool.convert_to_unit('degC-days')
     
-    heat_deg_days = hourly_heat.total / 24.
-    cool_deg_days = hourly_cool.total / 24.
+    heat_deg_days = hourly_heat.total
+    cool_deg_days = hourly_cool.total

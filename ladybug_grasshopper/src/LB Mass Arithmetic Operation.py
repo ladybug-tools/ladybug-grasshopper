@@ -34,7 +34,7 @@ Grasshopper components, and rebuilding the collection.
 
 ghenv.Component.Name = "LB Mass Arithmetic Operation"
 ghenv.Component.NickName = 'MassArithOp'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -57,6 +57,7 @@ if all_required_inputs(ghenv.Component):
 
     # try to replace the data collection type
     try:
+        data = data.duplicate()
         if type_:
             data.header.metadata['type'] = type_
         elif 'type' in data.header.metadata:
