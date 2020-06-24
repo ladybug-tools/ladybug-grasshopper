@@ -23,10 +23,13 @@ Create a colored plot of any hourly data collection.
             dimension according to the data. The value input here should usually be
             several times larger than the x_dim or y_dim in order to be noticable
             (e.g. 100). If 0, the colored_mesh3d will simply be flat. (Default: 0).
+        reverse_y_: Boolean to note whether the Y-axis of the chart is reversed
+            If True, time over the course of the day will flow from the top of
+            the chart to the bottom instead of the bottom to the top.
         legend_par_: An optional LegendParameter object to change the display
             of the HourlyPlot (Default: None).
         statement_: A conditional statement as a string (e.g. a > 25).
-            .   
+            .
             The variable of the first data collection should always be named 'a'
             (without quotations), the variable of the second list should be
             named 'b', and so on.
@@ -53,7 +56,7 @@ Create a colored plot of any hourly data collection.
 
 ghenv.Component.Name = "LB Hourly Plot"
 ghenv.Component.NickName = 'HourlyPlot'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: VisualizeWeatherData'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -94,6 +97,7 @@ if all_required_inputs(ghenv.Component):
     _x_dim_ = _x_dim_ if _x_dim_ is not None else 1
     _y_dim_ = _y_dim_ if _y_dim_ is not None else 4
     _z_dim_ = _z_dim_ if _z_dim_ is not None else 0
+    reverse_y_ = reverse_y_ if reverse_y_ is not None else False
 
     # set up empty lists of objects to be filled
     mesh = []
@@ -109,7 +113,8 @@ if all_required_inputs(ghenv.Component):
             lpar = None if len(legend_par_) == 0 else legend_par_[-1]
 
         # create the hourly plot object and get the main pieces of geometry
-        hour_plot = HourlyPlot(data_coll, lpar, _base_pt_, _x_dim_, _y_dim_, _z_dim_)
+        hour_plot = HourlyPlot(data_coll, lpar, _base_pt_,
+                               _x_dim_, _y_dim_, _z_dim_, reverse_y_)
         msh = from_mesh2d(hour_plot.colored_mesh2d, _base_pt_.z) if _z_dim_ == 0 else \
             from_mesh3d(hour_plot.colored_mesh3d)
         mesh.append(msh)

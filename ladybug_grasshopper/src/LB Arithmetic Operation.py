@@ -46,7 +46,7 @@ Grasshopper components, and rebuilding the collection.
 
 ghenv.Component.Name = "LB Arithmetic Operation"
 ghenv.Component.NickName = 'ArithOp'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -74,6 +74,7 @@ if all_required_inputs(ghenv.Component):
 
         # try to replace the data collection type
         try:
+            result = result.duplicate()
             if type_:
                 result.header.metadata['type'] = type_
             elif 'type' in result.header.metadata:

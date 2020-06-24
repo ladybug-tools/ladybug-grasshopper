@@ -38,7 +38,8 @@ These actions can be performed over the following time intervals:
             day/month/hour and inputting 100 will give the max value of each
             day/month/hour.
             .
-            Default is set to 'average'.
+            Default is 'average' if the input data type is not cumulative and
+            'total' if the data type is not cumulative.
     Returns:
         daily: Daily data collection derived from the input _data and _operation_.
         monthly: Monthly data collection derived from the input _data and _operation_.
@@ -48,7 +49,7 @@ These actions can be performed over the following time intervals:
 
 ghenv.Component.Name = 'LB Time Interval Operation'
 ghenv.Component.NickName = 'TimeOp'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -68,8 +69,10 @@ if all_required_inputs(ghenv.Component):
     assert isinstance(_data, HourlyDiscontinuousCollection), \
         '_data must be an Hourly Data Collection.' \
         ' Got {}.'.format(type(_data))
-    
-    if _operation_ is None or _operation_.lower() == 'average':
+    if _operation_ is None:
+        _operation_ = 'total' if _data.header.data_type.cumulative else 'average'
+
+    if _operation_.lower() == 'average':
         daily = _data.average_daily()
         monthly = _data.average_monthly()
         mon_per_hr = _data.average_monthly_per_hour()
