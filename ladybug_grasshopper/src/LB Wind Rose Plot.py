@@ -16,9 +16,10 @@ Create a plot of hourly wind data by wind directions.
             difference between the North and the positive Y-axis in degrees. 90 is West
             and 270 is East. This can also be Vector for the direction to North
             (Default: 0).
-        _wind_speed: A HourlyContinuousCollection or HourlyDiscontinuousCollection of
+        _wind_data: A HourlyContinuousCollection or HourlyDiscontinuousCollection of
             wind values, corresponding to the wind directions, which is "binned" by the
-            calculated direction intervals.
+            calculated direction intervals. This input usually consists of wind speed
+            values, but is not limited to this data type.
         _wind_direction: A HourlyContinuousCollection or HourlyDiscontinuousCollection
             of wind directions which will be used to "bin" the intervals for the
             windrose.
@@ -30,19 +31,19 @@ Create a plot of hourly wind data by wind directions.
         _show_calmrose_: A boolean to indicate if the wind rose displays a calm rose. The
             calm rose is a radial plot in the center of the wind rose with a radius
             corresponding to the total zero values divided by the number of directions.
-            This allows the wind rose to represent zero values from _wind_speed even
+            This allows the wind rose to represent zero values from _wind_data even
             though such values don't have any direction associated with them.
-        _show_freq_: A boolean to show the frequency of _wind_speed data values
+        _show_freq_: A boolean to show the frequency of _wind_data data values
             in the wind direction bins. The frequency lines represent constant intervals
-            in time while the color illustrates the average _wind_speed data values
+            in time while the color illustrates the average _wind_data data values
             associated with each interval. The number of frequency lines with similar
             colors therefore indicate a higher frequency of that value.
         _freq_dist_: The distance for the frequency interval in model units
-            (Default: 10). If _show_calmrose is set to True, then the initial frequency
+            (Default: 5). If _show_calmrose is set to True, then the initial frequency
             interval corresponds to the number of calm hours in the data collection,
             which may not align with this _freq_dist.
        _freq_hours_: The number of hours represented in each frequency interval
-            (Default: 200).
+            (Default: 50).
         _max_freq_lines_: A number representing the maximum frequency intervals in
             the rose, which determines the maximum amount of hours represented by the
             outermost ring of the windrose. Specifically, this number multiplied by the
@@ -58,13 +59,13 @@ Create a plot of hourly wind data by wind directions.
             LegendParameter object is computed using values from the wind data with
             11 segments (Default: None).
         statement_: A conditional statement as a string (e.g. a > 25) for
-            _wind_speed data.
+            the _wind_data and _wind_direction inputs.
             .
             The variable of the first data collection should always be named 'a'
             (without quotations), the variable of the second list should be
             named 'b', and so on.
             .
-            For example, if three data collections are connected to _wind_speed
+            For example, if three data collections are connected to _wind_data
             and the following statement is applied:
             '18 < a < 26 and b < 80 and c > 2'
             The resulting collections will only include values where the first
@@ -88,7 +89,7 @@ Create a plot of hourly wind data by wind directions.
 """
 ghenv.Component.Name = "LB Wind Rose Plot"
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: VisualizeWeatherData'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -113,7 +114,8 @@ try:
         from_polygon2d
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.fromobjects import legend_objects, compass_objects
-    from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree
+    from ladybug_rhino.grasshopper import \
+        all_required_inputs, list_to_data_tree, data_tree_to_list
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -130,33 +132,30 @@ def title_text(data_col):
 if all_required_inputs(ghenv.Component):
 
      # Ensure equal list length
-    if len(_wind_speed) > len(_wind_direction):
-        print('The number of _wind_speed data collections is less than the _wind_direction data '
+    if len(_wind_data) > len(_wind_direction):
+        print('The number of _wind_data data collections is less than the _wind_direction data '
               'collections. The final _wind_direction collection will be duplicated to match '
-              'the number of _wind_speed data collections.')
-        num = len(_wind_speed) - len(_wind_direction)
+              'the number of _wind_data data collections.')
+        num = len(_wind_data) - len(_wind_direction)
         _wind_direction += [_wind_direction[-1].duplicate() for i in range(num)]
 
-    if len(_wind_direction) > len(_wind_speed):
-        print('The number of _wind_speed data collections is greater than the _wind_direction data '
-              'collections. The final _wind_speed collection will be duplicated to match the number '
+    if len(_wind_direction) > len(_wind_data):
+        print('The number of _wind_data data collections is greater than the _wind_direction data '
+              'collections. The final _wind_data collection will be duplicated to match the number '
               'of _wind_direction data collections.')
-        num = len(_wind_direction) - len(_wind_speed)
-        _wind_speed += [_wind_speed[-1].duplicate() for i in range(num)]
-
-    if len(_wind_speed) > len(legend_par_) > 0:
-        num = len(_wind_speed) - len(legend_par_)
-        legend_par_ += [legend_par_[-1] for i in range(num)]
+        num = len(_wind_direction) - len(_wind_data)
+        _wind_data += [_wind_data[-1].duplicate() for i in range(num)]
 
     # Apply any analysis periods to the input collections
     if period_ is not None:
-        _wind_speed = _wind_speed.filter_by_analysis_period(period_)
+        _wind_data = _wind_data.filter_by_analysis_period(period_)
         _wind_direction = _wind_direction.filter_by_analysis_period(period_)
 
     if statement_ is not None and statement_.strip() != "":
-        # TODO: how to implement filtering for both wind speed while also applying to
-        # wind direction?
-        pass
+        for i in range(len(_wind_data)):
+            _data = HourlyContinuousCollection.filter_collections_by_statement(
+                [_wind_data[i], _wind_direction[i]], statement_)
+            _wind_data[i], _wind_direction[i] = _data
 
     # Check for errors in input
     if _dir_count_ is None:
@@ -180,6 +179,13 @@ if all_required_inputs(ghenv.Component):
     _center_pt_ = to_point3d(_center_pt_) if _center_pt_ is not None else Point3D()
     center_pt_2d = Point2D(_center_pt_.x, _center_pt_.y)
 
+    # set defaults so chart is same scale as other LB plots
+    if _freq_hours_ is None:
+        _freq_hours_ = 50.0
+
+    if _freq_dist_ is None:
+        _freq_dist_ = 5.0
+
     # set up empty lists of objects to be filled
     all_wind_histogram = []
     all_mesh = []
@@ -190,9 +196,9 @@ if all_required_inputs(ghenv.Component):
     all_title = []
 
     # Calculate _max_freq_lines_ if it's not already set.
-    if len(_wind_speed) > 1 and _max_freq_lines_ is None:
+    if len(_wind_data) > 1 and _max_freq_lines_ is None:
         max_freqs = []
-        for i, (dir_data, speed_data) in enumerate(zip(_wind_direction, _wind_speed)):
+        for i, (dir_data, speed_data) in enumerate(zip(_wind_direction, _wind_data)):
             w = WindRose(dir_data, speed_data, _dir_count_)
             if _freq_hours_ is not None:
                 w.frequency_hours = _freq_hours_
@@ -201,17 +207,24 @@ if all_required_inputs(ghenv.Component):
             max_freqs.append(w.frequency_intervals_compass)
         _max_freq_lines_ = max(max_freqs)
 
-    for i, (dir_data, speed_data) in enumerate(zip(_wind_direction, _wind_speed)):
+    for i, (dir_data, speed_data) in enumerate(zip(_wind_direction, _wind_data)):
 
         # Make the windrose
         windrose = WindRose(dir_data, speed_data, _dir_count_)
 
-        # Add and check optional visualization parameters
-        if _max_freq_lines_ is not None:
-            windrose.frequency_intervals_compass = _max_freq_lines_
+        if len(legend_par_) > 0:
+            try:  # sense when several legend parameters are connected
+                lpar = legend_par_[i]
+            except IndexError:
+                lpar = legend_par_[-1]
+            windrose.legend_parameters = lpar
 
         if _freq_hours_ is not None:
             windrose.frequency_hours = _freq_hours_
+
+        # Add and check optional visualization parameters
+        if _max_freq_lines_ is not None:
+            windrose.frequency_intervals_compass = _max_freq_lines_
 
         if _freq_dist_ is not None:
             windrose.frequency_spacing_distance = _freq_dist_
@@ -220,8 +233,6 @@ if all_required_inputs(ghenv.Component):
         windrose.show_freq = _show_freq_
         windrose.show_zeros = _show_calmrose_
         windrose.base_point = Point2D(center_pt_2d.x, center_pt_2d.y)
-        if len(legend_par_) > 0:
-            windrose.legend_parameters = legend_par_[i]
 
         # Make the mesh
         mesh = from_mesh2d(windrose.colored_mesh, _center_pt_.z)
