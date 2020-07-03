@@ -8,7 +8,7 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Create a plot of hourly wind data by wind directions.
+Create a plot of any hourly data by wind directions.
 -
 
     Args:
@@ -16,10 +16,11 @@ Create a plot of hourly wind data by wind directions.
             difference between the North and the positive Y-axis in degrees. 90 is West
             and 270 is East. This can also be Vector for the direction to North
             (Default: 0).
-        _data: Either a HourlyContinuousCollection or HourlyDiscontinuousCollection of
-            values, or a list of data collections corresponding to the wind directions,
-            which is "binned" by the direction intervals. This input usually consists
-            of wind speed values, but is not limited to this data type.
+        _data: A HourlyContinuousCollection or HourlyDiscontinuousCollection of
+            values corresponding to the wind directions, which is "binned" by
+            the direction intervals. This input usually consists of wind speed
+            values, but is not limited to this data type. It can also be a list
+            of data collections in which case multiple wind roses will be output.
         _wind_direction: A HourlyContinuousCollection or HourlyDiscontinuousCollection
             of wind directions which will be used to "bin" the _data items for the
             windrose.
@@ -30,20 +31,21 @@ Create a plot of hourly wind data by wind directions.
             the plot (Default: (0, 0, 0)).
         _show_calmrose_: A boolean to indicate if the wind rose displays a calm rose. The
             calm rose is a radial plot in the center of the wind rose with a radius
-            corresponding to the total zero values divided by the number of directions.
-            This allows the wind rose to represent zero values from _data even
-            though such values don't have any direction associated with them.
-        _show_freq_: A boolean to show the frequency of _data data values
-            in the wind direction bins. The frequency lines represent constant intervals
+            corresponding to the total zero values divided by the number of
+            directions. This allows the wind rose to represent zero values
+            from _data even though such values don't have any direction
+            associated with them. (Default: False).
+        _show_freq_: A boolean to show the frequency of _data data values in the
+            wind direction bins. The frequency lines represent constant intervals
             in time while the color illustrates the average _data data values
-            associated with each interval. The number of frequency lines with similar
-            colors therefore indicate a higher frequency of that value.
-        _freq_dist_: The distance for the frequency interval in model units
-            (Default: 5). If _show_calmrose is set to True, then the initial frequency
-            interval corresponds to the number of calm hours in the data collection,
-            which may not align with this _freq_dist.
-       _freq_hours_: The number of hours represented in each frequency interval
-            (Default: 50).
+            associated with each interval. The number of frequency lines with
+            similar colors therefore indicate a higher frequency of that
+            value. (Default: True)
+        _freq_dist_: The distance for the frequency interval in model units. If 
+            _show_calmrose is True, then the initial frequency interval corresponds
+            to the number of calm hours in the data collection, which may not
+            align with this _freq_dist (Default: 5)
+       _freq_hours_: The number of hours in each frequency interval (Default: 50).
         _max_freq_lines_: A number representing the maximum frequency intervals in
             the rose, which determines the maximum amount of hours represented by the
             outermost ring of the windrose. Specifically, this number multiplied by the
@@ -61,9 +63,10 @@ Create a plot of hourly wind data by wind directions.
         statement_: A conditional statement as a string (e.g. a > 25) for
             the _data and _wind_direction inputs.
             .
-            The variable of the first data collection should always be named 'a'
-            (without quotations), the variable of the second list should be
-            named 'b', and so on.
+            The variable of the first collection input to _data should always
+            be named 'a' (without quotations), the variable of the second list
+            should be named 'b', and so on. The wind direction is always the
+            last variable, though most statements won't have a need for it.
             .
             For example, if three data collections are connected to _data
             and the following statement is applied:
@@ -71,8 +74,8 @@ Create a plot of hourly wind data by wind directions.
             The resulting collections will only include values where the first
             data collection is between 18 and 26, the second collection is less
             than 80 and the third collection is greater than 2.
-        period_: An optional Ladybug analysis period to be applied to all of the input
-            data.
+        period_: An optional Ladybug analysis period to be applied to all of
+            the input data.
 
     Returns:
         report: ...
@@ -80,16 +83,20 @@ Create a plot of hourly wind data by wind directions.
             Multiple meshes will be output for several data collections are input.
         compass: A set of circles, lines and text objects that mark the cardinal
             directions in relation to the wind rose.
-        orient_lines: Line geometries representing the edges (or "spokes") of the wind
+        orient_line: Line geometries representing the edges (or "spokes") of the wind
             rose directions.
-        freq_lines: Polygon geometries representing the frequency intervals of the wind
+        freq_line: Polygon geometries representing the frequency intervals of the wind
             rose.
         legend: Geometry representing the legend for the wind rose.
         title: A text object for the global_title.
+        prevailing: The predominant direction of the outpt wind rose in clockwise
+            degrees from north. 0 is North, 90 is East, 180 is South, 270 is West.
+        data: The input _data after it has gone through any of the statement or
+            period operations that this component performs
 """
-ghenv.Component.Name = "LB Wind Rose Plot"
+ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: VisualizeWeatherData'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -99,6 +106,7 @@ import math
 try:
     from ladybug.datacollection import HourlyContinuousCollection
     from ladybug.windrose import WindRose
+    from ladybug.datatype.speed import Speed
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
@@ -130,8 +138,7 @@ def title_text(data_col):
 
 
 if all_required_inputs(ghenv.Component):
-
-    # Apply any analysis periods to the input collections
+    # Apply any analysis periods and conditional statement to the input collections
     if period_ is not None:
         _data = _data.filter_by_analysis_period(period_)
         _wind_direction = _wind_direction.filter_by_analysis_period(period_)
@@ -142,10 +149,9 @@ if all_required_inputs(ghenv.Component):
         _data = _fdata[:-1]
         _wind_direction = _fdata[-1]
 
-    # Check for errors in input
+    # set defaults and check errors in dir_count and north input
     if _dir_count_ is None:
         _dir_count_ = 16
-
     assert _dir_count_ > 2, 'The number of directions must be greater then three to ' \
         'plot the wind rose. Got: {}'.format(_dir_count_)
 
@@ -164,19 +170,22 @@ if all_required_inputs(ghenv.Component):
     _center_pt_ = to_point3d(_center_pt_) if _center_pt_ is not None else Point3D()
     center_pt_2d = Point2D(_center_pt_.x, _center_pt_.y)
 
-    # set defaults so chart is same scale as other LB plots
+    # set defaults frequency hours and distance so chart is same scale as other LB plots
     if _freq_hours_ is None:
         _freq_hours_ = 50.0
-
     if _freq_dist_ is None:
         _freq_dist_ = 5.0
+
+    # set default show_freq and _show_calmrose_
+    _show_calmrose_ = False if _show_calmrose_ is None else _show_calmrose_
+    _show_freq_ = True if _show_freq_ is None else _show_freq_
 
     # set up empty lists of objects to be filled
     all_wind_histogram = []
     all_mesh = []
     all_compass = []
-    all_orient_lines = []
-    all_freq_lines = []
+    all_orient_line = []
+    all_freq_line = []
     all_legends = []
     all_title = []
 
@@ -218,7 +227,8 @@ if all_required_inputs(ghenv.Component):
 
         windrose.north = north_
         windrose.show_freq = _show_freq_
-        windrose.show_zeros = _show_calmrose_
+        if isinstance(speed_data.header.data_type, Speed):
+            windrose.show_zeros = _show_calmrose_
         windrose.base_point = Point2D(center_pt_2d.x, center_pt_2d.y)
 
         # Make the mesh
@@ -231,10 +241,10 @@ if all_required_inputs(ghenv.Component):
                              windrose.legend_parameters.text_height,
                              windrose.legend_parameters.font)
         compass = compass_objects(windrose.compass, _center_pt_.z, None)
-        orient_lines = [from_linesegment2d(seg, _center_pt_.z)
+        orient_line = [from_linesegment2d(seg, _center_pt_.z)
                             for seg in windrose.orientation_lines]
         if _show_freq_:
-            freq_lines = [from_polygon2d(poly) for poly in windrose.frequency_lines]
+            freq_line = [from_polygon2d(poly) for poly in windrose.frequency_lines]
 
         # move the center point so wind roses are not on top of one another
         fac = (i + 1) * windrose.compass_radius * 3
@@ -242,15 +252,19 @@ if all_required_inputs(ghenv.Component):
 
         all_mesh.append(mesh)
         all_compass.append(compass)
-        all_orient_lines.append(orient_lines)
-        all_freq_lines.append(freq_lines)
+        all_orient_line.append(orient_line)
+        all_freq_line.append(freq_line)
         all_legends.append(legend)
         all_title.append(title)
 
     # convert nested lists into data trees
     mesh = list_to_data_tree(all_mesh)
     compass = list_to_data_tree(all_compass)
-    orient_lines = list_to_data_tree(all_orient_lines)
-    freq_lines = list_to_data_tree(all_freq_lines)
+    orient_line = list_to_data_tree(all_orient_line)
+    freq_line = list_to_data_tree(all_freq_line)
     legend = list_to_data_tree(all_legends)
     title = list_to_data_tree(all_title)
+
+    # output prevailing direction and processed data
+    prevailing = windrose.prevailing_direction
+    data = _data
