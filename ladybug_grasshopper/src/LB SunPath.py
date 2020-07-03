@@ -84,10 +84,10 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '2 :: VisualizeWeatherData'
-ghenv.Component.AdditionalHelpFromDocStrings = '1'
+ghenv.Component.SubCategory = '2 :: Visualize Data'
+ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 try:
     from ladybug_geometry.geometry2d.pointvector import Vector2D, Point2D

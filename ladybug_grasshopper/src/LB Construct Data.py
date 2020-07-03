@@ -21,9 +21,9 @@ Construct a Ladybug data collection from header and values.
 
 ghenv.Component.Name = "LB Construct Data"
 ghenv.Component.NickName = '+Data'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
+ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:

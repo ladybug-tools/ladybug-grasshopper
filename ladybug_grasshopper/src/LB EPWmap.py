@@ -8,20 +8,20 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Open EPWmap in web browser.
+Open EPWmap in a web browser.
 -
 
     Args:
-        _epw_map: Set to "True" to open EPWmap
+        _epw_map: Set to "True" to open EPWmap in a supported browser.
     Returns:
         report: ...
 """
 
 ghenv.Component.Name = 'LB EPWmap'
 ghenv.Component.NickName = 'EPWMap'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '0 :: Ladybug'
+ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:

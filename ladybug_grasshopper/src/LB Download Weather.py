@@ -28,9 +28,9 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
 ghenv.Component.Name = 'LB Download Weather'
 ghenv.Component.NickName = 'DownloadEPW'
-ghenv.Component.Message = '0.2.1'
+ghenv.Component.Message = '0.2.2'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '0 :: Ladybug'
+ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:

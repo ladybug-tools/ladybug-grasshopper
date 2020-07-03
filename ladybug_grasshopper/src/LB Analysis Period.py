@@ -23,16 +23,16 @@ Create an Analysis Period to describe a slice of time during the year.
             Acceptable inputs include: 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60
     
     Returns:
-        analysis_period: Analysis period.
+        period: Analysis period.
         hoys: List of dates in this analysis period.
         dates: List of hours of the year in this analysis period.
 """
 
 ghenv.Component.Name = 'LB Analysis Period'
 ghenv.Component.NickName = 'AnalysisPeriod'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
+ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 try:
@@ -51,6 +51,6 @@ anp = ap.AnalysisPeriod(
     _end_month_, _end_day_, _end_hour_, _timestep_)
 
 if anp:
-    analysis_period = anp
+    period = anp
     dates = wrap_output(anp.datetimes)
     hoys = anp.hoys

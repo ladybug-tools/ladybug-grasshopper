@@ -23,9 +23,9 @@ Ladybug Legacy to Ladybug[+].
 
 ghenv.Component.Name = "LB Data to Legacy"
 ghenv.Component.NickName = 'ToLegacy'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '0 :: Ladybug'
+ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:

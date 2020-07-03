@@ -96,10 +96,10 @@ Create a plot of any hourly data by wind directions.
 """
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '0.2.0'
+ghenv.Component.Message = '0.2.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '2 :: VisualizeWeatherData'
-ghenv.Component.AdditionalHelpFromDocStrings = '1'
+ghenv.Component.SubCategory = '2 :: Visualize Data'
+ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 import math
 

@@ -20,9 +20,9 @@ Deconstruct a Ladybug DataCollection into a header and values.
 
 ghenv.Component.Name = "LB Deconstruct Data"
 ghenv.Component.NickName = 'XData'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
+ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
