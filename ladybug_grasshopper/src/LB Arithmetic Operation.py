@@ -46,9 +46,9 @@ Grasshopper components, and rebuilding the collection.
 
 ghenv.Component.Name = "LB Arithmetic Operation"
 ghenv.Component.NickName = 'ArithOp'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
+ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 try:

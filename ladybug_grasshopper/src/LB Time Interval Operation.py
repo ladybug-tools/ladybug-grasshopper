@@ -49,9 +49,9 @@ These actions can be performed over the following time intervals:
 
 ghenv.Component.Name = 'LB Time Interval Operation'
 ghenv.Component.NickName = 'TimeOp'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
+ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 try:

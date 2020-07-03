@@ -27,9 +27,9 @@ Construct location from latitude, lognitude, and time zone data.
 
 ghenv.Component.Name = 'LB Construct Location'
 ghenv.Component.NickName = 'ConstrLoc'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '0 :: Ladybug'
+ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
 
 try:

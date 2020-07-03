@@ -60,9 +60,9 @@ Import data from a standard .stat file.
 
 ghenv.Component.Name = "LB Import STAT"
 ghenv.Component.NickName = 'ImportSTAT'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '0 :: Ladybug'
+ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
 
 

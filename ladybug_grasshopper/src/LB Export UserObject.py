@@ -51,10 +51,10 @@ be installed on other's machines.
 
 ghenv.Component.Name = 'LB Export UserObject'
 ghenv.Component.NickName = 'ExportUO'
-ghenv.Component.Message = '0.2.0'
+ghenv.Component.Message = '0.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
-ghenv.Component.AdditionalHelpFromDocStrings = '1'
+ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 import Grasshopper.Folders as Folders
 import Grasshopper.Kernel as gh

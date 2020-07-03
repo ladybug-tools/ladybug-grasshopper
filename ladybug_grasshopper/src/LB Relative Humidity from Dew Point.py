@@ -21,9 +21,9 @@ Calculate relative humidity from Dry Bulb Temperature and Dew Point Temperature.
 
 ghenv.Component.Name = "LB Relative Humidity from Dew Point"
 ghenv.Component.NickName = 'RelHumid'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
+ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:

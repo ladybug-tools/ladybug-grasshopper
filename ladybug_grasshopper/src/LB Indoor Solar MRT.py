@@ -59,9 +59,9 @@ radiant exchange.
 
 ghenv.Component.Name = 'LB Indoor Solar MRT'
 ghenv.Component.NickName = 'IndoorSolarMRT'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '1 :: Analyze Weather Data'
+ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
 
 try:
