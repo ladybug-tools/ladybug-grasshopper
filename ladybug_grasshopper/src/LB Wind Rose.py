@@ -91,12 +91,14 @@ Create a plot of any hourly data by wind directions.
         title: A text object for the global_title.
         prevailing: The predominant direction of the outpt wind rose in clockwise
             degrees from north. 0 is North, 90 is East, 180 is South, 270 is West.
+        histogram: A data tree of average _data values with one value for each
+            wind direction.
         data: The input _data after it has gone through any of the statement or
-            period operations that this component performs
+            period operations that this component performs.
 """
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '0.2.1'
+ghenv.Component.Message = '0.2.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -140,7 +142,7 @@ def title_text(data_col):
 if all_required_inputs(ghenv.Component):
     # Apply any analysis periods and conditional statement to the input collections
     if period_ is not None:
-        _data = _data.filter_by_analysis_period(period_)
+        _data = [dat.filter_by_analysis_period(period_) for dat in _data]
         _wind_direction = _wind_direction.filter_by_analysis_period(period_)
 
     if statement_ is not None and statement_.strip() != "":
@@ -148,6 +150,21 @@ if all_required_inputs(ghenv.Component):
             _data + [_wind_direction], statement_)
         _data = _fdata[:-1]
         _wind_direction = _fdata[-1]
+
+    # filter zero speed values out of collections if speed is input
+    pattern = []
+    filt_wind_dir = _wind_direction
+    for dat in _data:
+        if isinstance(dat.header.data_type, Speed):
+            for val in dat.values:
+                pat = True if val > 1e-10 else False
+                pattern.append(pat)
+            break
+    if len(pattern) != 0:
+        for i, dat in enumerate(_data):
+            if not isinstance(dat.header.data_type, Speed):
+                _data[i] = dat.filter_by_pattern(pattern)
+        filt_wind_dir = _wind_direction.filter_by_pattern(pattern)
 
     # set defaults and check errors in dir_count and north input
     if _dir_count_ is None:
@@ -194,7 +211,9 @@ if all_required_inputs(ghenv.Component):
     if len(_data) > 1 and _max_freq_lines_ is None:
         max_freqs = []
         for i, _data_item in enumerate(_data):
-            w = WindRose(_wind_direction, _data_item, _dir_count_)
+            win_dir = _wind_direction if isinstance(_data_item.header.data_type, Speed) \
+                else filt_wind_dir
+            w = WindRose(win_dir, _data_item, _dir_count_)
             if _freq_hours_ is not None:
                 w.frequency_hours = _freq_hours_
             if _freq_dist_ is not None:
@@ -206,7 +225,9 @@ if all_required_inputs(ghenv.Component):
     for i, speed_data in enumerate(_data):
 
         # Make the windrose
-        windrose = WindRose(_wind_direction, speed_data, _dir_count_)
+        win_dir = _wind_direction if isinstance(speed_data.header.data_type, Speed) \
+            else filt_wind_dir
+        windrose = WindRose(win_dir, speed_data, _dir_count_)
 
         if len(legend_par_) > 0:
             try:  # sense when several legend parameters are connected
@@ -256,6 +277,7 @@ if all_required_inputs(ghenv.Component):
         all_freq_line.append(freq_line)
         all_legends.append(legend)
         all_title.append(title)
+        all_wind_histogram.append([sum(bin) / len(bin) for bin in windrose.histogram_data])
 
     # convert nested lists into data trees
     mesh = list_to_data_tree(all_mesh)
@@ -264,6 +286,7 @@ if all_required_inputs(ghenv.Component):
     freq_line = list_to_data_tree(all_freq_line)
     legend = list_to_data_tree(all_legends)
     title = list_to_data_tree(all_title)
+    histogram = list_to_data_tree(all_wind_histogram)
 
     # output prevailing direction and processed data
     prevailing = windrose.prevailing_direction
