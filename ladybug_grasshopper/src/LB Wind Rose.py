@@ -91,14 +91,15 @@ Create a plot of any hourly data by wind directions.
         title: A text object for the global_title.
         prevailing: The predominant direction of the outpt wind rose in clockwise
             degrees from north. 0 is North, 90 is East, 180 is South, 270 is West.
-        histogram: A data tree of average _data values with one value for each
-            wind direction.
+        histogram: A list of integers for the number of values associated with
+            each wind direction.
+        avg_val: A list of average _data values with one value for each wind direction.
         data: The input _data after it has gone through any of the statement or
-            period operations that this component performs.
+            period operations input to this component.
 """
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '0.2.2'
+ghenv.Component.Message = '0.2.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -136,6 +137,7 @@ def title_text(data_col):
                                     data_col.header.unit)]
     for key, val in data_col.header.metadata.items():
         title_array.append('{}: {}'.format(key, val))
+    title_array.append('period: {}'.format(data_col.header.analysis_period))
     return '\n'.join(title_array)
 
 
@@ -198,6 +200,7 @@ if all_required_inputs(ghenv.Component):
     _show_freq_ = True if _show_freq_ is None else _show_freq_
 
     # set up empty lists of objects to be filled
+    all_wind_avg_val = []
     all_wind_histogram = []
     all_mesh = []
     all_compass = []
@@ -277,7 +280,16 @@ if all_required_inputs(ghenv.Component):
         all_freq_line.append(freq_line)
         all_legends.append(legend)
         all_title.append(title)
-        all_wind_histogram.append([sum(bin) / len(bin) for bin in windrose.histogram_data])
+        
+        # compute the average values
+        wind_avg_val = []
+        for bin in windrose.histogram_data:
+            try:
+                wind_avg_val.append(sum(bin) / len(bin))
+            except ZeroDivisionError:
+                wind_avg_val.append(0)
+        all_wind_avg_val.append(wind_avg_val)
+        all_wind_histogram.append([len(bin) for bin in windrose.histogram_data])
 
     # convert nested lists into data trees
     mesh = list_to_data_tree(all_mesh)
@@ -286,6 +298,7 @@ if all_required_inputs(ghenv.Component):
     freq_line = list_to_data_tree(all_freq_line)
     legend = list_to_data_tree(all_legends)
     title = list_to_data_tree(all_title)
+    avg_val = list_to_data_tree(all_wind_avg_val)
     histogram = list_to_data_tree(all_wind_histogram)
 
     # output prevailing direction and processed data
