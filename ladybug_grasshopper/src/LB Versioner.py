@@ -42,7 +42,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -54,6 +54,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
+    from ladybug_rhino.pythonpath import iron_python_search_path, create_python_package_dir
     from ladybug_rhino.download import download_file_by_name
     from ladybug_rhino.grasshopper import all_required_inputs, give_warning
 except ImportError as e:
@@ -251,6 +252,8 @@ if all_required_inputs(ghenv.Component) and _update is True:
     else:
         give_warning(ghenv.Component, stderr)
         print stderr
+    if os.name != 'nt':  # make sure libraries are copied to the rhino scripts folder
+        iron_python_search_path(create_python_package_dir())
 
     # install the grasshopper components
     print 'Installing Ladybug Tools Grasshopper components.'
