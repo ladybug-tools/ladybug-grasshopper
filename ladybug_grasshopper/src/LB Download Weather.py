@@ -16,10 +16,11 @@ unzip the file, and open .epw, .stat, and ddy weather files.
         _weather_URL: Text representing the URL at which the climate data resides. 
             To open the a map interface for all publicly availabe climate data (epwmap),
             use the "EPWmap" component.
-        _folder_: An optional  file path to a working directory on your computer
-            where you would like to download and unzip the file.  If nothing is set,
-            the weather files will be downloaded to C:/ladybug/ and placed in a
-            folder with the name of the weather file location.
+        _folder_: An optional file path to a directory into which the weather file
+            will be downloaded and unziped.  If None, the weather files will be
+            downloaded to the ladybug default weather data folder and placed in
+            a sub-folder with the name of the weather file location.
+
     Returns:
         epw_file: The file path of the downloaded epw file.
         stat_file: The file path of the downloaded stat file.
@@ -28,7 +29,7 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
 ghenv.Component.Name = 'LB Download Weather'
 ghenv.Component.NickName = 'DownloadEPW'
-ghenv.Component.Message = '0.2.2'
+ghenv.Component.Message = '0.2.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
