@@ -91,7 +91,7 @@ Create a plot of any hourly data by wind directions.
         title: A text object for the global_title.
         prevailing: The predominant direction of the outpt wind rose in clockwise
             degrees from north. 0 is North, 90 is East, 180 is South, 270 is West.
-        histogram: A list of integers for the number of values associated with
+        frequency: A list of integers for the number of values associated with
             each wind direction.
         avg_val: A list of average _data values with one value for each wind direction.
         data: The input _data after it has gone through any of the statement or
@@ -99,7 +99,7 @@ Create a plot of any hourly data by wind directions.
 """
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '0.2.3'
+ghenv.Component.Message = '0.2.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -201,7 +201,7 @@ if all_required_inputs(ghenv.Component):
 
     # set up empty lists of objects to be filled
     all_wind_avg_val = []
-    all_wind_histogram = []
+    all_wind_frequency = []
     all_mesh = []
     all_compass = []
     all_orient_line = []
@@ -289,7 +289,7 @@ if all_required_inputs(ghenv.Component):
             except ZeroDivisionError:
                 wind_avg_val.append(0)
         all_wind_avg_val.append(wind_avg_val)
-        all_wind_histogram.append([len(bin) for bin in windrose.histogram_data])
+        all_wind_frequency.append([len(bin) for bin in windrose.histogram_data])
 
     # convert nested lists into data trees
     mesh = list_to_data_tree(all_mesh)
@@ -299,7 +299,7 @@ if all_required_inputs(ghenv.Component):
     legend = list_to_data_tree(all_legends)
     title = list_to_data_tree(all_title)
     avg_val = list_to_data_tree(all_wind_avg_val)
-    histogram = list_to_data_tree(all_wind_histogram)
+    frequency = list_to_data_tree(all_wind_frequency)
 
     # output prevailing direction and processed data
     prevailing = windrose.prevailing_direction
