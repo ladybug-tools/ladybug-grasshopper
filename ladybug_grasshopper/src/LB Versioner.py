@@ -42,7 +42,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -94,6 +94,17 @@ def get_standards_directory():
     if not os.path.isdir(hb_folder):
         os.makedirs(hb_folder)
     return hb_folder
+
+
+def remove_dist_info_files(directory):
+    """Remove all of the PyPI .dist-info folders from a given directory.
+    
+    Args:
+        directory: A directory containing .dist-info folders to delete.
+    """
+    for fold in os.listdir(directory):
+        if fold.endswith('.dist-info'):
+            nukedir(os.path.join(directory, fold), rmdir=True)
 
 
 def update_libraries_pip(python_exe, package_name, version=None, target=None):
@@ -263,6 +274,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
     lbgh_ver = ver_dict['ladybug-grasshopper']
     if os.path.isdir(os.path.join(uo_folder, 'ladybug_grasshopper-{}.dist-info'.format(lbgh_ver))):
         print 'Ladybug Tools Grasshopper components successfully installed!\n '
+        remove_dist_info_files(uo_folder)  # remove the .dist-info files
     else:
         give_warning(ghenv.Component, stderr)
         print stderr
