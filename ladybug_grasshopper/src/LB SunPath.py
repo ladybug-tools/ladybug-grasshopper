@@ -61,7 +61,8 @@ analysis and shading design.
 
     Returns:
         vectors: Vector(s) indicating the direction of sunlight for each sun
-            position on the sun path.
+            position on the sun path. Note that these vectors point downwards
+            towards the ground.
         altitudes: Number(s) indicating the sun altitude(s) in degrees for
             each sun position on the sun path.
         azimuths: Number(s) indicating the sun azimuths in degrees for each
@@ -74,24 +75,28 @@ analysis and shading design.
             dome over the course of a day.
         compass: A set of circles, lines and text objects that mark the cardinal
             directions in relation to the sun.
-        legend: Geometry representing the legend for the input data_ will be None
+        legend: Geometry representing the legend for the input data_. Will be None
             if no _data is connected.
-        title: A text object for the global_title.
-        colors: A list of colors generated from input data_, which can be used to
-            color the sun_pts by connecting this up to a native Grasshopper
-            "Custom Preview" component.
+        title: A text object for the title of the sunpath.
+        color_pts: A list of points colored with the input data_, which will display
+            in the Rhino scene in accordance with the legend. Note that
+            the text representation of these objects bears the RGB color of each
+            point. So casting this output to text and then to a color will
+            yeild color objects that can be used for previewing other types
+            of geometry with the input data_. Will be None if no _data is connected.
 """
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 try:
     from ladybug_geometry.geometry2d.pointvector import Vector2D, Point2D
-    from ladybug_geometry.geometry3d.pointvector import Point3D
+    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
+    from ladybug_geometry.geometry3d.plane import Plane
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
 
@@ -107,13 +112,14 @@ except ImportError as e:
 try:
     from ladybug_rhino.config import conversion_to_meters
     from ladybug_rhino.color import color_to_color
+    from ladybug_rhino.colorize import ColoredPoint
     from ladybug_rhino.fromgeometry import from_polyline3d, from_polyline2d, \
         from_arc3d, from_vector3d, from_point3d, from_point2d
     from ladybug_rhino.fromobjects import legend_objects, compass_objects
     from ladybug_rhino.togeometry import to_vector2d, to_point2d, to_point3d
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree, \
-        wrap_output
+        hide_output, show_output, schedule_solution
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -248,6 +254,7 @@ if all_required_inputs(ghenv.Component):
         all_daily = []
         all_compass = []
         all_colors = []
+        all_col_pts = []
         all_legends = []
         for i, data in enumerate(data_):
             # move the center point so sun paths are not on top of one another
@@ -278,21 +285,35 @@ if all_required_inputs(ghenv.Component):
 
             # produce a visualization of colored points
             cols = [color_to_color(col) for col in graphic.value_colors]
-            # TODO: See if we can get these points to be output with display color
-            all_colors.append(cols)
+            col_pts = []
+            for pt, col in zip(sun_pts_init, cols):
+                col_pt = ColoredPoint(pt)
+                col_pt.color = col
+                col_pts.append(col_pt)
             all_sun_pts.append(sun_pts_init)
+            all_col_pts.append(col_pts)
 
         # convert all nested lists to data trees
         sun_pts = list_to_data_tree(all_sun_pts)
         analemma = list_to_data_tree(all_analemma)
         daily = list_to_data_tree(all_daily)
         compass = list_to_data_tree(all_compass)
-        colors = list_to_data_tree(all_colors)
         legend = list_to_data_tree(all_legends)
-        ghenv.Component.Params.Output[5].Hidden = True  # hide the points
-    else:  # no dtat connected; just output one sunpath
+
+        # do some acrobatics to get the colored points to display
+        # CWM: I don't know why we have to re-schedule the solution but this is the
+        # only way I found to get the colored points to appear (redraw did not work).
+        color_pts = list_to_data_tree(all_col_pts)
+        hide_output(ghenv.Component, 5)
+        schedule_solution(ghenv.Component, 2)
+    else:  # no data connected; just output one sunpath
         sun_pts = draw_sun_positions(suns, radius, center_pt3d)
         analemma, daily = draw_analemma_and_arcs(sp, datetimes, radius, center_pt3d)
         font = legend_par_.font if legend_par_ is not None else 'Arial'
         compass = compass_objects(Compass(radius, center_pt, north_), z, None, projection_, font)
-        ghenv.Component.Params.Output[5].Hidden = False  # show the points
+        if _location.city:
+            title = text_objects(
+                'city: {}'.format(_location.city),
+                Plane(o=center_pt3d.move(Vector3D(-radius * 1.25, -radius * 1.25))),
+                radius / 15, font)
+        show_output(ghenv.Component, 5)
