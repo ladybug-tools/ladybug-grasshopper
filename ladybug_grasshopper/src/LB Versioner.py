@@ -42,7 +42,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -62,7 +62,7 @@ except ImportError as e:
 
 import os
 import subprocess
-from Grasshopper.Folders import UserObjectFolders
+from Grasshopper.Folders import UserObjectFolders, DefaultAssemblyFolder
 
 
 def get_python_exe():
@@ -191,7 +191,8 @@ def parse_lbt_gh_versions(lbt_gh_folder):
             'honeybee-grasshopper-core': '0.0.0',
             'honeybee-grasshopper-radiance': '0.0.0',
             'honeybee-grasshopper-energy': '0.0.0',
-            'dragonfly-grasshopper': '0.0.0'
+            'dragonfly-grasshopper': '0.0.0',
+            'ladybug-grasshopper-dotnet': '0.0.0'
         }
     """
     # set the names of the libraries to collect and the version dict
@@ -205,7 +206,8 @@ def parse_lbt_gh_versions(lbt_gh_folder):
         'honeybee-grasshopper-core': None,
         'honeybee-grasshopper-radiance': None,
         'honeybee-grasshopper-energy': None,
-        'dragonfly-grasshopper': None
+        'dragonfly-grasshopper': None,
+        'ladybug-grasshopper-dotnet': None
         }
     libs_to_collect = list(version_dict.keys())
 
@@ -277,6 +279,21 @@ if all_required_inputs(ghenv.Component) and _update is True:
         remove_dist_info_files(uo_folder)  # remove the .dist-info files
     else:
         give_warning(ghenv.Component, stderr)
+        print stderr
+
+    # install the .gha Grasshopper components
+    gha_folder = DefaultAssemblyFolder
+    if os.path.isdir(os.path.join(gha_folder, 'ladybug_grasshopper_dotnet')):
+        nukedir(os.path.join(gha_folder, 'ladybug_grasshopper_dotnet'), True)
+    stderr = update_libraries_pip(py_exe, 'ladybug-grasshopper-dotnet',
+                                  ladybug_grasshopper_dotnet, gha_folder)
+    package_dir = os.path.join(
+        gha_folder, 'ladybug_grasshopper_dotnet-{}.dist-info'.format(ladybug_grasshopper_dotnet))
+    if os.path.isdir(package_dir):
+        print 'Ladybug Tools .gha Grasshopper components successfully installed!\n '
+        remove_dist_info_files(gha_folder)  # remove the dist-info files
+    else:
+        give_warning(stderr)
         print stderr
 
     # install the honeybee-openstudio ruby gem
