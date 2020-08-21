@@ -42,7 +42,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '0.2.0'
+ghenv.Component.Message = '0.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -286,9 +286,9 @@ if all_required_inputs(ghenv.Component) and _update is True:
     if os.path.isdir(os.path.join(gha_folder, 'ladybug_grasshopper_dotnet')):
         nukedir(os.path.join(gha_folder, 'ladybug_grasshopper_dotnet'), True)
     stderr = update_libraries_pip(py_exe, 'ladybug-grasshopper-dotnet',
-                                  ladybug_grasshopper_dotnet, gha_folder)
+                                  ver_dict['ladybug-grasshopper-dotnet'], gha_folder)
     package_dir = os.path.join(
-        gha_folder, 'ladybug_grasshopper_dotnet-{}.dist-info'.format(ladybug_grasshopper_dotnet))
+        gha_folder, 'ladybug_grasshopper_dotnet-{}.dist-info'.format(ver_dict['ladybug-grasshopper-dotnet']))
     if os.path.isdir(package_dir):
         print 'Ladybug Tools .gha Grasshopper components successfully installed!\n '
         remove_dist_info_files(gha_folder)  # remove the dist-info files
