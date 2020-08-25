@@ -42,7 +42,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '0.2.1'
+ghenv.Component.Message = '0.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -78,6 +78,14 @@ def get_python_exe():
     if os.path.isfile(py_exe_file):
         return py_exe_file, py_site_pack
     return None, None
+
+
+def get_recipe_directory():
+    """Get the directory where Honeybee recipes are installed."""
+    re_folder = os.path.join(folders.ladybug_tools_folder, 'resources', 'recipes')
+    if not os.path.isdir(re_folder):
+        os.makedirs(re_folder)
+    return re_folder
 
 
 def get_gem_directory():
@@ -198,7 +206,9 @@ def parse_lbt_gh_versions(lbt_gh_folder):
     # set the names of the libraries to collect and the version dict
     version_dict = {
         'lbt-dragonfly': None,
+        'queenbee-luigi': None,
         'ladybug-rhino': None,
+        'honeybee-radiance-recipe': None,
         'honeybee-standards': None,
         'honeybee-energy-standards': None,
         'honeybee-openstudio-gem': None,
@@ -256,6 +266,16 @@ if all_required_inputs(ghenv.Component) and _update is True:
         give_warning(ghenv.Component, stderr)
         print stderr
 
+    # install the queenbee core libraries
+    print 'Installing Queenbee core Python libraries.'
+    qb_ver = ver_dict['queenbee-luigi']
+    stderr = update_libraries_pip(py_exe, 'queenbee-luigi[cli]', qb_ver)
+    if os.path.isdir(os.path.join(py_lib, 'queenbee_luigi-{}.dist-info'.format(qb_ver))):
+        print 'Queenbee core Python libraries successfully installed!\n '
+    else:
+        give_warning(stderr)
+        print stderr
+
     # install the library needed for interaction with Rhino
     print 'Installing ladybug-rhino Python library.'
     rh_ver = ver_dict['ladybug-rhino']
@@ -283,15 +303,36 @@ if all_required_inputs(ghenv.Component) and _update is True:
 
     # install the .gha Grasshopper components
     gha_folder = DefaultAssemblyFolder
-    if os.path.isdir(os.path.join(gha_folder, 'ladybug_grasshopper_dotnet')):
-        nukedir(os.path.join(gha_folder, 'ladybug_grasshopper_dotnet'), True)
-    stderr = update_libraries_pip(py_exe, 'ladybug-grasshopper-dotnet',
-                                  ver_dict['ladybug-grasshopper-dotnet'], gha_folder)
-    package_dir = os.path.join(
-        gha_folder, 'ladybug_grasshopper_dotnet-{}.dist-info'.format(ver_dict['ladybug-grasshopper-dotnet']))
-    if os.path.isdir(package_dir):
-        print 'Ladybug Tools .gha Grasshopper components successfully installed!\n '
-        remove_dist_info_files(gha_folder)  # remove the dist-info files
+    gha_location = os.path.join(gha_folder, 'ladybug_grasshopper_dotnet')
+    if os.path.isdir(gha_location):
+        msg = '.gha files already exist in your Components folder and cannot be ' \
+            'deleted while Grasshopper is open.\nClose Grasshopper, delete the ' \
+            '.gha files at\n{}\nand rerun this versioner component.\nOr simply keep '\
+            'using the old .gha component if you do not need the latest ' \
+            '.gha component features.\n '.format(gha_location)
+        print msg
+    else:
+        gha_ver = ver_dict['ladybug-grasshopper-dotnet']
+        stderr = update_libraries_pip(py_exe, 'ladybug-grasshopper-dotnet', gha_ver, gha_folder)
+        package_dir = os.path.join(
+            gha_folder, 'ladybug_grasshopper_dotnet-{}.dist-info'.format(gha_ver))
+        if os.path.isdir(package_dir):
+            print 'Ladybug Tools .gha Grasshopper components successfully installed!\n '
+            remove_dist_info_files(gha_folder)  # remove the dist-info files
+        else:
+            give_warning(stderr)
+            print stderr
+
+    # install the honeybee_radiance_recipe package to recipe resources
+    print 'Installing Honeybee recipes.'
+    recipe_dir = get_recipe_directory()
+    rec_ver = ver_dict['honeybee-radiance-recipe']
+    if os.path.isdir(os.path.join(recipe_dir, 'honeybee_radiance_recipe')):
+        nukedir(os.path.join(recipe_dir, 'honeybee_radiance_recipe'), True)
+    stderr = update_libraries_pip(py_exe, 'honeybee-radiance-recipe', rec_ver, recipe_dir)
+    if os.path.isdir(os.path.join(recipe_dir, 'honeybee_radiance_recipe-{}.dist-info'.format(rec_ver))):
+        print 'Honeybee recipes successfully installed!\n '
+        remove_dist_info_files(recipe_dir)  # remove the dist-info files
     else:
         give_warning(stderr)
         print stderr
@@ -325,6 +366,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
             stderr = update_libraries_pip(py_exe, pkg_name, ver, stand_dir)
             if os.path.isdir(os.path.join(stand_dir, '{}-{}.dist-info'.format(pkg_name.replace('-', '_'), ver))):
                 print 'Ladybug Tools Grasshopper standards libraries successfully installed!\n '
+                remove_dist_info_files(stand_dir)  # remove the dist-info files
             else:
                 give_warning(ghenv.Component, stderr)
                 print stderr
