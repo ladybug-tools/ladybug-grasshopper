@@ -28,7 +28,8 @@ Equivalent Temperature (PET) model should be used.
         _mrt_: Data Collection or individual value of mean radiant temperature
             (MRT) in C. Default is the same as the air_temp..
         _wind_vel_: Data Collection or individual of air speed values in m/s.
-            Default is a very low speed of 0.1 m/s.
+            Default is a low speed of 0.5 m/s, which is the lowest input
+            speed that is recommended for the UTCI model.
         _rel_humid: Data Collection or individual value of relative humidity in %.
         _run: Set to True to run the component.
     Returns:
@@ -68,7 +69,7 @@ Equivalent Temperature (PET) model should be used.
 
 ghenv.Component.Name = 'LB UTCI Comfort'
 ghenv.Component.NickName = 'UTCI'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -94,7 +95,7 @@ except ImportError as e:
 
 def extract_collections(input_list):
     """Process inputs into collections and floats."""
-    defaults = [None, _air_temp, 0.1, None]
+    defaults = [None, _air_temp, 0.5, None]
     data_colls = []
     for i, input in enumerate(input_list):
         if input is None:
