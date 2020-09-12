@@ -31,18 +31,19 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
             but grasshopper plugin versions less than 0.3.0 are not supported.
             A list of all versions of the Grasshopper plugin can be found
             here - https://github.com/ladybug-tools/lbt-grasshopper/releases
-        clean_standards_: Set to True to have any user libraries of standards
-            (constructions, schedules, modifiers) overwritten with a
-            completely fresh copy. If False or None, any existing standards
-            will be left alone.
-    
+        clean_standards_: Set to True to have the library of standards (constructions,
+            schedules, modifiers) overwritten with a completely fresh copy.
+            DO NOT SET TO TRUE IF YOU WANT TO KEEP ANY OBJECTS THAT YOU HAVE
+            ADDED TO YOUR honeybee_standards FOLDER. If False or None, any
+            existing standards will be left alone.
+
     Returns:
         Vviiiiiz!: !!!
 """
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '0.3.0'
+ghenv.Component.Message = '0.4.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -348,28 +349,33 @@ if all_required_inputs(ghenv.Component) and _update is True:
     copy_file_tree(source_folder, lib_folder)
     nukedir(base_folder, True)
 
-    # install the standards libraries
-    standards = ['honeybee-standards', 'honeybee-energy-standards']
-    stand_versions = [ver_dict['honeybee-standards'], ver_dict['honeybee-energy-standards']]
+    # always update the honeybee-energy-standards package
+    print 'Installing Honeybee energy standards.'
     stand_dir = get_standards_directory()
-    if not clean_standards_:
-        new_standards, new_stand_versions = [], []
-        for i, pkg_name in enumerate(standards):
-            lib_folder = os.path.join(stand_dir, pkg_name.replace('-', '_'))
-            if not os.path.isdir(lib_folder):
-                new_standards.append(standards[i])
-                new_stand_versions.append(stand_versions[i])
-        standards, stand_versions = new_standards, new_stand_versions
-    if len(standards) != 0:
+    hes_ver = ver_dict['honeybee-energy-standards']
+    if os.path.isdir(os.path.join(stand_dir, 'honeybee_energy_standards')):
+        nukedir(os.path.join(stand_dir, 'honeybee_energy_standards'), True)
+    stderr = update_libraries_pip(py_exe, 'honeybee-energy-standards', hes_ver, stand_dir)
+    if os.path.isdir(os.path.join(stand_dir, 'honeybee_energy_standards-{}.dist-info'.format(hes_ver))):
+        print 'Honeybee energy standards successfully installed!\n '
+        remove_dist_info_files(stand_dir)  # remove the dist-info files
+    else:
+        give_warning(stderr)
+        print stderr
+
+    # install the standards libraries if requested or they don't exist
+    if clean_standards_ or not os.path.isdir(os.path.join(stand_dir, 'honeybee_standards')):
         print 'Installing Ladybug Tools standards libraries (constructions, schedules, etc.).'
-        for pkg_name, ver in zip(standards, stand_versions):
-            stderr = update_libraries_pip(py_exe, pkg_name, ver, stand_dir)
-            if os.path.isdir(os.path.join(stand_dir, '{}-{}.dist-info'.format(pkg_name.replace('-', '_'), ver))):
-                print 'Ladybug Tools Grasshopper standards libraries successfully installed!\n '
-                remove_dist_info_files(stand_dir)  # remove the dist-info files
-            else:
-                give_warning(ghenv.Component, stderr)
-                print stderr
+        hs_ver = ver_dict['honeybee-standards']
+        if os.path.isdir(os.path.join(stand_dir, 'honeybee_standards')):
+            nukedir(os.path.join(stand_dir, 'honeybee_standards'), True)
+        stderr = update_libraries_pip(py_exe, 'honeybee-standards', hs_ver, stand_dir)
+        if os.path.isdir(os.path.join(stand_dir, 'honeybee_standards-{}.dist-info'.format(hs_ver))):
+            print 'Honeybee standards successfully installed!\n '
+            remove_dist_info_files(stand_dir)  # remove the dist-info files
+        else:
+            give_warning(stderr)
+            print stderr
 
     # delete the temp folder and give a completion message
     nukedir(temp_folder, True)
