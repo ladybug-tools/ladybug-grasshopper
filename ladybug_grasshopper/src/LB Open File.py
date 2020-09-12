@@ -8,20 +8,21 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Open a file's directory in Windows Explorer or Mac Finder.
-This is useful for understanding weather data or simulation files.
+Open a file in whatever program is associated with the file extension.
+This can be used to open simulation files in particular applications (eg. opening
+an OSM file in the OpenStudio Application).
 -
 
     Args:
-        _file_path: Full path to a file or directory to be opened in Explorer/Finder.
+        _file_path: Full path to a file to be opened.
     
     Returns:
         report: Reports, errors, warnings, etc.
 """
 
-ghenv.Component.Name = 'LB Open Directory'
-ghenv.Component.NickName = 'OpenDir'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Name = 'LB Open File'
+ghenv.Component.NickName = 'OpenFile'
+ghenv.Component.Message = '0.1.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
@@ -38,11 +39,5 @@ except ImportError as e:
 if all_required_inputs(ghenv.Component):
     # check that the file exists
     assert os.path.exists(_file_path), \
-        'No file or directory was found at: {}'.format(_file_path)
-    folder = _file_path if os.path.isdir(_file_path) else os.path.dirname(_file_path)
-
-    # open the file in explorer or finder
-    if os.name == 'nt':  # we are on Windows
-        subprocess.Popen('explorer.exe ' + folder)
-    else:  # assume we are on Mac
-        subprocess.call(['open', '-R', _file_path])
+        'No file was found at: {}'.format(_file_path)
+    os.startfile(_file_path)
