@@ -30,13 +30,13 @@ with the legends automatically output from different studies.
         title_obj: A text object for the  legend title.
         label_objs: An array of text objects for the label text.
         label_text: An array of text strings for the label text.
-        legend_par: The input legend parameters with defaults filled for
-            unset properties.
+        colors: An array of colors that align with the input _values. This can
+            be used to color geometry that aligns with the values.
 """
 
 ghenv.Component.Name = "LB Create Legend"
 ghenv.Component.NickName = 'CreateLegend'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -50,6 +50,7 @@ except ImportError as e:
 try:
     from ladybug_rhino.togeometry import to_plane
     from ladybug_rhino.fromobjects import legend_objects
+    from ladybug_rhino.color import color_to_color
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
@@ -65,7 +66,6 @@ if all_required_inputs(ghenv.Component):
 
     # create the legend
     legend = Legend(_values, legend_par_)
-    legend_par = legend.legend_parameters
 
     # separate all of the outputs from this component
     rhino_objs = legend_objects(legend)
@@ -73,3 +73,4 @@ if all_required_inputs(ghenv.Component):
     title_obj = rhino_objs[1]
     label_objs = rhino_objs[2:]
     label_text = legend.segment_text
+    colors = [color_to_color(col) for col in legend.value_colors]
