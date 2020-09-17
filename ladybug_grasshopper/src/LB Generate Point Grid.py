@@ -28,31 +28,30 @@ The resulting mesh will be in a format that the 'Color Mesh' component will acce
 
 ghenv.Component.Name = "LB Generate Point Grid"
 ghenv.Component.NickName = 'GenPts'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
-    from ladybug_rhino.togeometry import to_gridded_mesh3d
+    from ladybug_rhino.togeometry import to_gridded_mesh3d, to_mesh3d
     from ladybug_rhino.fromgeometry import from_mesh3d, from_point3d, from_vector3d
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
-import Rhino.Geometry as rg
-
 
 if all_required_inputs(ghenv.Component):
     # check the input and generate the mesh.
     _dist_surface_ = _dist_surface_ or 0
-    if type(_geometry) == rg.Brep:
+    try:  # assume it's a Rhino Brep
         lb_mesh = to_gridded_mesh3d(_geometry, _grid_size, _dist_surface_)
-    elif type(_geometry) == rg.Mesh:
-        lb_mesh = to_mesh3d(_geometry)
-    else:
-        raise TypeError(
-            '_geometry must be a Brep or a Mesh. Got {}.'.format(type(_geometry)))
+    except TypeError:  # assume it's a Rhino Mesh
+        try:
+            lb_mesh = to_mesh3d(_geometry)
+        except TypeError:  # unidientified geometry type
+            raise TypeError(
+                '_geometry must be a Brep or a Mesh. Got {}.'.format(type(_geometry)))
     
     # generate the test points, vectors, and areas.
     points = [from_point3d(pt) for pt in lb_mesh.face_centroids]
