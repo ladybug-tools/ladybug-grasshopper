@@ -44,7 +44,7 @@ Create a plot of any hourly data by wind directions.
         _freq_dist_: The distance for the frequency interval in model units. If 
             _show_calmrose is True, then the initial frequency interval corresponds
             to the number of calm hours in the data collection, which may not
-            align with this _freq_dist (Default: 5)
+            align with this _freq_dist (Default: 5 meters)
        _freq_hours_: The number of hours in each frequency interval (Default: 50).
         _max_freq_lines_: A number representing the maximum frequency intervals in
             the rose, which determines the maximum amount of hours represented by the
@@ -97,9 +97,10 @@ Create a plot of any hourly data by wind directions.
         data: The input _data after it has gone through any of the statement or
             period operations input to this component.
 """
+
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '0.2.4'
+ghenv.Component.Message = '0.2.5'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -120,6 +121,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
 
 try:
+    from ladybug_rhino.config import conversion_to_meters
     from ladybug_rhino.togeometry import to_point3d, to_vector2d
     from ladybug_rhino.fromgeometry import from_mesh2d, from_linesegment2d, \
         from_polygon2d
@@ -193,7 +195,7 @@ if all_required_inputs(ghenv.Component):
     if _freq_hours_ is None:
         _freq_hours_ = 50.0
     if _freq_dist_ is None:
-        _freq_dist_ = 5.0
+        _freq_dist_ = 5.0 / conversion_to_meters()
 
     # set default show_freq and _show_calmrose_
     _show_calmrose_ = False if _show_calmrose_ is None else _show_calmrose_

@@ -21,8 +21,9 @@ mesh that shows the range of the data within specific percentiles.
         _base_pt_: An optional Point3D to be used as a starting point to generate
             the geometry of the chart (Default: (0, 0, 0)).
         _x_dim_: An optional number to set the X dimension of each month of the
-            chart. (Default: 10).
-        _y_dim_: An optional number to set the Y dimension of the chart (Default: 40).
+            chart. (Default: 10 meters).
+        _y_dim_: An optional number to set the Y dimension of the entire
+            chart (Default: 40 meters).
         stack_: Boolean to note whether multiple connected monthly or daily input
             _data with the same units should be stacked on top of each other.
             Otherwise, all bars for monthly/daily data will be placed next to
@@ -67,7 +68,7 @@ mesh that shows the range of the data within specific percentiles.
 
 ghenv.Component.Name = 'LB Monthly Chart'
 ghenv.Component.NickName = 'MonthlyChart'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -85,6 +86,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
 
 try:
+    from ladybug_rhino.config import conversion_to_meters
     from ladybug_rhino.config import tolerance
     from ladybug_rhino.togeometry import to_point2d
     from ladybug_rhino.fromgeometry import from_mesh3d, from_mesh2d, \
@@ -101,8 +103,8 @@ if all_required_inputs(ghenv.Component):
     z_val = _base_pt_.Z if _base_pt_ is not None else 0
     z_val_tol = z_val + tolerance
     _base_pt_ = to_point2d(_base_pt_) if _base_pt_ is not None else Point2D()
-    _x_dim_ = _x_dim_ if _x_dim_ is not None else 10
-    _y_dim_ = _y_dim_ if _y_dim_ is not None else 40
+    _x_dim_ = _x_dim_ if _x_dim_ is not None else 10.0 / conversion_to_meters()
+    _y_dim_ = _y_dim_ if _y_dim_ is not None else 40.0 / conversion_to_meters()
     stack_ = stack_ if stack_ is not None else False
     percentile_ = percentile_ if percentile_ is not None else 34.0
     lpar = legend_par_[0] if len(legend_par_) != 0 else None
