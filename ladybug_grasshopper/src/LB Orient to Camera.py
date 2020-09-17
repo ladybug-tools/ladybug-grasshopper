@@ -29,54 +29,17 @@ Orient a series of geometries to the active viewport camera.
 
 ghenv.Component.Name = 'LB Orient to Camera'
 ghenv.Component.NickName = 'OrientCam'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
-import Rhino.Geometry as rg
-import Rhino.Display as rd
-
 try:
     from ladybug_rhino.grasshopper import all_required_inputs
-    from ladybug_rhino.text import TextGoo
-    from ladybug_rhino.viewport import camera_oriented_plane
+    from ladybug_rhino.viewport import orient_to_camera
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
-def bounding_box_origin(geometry):
-    """Get the origin of a bounding box around a list of geometry.
-
-    Args:
-        geometry: A list of geometry for which the bounding box origin will
-            be computed.
-    """
-    b_box = geometry[0].GetBoundingBox(False)
-    for geo in geometry[1:]:
-        if isinstance(geo, rd.Text3d):
-            b_box = rg.BoundingBox.Union(b_box, geo.BoundingBox)
-        else:
-            b_box = rg.BoundingBox.Union(b_box, geo.GetBoundingBox(False))
-    return b_box.Corner(True, True, True)
-
-
 if all_required_inputs(ghenv.Component):
-    # set the default position if it is None
-    origin = bounding_box_origin(_geo)
-    pt = origin if _position_ is None else _position_
-
-    # get a plane oriented to the camera
-    oriented_plane = camera_oriented_plane(pt)
-
-    # orient the input geometry to the plane facing the camera
-    base_plane = rg.Plane(origin, rg.Vector3d(0, 0, 1))
-    xform = rg.Transform.PlaneToPlane(base_plane, oriented_plane)
-    geo = []
-    for rh_geo in _geo:
-        if isinstance(rh_geo, rd.Text3d):
-            geo.append(TextGoo(rh_geo).Transform(xform))
-        else:
-            new_geo = rh_geo.Duplicate()
-            new_geo.Transform(xform)
-            geo.append(new_geo)
+    geo = orient_to_camera(_geo, _position_)
