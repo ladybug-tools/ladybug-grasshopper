@@ -15,7 +15,7 @@ The resulting mesh will be in a format that the 'Color Mesh' component will acce
     Args:
         _geometry: Brep or Mesh from which to generate the points and grid.
         _grid_size: Number for the size of the test grid.
-        _dist_surface_: Number for the distance to move points from the surfaces
+        _offset_dist_: Number for the distance to move points from the surfaces
             of the input _geometry.  Typically, this should be a small positive
             number to ensure points are not blocked by the mesh. Default is 0.
     
@@ -28,7 +28,7 @@ The resulting mesh will be in a format that the 'Color Mesh' component will acce
 
 ghenv.Component.Name = "LB Generate Point Grid"
 ghenv.Component.NickName = 'GenPts'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -43,9 +43,9 @@ except ImportError as e:
 
 if all_required_inputs(ghenv.Component):
     # check the input and generate the mesh.
-    _dist_surface_ = _dist_surface_ or 0
+    _offset_dist_ = _offset_dist_ or 0
     try:  # assume it's a Rhino Brep
-        lb_mesh = to_gridded_mesh3d(_geometry, _grid_size, _dist_surface_)
+        lb_mesh = to_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
     except TypeError:  # assume it's a Rhino Mesh
         try:
             lb_mesh = to_mesh3d(_geometry)
