@@ -85,12 +85,13 @@ For such complex studies, honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB Direct Sun Study"
 ghenv.Component.NickName = 'DirectSunStudy'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
+    from ladybug.color import Colorset
     from ladybug.graphic import GraphicContainer
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
@@ -101,12 +102,13 @@ try:
     from ladybug_rhino.fromgeometry import from_mesh3d, from_point3d, from_vector3d
     from ladybug_rhino.fromobjects import legend_objects
     from ladybug_rhino.text import text_objects
-    from ladybug_rhino.intersect import mesh_geometry, intersect_mesh_rays
+    from ladybug_rhino.intersect import join_geometry_to_mesh, intersect_mesh_rays
     from ladybug_rhino.grasshopper import all_required_inputs, hide_output, \
         show_output, list_to_data_tree
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
+import Rhino.Geometry as rg
 
 if all_required_inputs(ghenv.Component):
     # set the default offset distance
@@ -116,18 +118,20 @@ if all_required_inputs(ghenv.Component):
     if _run:  # run the entire study
         # mesh the input geometry and context
         study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
-        shade_mesh = mesh_geometry(_geometry + context_)
+        shade_mesh = join_geometry_to_mesh(_geometry + context_)
 
         # get the study points and reverse the sun vectors (for backward ray-tracting)
         rev_vec = [from_vector3d(to_vector3d(vec).reverse()) for vec in _vectors]
+        normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
         points = [from_point3d(pt) for pt in study_mesh.face_centroids]
         hide_output(ghenv.Component, 1)
 
-        # intersect the rays with the mesh and output the sun_visible data
-        int_matrix = intersect_mesh_rays(shade_mesh, points, rev_vec, parallel_)
-        sun_visible = list_to_data_tree(int_matrix)
+        # intersect the rays with the mesh
+        int_matrix = intersect_mesh_rays(shade_mesh, points, rev_vec, normals,
+                                         parallel=parallel_)
 
         # compute the results
+        sun_visible = list_to_data_tree(int_matrix)
         if _timestep_ and _timestep_ != 1:  # divide by the timestep before output
             results = [sum(val / _timestep_ for val in int_list)
                        for int_list in int_matrix]
@@ -137,6 +141,8 @@ if all_required_inputs(ghenv.Component):
         # create the mesh and legend outputs
         graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)
         graphic.legend_parameters.title = 'hours'
+        if legend_par_ is None or legend_par_.are_colors_default:
+            graphic.legend_parameters.colors = Colorset.ecotect()
         title = text_objects('Direct Sun Study', graphic.lower_title_location,
                              graphic.legend_parameters.text_height * 1.5,
                              graphic.legend_parameters.font)
