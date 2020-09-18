@@ -28,7 +28,7 @@ The resulting mesh will be in a format that the 'Color Mesh' component will acce
 
 ghenv.Component.Name = "LB Generate Point Grid"
 ghenv.Component.NickName = 'GenPts'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.1.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
