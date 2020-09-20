@@ -208,7 +208,7 @@ if all_required_inputs(ghenv.Component):
         north_ = 0
     if _center_pt_ is not None:  # process the center point into a Point2D
         center_pt, center_pt3d = to_point2d(_center_pt_), to_point3d(_center_pt_)
-        z = _center_pt_.Z
+        z = center_pt3d.z
     else:
         center_pt, center_pt3d = Point2D(), Point3D()
         z = 0
