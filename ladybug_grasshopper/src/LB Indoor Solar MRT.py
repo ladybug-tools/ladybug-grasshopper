@@ -59,10 +59,10 @@ radiant exchange.
 
 ghenv.Component.Name = 'LB Indoor Solar MRT'
 ghenv.Component.NickName = 'IndoorSolarMRT'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '5'
+ghenv.Component.AdditionalHelpFromDocStrings = '6'
 
 try:
     from ladybug_comfort.collection.solarcal import IndoorSolarCal
