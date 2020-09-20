@@ -14,10 +14,10 @@ _
 Such direct sun calculations can be used for shadow studies of outdoor enviroments
 or can be used to estimate glare potential from direct sun on the indoors.
 _
-Note that this component uses the CAD environment's ray intersection methods to 
-etermine if the sun is visible, which can be fast for geometries with low
-complexity but does not scale well for complex geometries or many test points.
-For such complex studies, honeybee-radiance should be used.
+Note that this component uses the CAD environment's ray intersection methods,
+which can be fast for geometries with low complexity but does not scale well
+for complex geometries or many test points. For such complex studies,
+honeybee-radiance should be used.
 -
 
     Args:
@@ -46,7 +46,7 @@ For such complex studies, honeybee-radiance should be used.
         _offset_dist_: A number for the distance to move points from the surfaces
             of the input _geometry.  Typically, this should be a small positive
             number to ensure points are not blocked by the mesh. (Default: 10 cm
-            in the equivalent Rhino Model units)
+            in the equivalent Rhino Model units).
         legend_par_: Optional legend parameters from the "LB Legend Parameters"
             that will be used to customize the display of the results.
         parallel_: Set to "True" to run the study using multiple CPUs. This can
@@ -74,18 +74,19 @@ For such complex studies, honeybee-radiance should be used.
         legend: A legend showing the number of hours that correspond to the colors
             of the mesh.
         title: A text object for the study title.
-        sun_visible: A Data Tree (list of lists) that contains values for the
-            vector-by-vector results of the study. Each sub-list (aka. branch
-            of the Data Tree) represents one of the points used for analysis.
-            The length of each sub-list matches the number of _vectors used
-            for the analysis. Each value in the sub-list is either a "1",
-            indicating that the sun is visible for that vector, or a "0",
-            indicating that the sun is not visible for that vector.
+        int_mtx: A Matrix object that can be connected to the "LB Deconstruct Matrix"
+            component to obtain detailed vector-by-vector results of the study.
+            Each sub-list of the matrix (aka. branch of the Data Tree) represents
+            one of the points used for analysis. The length of each sub-list
+            matches the number of _vectors used for the analysis. Each value
+            in the sub-list is either a "1", indicating that the sun is visible
+            for that vector, or a "0", indicating that the sun is not visible
+            for that vector.
 """
 
-ghenv.Component.Name = "LB Direct Sun Study"
-ghenv.Component.NickName = 'DirectSunStudy'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Name = "LB Direct Sun Hours"
+ghenv.Component.NickName = 'DirectSunHours'
+ghenv.Component.Message = '0.1.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -104,37 +105,37 @@ try:
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.intersect import join_geometry_to_mesh, intersect_mesh_rays
     from ladybug_rhino.grasshopper import all_required_inputs, hide_output, \
-        show_output, list_to_data_tree
+        show_output, objectify_output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
-import Rhino.Geometry as rg
 
 if all_required_inputs(ghenv.Component):
     # set the default offset distance
     _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
         else 0.1 / conversion_to_meters()
 
+    # create the gridded mesh from the geometry
+    study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
+    points = [from_point3d(pt) for pt in study_mesh.face_centroids]
+
     if _run:  # run the entire study
-        # mesh the input geometry and context
-        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
+        # hide the study points and mesh the geometry and context
+        hide_output(ghenv.Component, 1)
         shade_mesh = join_geometry_to_mesh(_geometry + context_)
 
         # get the study points and reverse the sun vectors (for backward ray-tracting)
         rev_vec = [from_vector3d(to_vector3d(vec).reverse()) for vec in _vectors]
         normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
-        points = [from_point3d(pt) for pt in study_mesh.face_centroids]
-        hide_output(ghenv.Component, 1)
 
         # intersect the rays with the mesh
         int_matrix = intersect_mesh_rays(shade_mesh, points, rev_vec, normals,
                                          parallel=parallel_)
 
         # compute the results
-        sun_visible = list_to_data_tree(int_matrix)
+        int_mtx = objectify_output('Sun Intersection Matrix', int_matrix)
         if _timestep_ and _timestep_ != 1:  # divide by the timestep before output
-            results = [sum(val / _timestep_ for val in int_list)
-                       for int_list in int_matrix]
+            results = [sum(int_list) / _timestep_ for int_list in int_matrix]
         else:  # no division required
             results = [sum(int_list) for int_list in int_matrix]
 
@@ -143,16 +144,14 @@ if all_required_inputs(ghenv.Component):
         graphic.legend_parameters.title = 'hours'
         if legend_par_ is None or legend_par_.are_colors_default:
             graphic.legend_parameters.colors = Colorset.ecotect()
-        title = text_objects('Direct Sun Study', graphic.lower_title_location,
+        title = text_objects('Direct Sun Hours', graphic.lower_title_location,
                              graphic.legend_parameters.text_height * 1.5,
                              graphic.legend_parameters.font)
-        
+
         # create all of the visual outputs
         study_mesh.colors = graphic.value_colors
         mesh = from_mesh3d(study_mesh)
         legend = legend_objects(graphic.legend)
 
-    else:  # only show the resolution of the mesh
-        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
-        points = [from_point3d(pt) for pt in study_mesh.face_centroids]
+    else:  # only show the the test points
         show_output(ghenv.Component, 1)
