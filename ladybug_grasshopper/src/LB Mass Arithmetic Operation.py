@@ -34,10 +34,10 @@ Grasshopper components, and rebuilding the collection.
 
 ghenv.Component.Name = "LB Mass Arithmetic Operation"
 ghenv.Component.NickName = 'MassArithOp'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.1.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '2'
+ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:
     from ladybug_rhino.grasshopper import all_required_inputs

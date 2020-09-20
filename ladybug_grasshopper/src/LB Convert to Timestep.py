@@ -31,10 +31,10 @@ the data set.
 
 ghenv.Component.Name = 'LB Convert to Timestep'
 ghenv.Component.NickName = 'ToStep'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '2'
+ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:
     from ladybug.datacollection import HourlyDiscontinuousCollection, \

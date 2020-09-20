@@ -70,10 +70,10 @@ comfort model should be used.
 
 ghenv.Component.Name = 'LB Adaptive Comfort'
 ghenv.Component.NickName = 'Adaptive'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '4'
+ghenv.Component.AdditionalHelpFromDocStrings = '5'
 
 try:
     from ladybug.datatype.temperature import Temperature

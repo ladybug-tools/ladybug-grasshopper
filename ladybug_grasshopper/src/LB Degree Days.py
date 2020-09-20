@@ -36,10 +36,10 @@ Calculate humidity metrics from relative humidity, dry bulb temperature and
 
 ghenv.Component.Name = 'LB Degree Days'
 ghenv.Component.NickName = 'HDD_CDD'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '3'
+ghenv.Component.AdditionalHelpFromDocStrings = '4'
 
 try:
     from ladybug_comfort.degreetime import heating_degree_time, cooling_degree_time
