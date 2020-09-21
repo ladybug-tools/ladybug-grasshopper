@@ -19,11 +19,13 @@ analysis and shading design.
             difference between the North and the positive Y-axis in degrees.
             90 is West and 270 is East. This can also be Vector for the
             direction to North. (Default: 0)
-        _location: The output from the importEPW or constructLocation component.
-            This is essentially a list of text summarizing a location on the
-            earth.
-        _hoys_: A list or a single number that respresent an hour of the year.
-            Use Analysis Period or HOY components to generate the numbers.
+        _location: A ladybug Location that has been output from the "LB Import EPW"
+            component or the "LB Construct Location" component.
+        hoys_: A number or list of numbers between 0 and 8760 that respresent the
+            hour of the year at which to evaluate the sun position. The
+            "LB Calculate HOY" component can output this number given a month,
+            day and hour. The "LB Analysis Period" component can output a
+            list of HOYs within a certain hour or date range.
         dl_saving_: An optional analysis period for daylight saving time.
             If None, no daylight saving time will be used. (Default: None)
         solar_time_: A boolean to indicate if the input hours should be treated
@@ -36,10 +38,11 @@ analysis and shading design.
             instead of a 2D one. (Default: None) Choose from the following:
                 * Orthographic
                 * Stereographic
-        _annual_: If True, the output sun path geometry will be for the entire
-            year, complete with analemmas for all integer sun-up hours and a
-            daily arc for each month. If False, only one daily arc will be
-            output for each unique day in the input _hoys_.
+        daily_: Boolean to note whether the sunpath should display only one daily
+            arc for each unique day in the input hoys_ (True) or whther the
+            output sun path geometry should be for the entire year, complete
+            with analemmas for all sun-up hours and a daily arc for each
+            month (False). (Default: False)
         data_: Optional HourlyContinuousCollection objects, which will be used
             to generate colors that align with each of the sun_pts. This data
             can also be used along with the statement_ below to select out
@@ -88,7 +91,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '0.2.0'
+ghenv.Component.Message = '0.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -132,7 +135,7 @@ def draw_analemma_and_arcs(sp, datetimes, radius, center_pt3d):
     Args:
         sp: Sunpath object for which geometry will be drawn.
         datetimes: A list of datetimes, which will be used to get days
-            if _annual_ is False.
+            if daily_ is True.
         radius: Number for the radius of the sun path.
         center_pt3d: Point3D for the center of the sun path.
 
@@ -143,7 +146,7 @@ def draw_analemma_and_arcs(sp, datetimes, radius, center_pt3d):
     sp.daylight_saving_period = None  # set here so analemmas aren't messed up
 
     center_pt, z = Point2D(center_pt3d.x, center_pt3d.y), center_pt3d.z
-    if _annual_:
+    if not daily_:
         if projection_ is None:
             analemma = [from_polyline3d(pline) for pline in sp.hourly_analemma_polyline3d(
                 center_pt3d, radius, True, solar_time_)]
@@ -208,7 +211,7 @@ if all_required_inputs(ghenv.Component):
         north_ = 0
     if _center_pt_ is not None:  # process the center point into a Point2D
         center_pt, center_pt3d = to_point2d(_center_pt_), to_point3d(_center_pt_)
-        z = _center_pt_.Z
+        z = _center_pt_.z
     else:
         center_pt, center_pt3d = Point2D(), Point3D()
         z = 0
@@ -216,13 +219,17 @@ if all_required_inputs(ghenv.Component):
     radius = (100 * _scale_) / conversion_to_meters()
     solar_time_ = False if solar_time_ is None else solar_time_  # process solat time
 
-    # create a intersection of the input _hoys_ and the data hoys
-    if len(data_) > 0 and len(_hoys_) > 0:
+    # create a intersection of the input hoys_ and the data hoys
+    if len(data_) > 0 and len(hoys_) > 0:
+        all_aligned = all(data_[0].is_collection_aligned(d) for d in data_[1:])
+        assert all_aligned, 'All collections input to data_ must be aligned for ' \
+            'each Sunpath.\nGrafting the data_ and suplying multiple grafted ' \
+            '_center_pt_ can be used to view each data on its own path.'
         if statement_ is not None:
             data_ = HourlyContinuousCollection.filter_collections_by_statement(
                 data_, statement_)
         data_hoys = set(dt.hoy for dt in data_[0].datetimes)
-        _hoys_ = list(data_hoys.intersection(set(_hoys_)))
+        hoys_ = list(data_hoys.intersection(set(hoys_)))
 
     # initialize sunpath based on location
     sp = Sunpath.from_location(_location, north_, dl_saving_)
@@ -235,7 +242,7 @@ if all_required_inputs(ghenv.Component):
     hoys = []
     vectors = []
     suns = []
-    for hoy in _hoys_:
+    for hoy in hoys_:
         sun = sp.calculate_sun_from_hoy(hoy, solar_time_)
         if sun.is_during_day:
             altitudes.append(sun.altitude)
@@ -246,7 +253,7 @@ if all_required_inputs(ghenv.Component):
             vectors.append(from_vector3d(sun.sun_vector))
             suns.append(sun)
 
-    if len(data_) > 0 and len(_hoys_) > 0:  # build a sunpath for each data collection
+    if len(data_) > 0 and len(hoys_) > 0:  # build a sunpath for each data collection
         new_data = []
         title = []
         all_sun_pts = []
@@ -278,7 +285,8 @@ if all_required_inputs(ghenv.Component):
             # create points, analemmas, daily arcs, and compass geometry
             sun_pts_init = draw_sun_positions(suns, radius, center_pt3d_i)
             analemma_i, daily_i = draw_analemma_and_arcs(sp, datetimes, radius, center_pt3d_i)
-            compass_i = compass_objects(lb_compass, z, None, projection_, graphic.legend_parameters.font)
+            compass_i = compass_objects(lb_compass, z, None, projection_,
+                                        graphic.legend_parameters.font)
             all_analemma.append(analemma_i)
             all_daily.append(daily_i)
             all_compass.append(compass_i)

@@ -31,60 +31,48 @@ Import climate data from a standard .epw file.
         wind_speed: The hourly wind speed in m/sec.
             Values can range from 0 to 40. Missing value is 999.
         wind_direction: The hourly wind direction in degrees.
-            The convention is that North=0.0, East=90.0, South=180.0, West=270.0.
-            (If wind is calm for the given hour, the direction equals zero.)
+            The convention is North=0.0, East=90.0, South=180.0, West=270.0.
+            If wind is calm for the given hour, the direction equals zero.
             Values can range from 0 to 360. Missing value is 999.
         direct_normal_rad: The hourly Direct Normal Radiation in Wh/m2.
-            (Amount of solar radiation in Wh/m2 received directly from the
-            solar disk on a surface perpendicular to the sun's rays, during
-            the number of minutes preceding the time indicated.) If the field
-            is missing ( 9999) or invalid (<0), it is set to 0. Counts of such
-            missing values are totaled and presented at the end of the runperiod.
+            Direc Normal Radiation is the amount of solar radiation in Wh/m2
+            received directly from the solar disk on a surface perpendicular
+            to the sun's rays. Missing values are (9999).
         diffuse_horizontal_rad: The hourly Diffuse Horizontal Radiation in Wh/m2.
-            (Amount of solar radiation in Wh/m2 received from the sky
-            (excluding the solar disk) on a horizontal surface during the
-            number of minutes preceding the time indicated.) If the field is
-            missing ( 9999) or invalid (<0), it is set to 0. Counts of such
-            missing values are totaled and presented at the end of the runperiod.
+            Diffuse Horizontal Radiation is the amount of solar radiation in
+            Wh/m2 received from the sky (excluding the solar disk) on a
+            horizontal surface. Missing values are (9999).
         global_horizontal_rad: The hourly Global Horizontal Radiation in Wh/m2.
-            (Total amount of direct and diffuse solar radiation in Wh/m2
-            received on a horizontal surface during the number of minutes
-            preceding the time indicated.) It is not currently used in
-            EnergyPlus calculations. It should have a minimum value of 0;
-            missing value for this field is 9999.
+            Global Horizontal Radiation is the total amount of direct and
+            diffuse solar radiation in Wh/m2 received on a horizontal surface.
+            It is not currently used inbEnergyPlus calculations. It should
+            have a minimum value of 0; missing value for this field is 9999.
         horizontal_infrared_rad: The Horizontal Infrared Radiation Intensity in Wh/m2.
-            If it is missing, it is calculated from the Opaque Sky Cover field
-            as shown in the following explanation. It should have a minimum
-            value of 0; missing value for this field is 9999.
+            If it is missing, EnergyPlus calculates it from the Opaque Sky Cover
+            field. It should have a minimum value of 0; missing value is 9999.
         direct_normal_ill: The hourly Direct Normal Illuminance in lux.
-            (Average amount of illuminance in hundreds of lux received
-            directly from the solar disk on a surface perpendicular to the
-            sun's rays, during the number of minutes preceding the time
-            indicated.) It is not currently used in EnergyPlus calculations.
-            It should have a minimum value of 0; missing value for this field
-            is 999999 and will be considered missing of >= 999900.
+            Direct Normal Illuminance is the average amount of illuminance in
+            lux received directly from the solar disk on a surface
+            perpendicular to the sun's rays. It is not currently used in
+            EnergyPlus calculations. It should have a minimum value of 0;
+            missing value is 999999.
         diffuse_horizontal_ill: The hourly Diffuse Horizontal Illuminance in lux.
-            (Average amount of illuminance in hundreds of lux received from
-            the sky (excluding the solar disk) on a horizontal surface during
-            the number of minutes preceding the time indicated.) It is not
-            currently used in EnergyPlus calculations. It should have a
-            minimum value of 0; missing value for this field is 999999 and
-            will be considered missing of >= 999900.
+            Diffuse Horizontal Illuminance is the average amount of illuminance
+            in lux received from the sky (excluding the solar disk) on a
+            horizontal surface. It is not currently used in EnergyPlus
+            calculations. It should have a minimum value of 0; missing
+            value is 999999.
         global_horizontal_ill: The hourly Global Horizontal Illuminance in lux.
-            (Average total amount of direct and diffuse illuminance in
-            hundreds of lux received on a horizontal surface during the
-            number of minutes preceding the time indicated.) It is not
-            currently used in EnergyPlus calculations. It should have a
-            minimum value of 0; missing value for this field is 999999 and
-            will be considered missing of >= 999900.
-        total_sky_cover: The fraction for total sky cover (tenths of coverage).
-            (i.e. 1 is 1/10 covered. 10 is total coverage) (Amount of sky
-            dome in tenths covered by clouds or obscuring phenomena at the
-            hour indicated at the time indicated.) Minimum value is 0;
-            maximum value is 10; missing value is 99."
+            Global Horizontal Illuminance is the average total amount of
+            direct and diffuse illuminance in lux received on a horizontal
+            surface. It is not currently used in EnergyPlus calculations.
+            It should have a minimum value of 0; missing value is 999999.
+        total_sky_cover: The fraction for Total Sky Cover  in tenths of coverage.
+            (eg. 1 is 1/10 covered. 10 is total coverage). Total Sky Cover is
+            the amount of the sky dome covered by clouds or obscuring phenomena.
+            Minium value is 0; maximum value is 10; missing value is 99.
         barometric_pressure: The hourly weather station pressure in Pa.
-            Valid values range from 31,000 to 120,000...
-            Missing value for this field is 999999."
+            Valid values range from 31,000 to 120,000. Missing value is 999999.
         model_year: The year from which the hourly data has been extracted.
             EPW files are synthesized from real recorded data from different
             years in a given climate. This is done to ensure that, for each
@@ -93,11 +81,17 @@ Import climate data from a standard .epw file.
             Different EPW files will be synthesized from different years
             depeding on whether they are TMY (Typical Meteorological Year),
             TMY2, TMY3, AMY (Actual Meteorological Year) or other.
+        ground_temperature: Monthly ground temperature data if it exists within
+            the EPW file. Typically, each data collection in this list
+            represents monthly temperatures at three different depths.
+            - 0.5 meters
+            - 2.0 meters
+            - 4.0 meters
 """
 
 ghenv.Component.Name = 'LB Import EPW'
 ghenv.Component.NickName = 'ImportEPW'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -131,3 +125,5 @@ if all_required_inputs(ghenv.Component):
     total_sky_cover = epw_data.total_sky_cover
     barometric_pressure = epw_data.atmospheric_station_pressure
     model_year = epw_data.years
+    g_temp = epw_data.monthly_ground_temperature
+    ground_temperature = [g_temp[key] for key in sorted(g_temp.keys())]
