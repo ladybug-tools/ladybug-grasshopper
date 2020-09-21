@@ -91,7 +91,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '0.2.1'
+ghenv.Component.Message = '0.2.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -211,7 +211,7 @@ if all_required_inputs(ghenv.Component):
         north_ = 0
     if _center_pt_ is not None:  # process the center point into a Point2D
         center_pt, center_pt3d = to_point2d(_center_pt_), to_point3d(_center_pt_)
-        z = _center_pt_.z
+        z = center_pt3d.z
     else:
         center_pt, center_pt3d = Point2D(), Point3D()
         z = 0
