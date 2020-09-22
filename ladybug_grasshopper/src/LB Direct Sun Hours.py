@@ -86,7 +86,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB Direct Sun Hours"
 ghenv.Component.NickName = 'DirectSunHours'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -129,8 +129,8 @@ if all_required_inputs(ghenv.Component):
         normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
 
         # intersect the rays with the mesh
-        int_matrix = intersect_mesh_rays(shade_mesh, points, rev_vec, normals,
-                                         parallel=parallel_)
+        int_matrix, angles = intersect_mesh_rays(
+            shade_mesh, points, rev_vec, normals, parallel=parallel_)
 
         # compute the results
         int_mtx = objectify_output('Sun Intersection Matrix', int_matrix)

@@ -129,12 +129,16 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB View Percent"
 ghenv.Component.NickName = 'ViewPercent'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 import math
+try:  # python 2
+    from itertools import izip as zip
+except ImportError:  # python 3
+    pass
 
 try:
     from ladybug.viewsphere import view_sphere
@@ -149,8 +153,7 @@ try:
     from ladybug_rhino.fromgeometry import from_mesh3d, from_point3d, from_vector3d
     from ladybug_rhino.fromobjects import legend_objects
     from ladybug_rhino.text import text_objects
-    from ladybug_rhino.intersect import join_geometry_to_mesh, \
-        intersect_mesh_rays, vector_angles
+    from ladybug_rhino.intersect import join_geometry_to_mesh, intersect_mesh_rays
     from ladybug_rhino.grasshopper import all_required_inputs, hide_output, \
         show_output, objectify_output
 except ImportError as e:
@@ -186,14 +189,18 @@ if all_required_inputs(ghenv.Component):
     points = [from_point3d(pt) for pt in study_mesh.face_centroids]
 
     # get the view vectors based on the view type
+    patch_wghts = None
     if vt_str == 'Horizontal Radial':
         lb_vecs = view_sphere.horizontal_radial_vectors(30 * _resolution_)
     elif vt_str == 'Horizontal 30-Degree Offset':
         patch_mesh, lb_vecs = view_sphere.horizontal_radial_patches(30, _resolution_)
+        patch_wghts = view_sphere.horizontal_radial_patch_weights(30, _resolution_)
     elif vt_str == 'Spherical':
         patch_mesh, lb_vecs = view_sphere.sphere_patches(_resolution_)
+        patch_wghts = view_sphere.sphere_patch_weights(_resolution_)
     else:
         patch_mesh, lb_vecs = view_sphere.dome_patches(_resolution_)
+        patch_wghts = view_sphere.dome_patch_weights(_resolution_)
     view_vecs = [from_vector3d(pt) for pt in lb_vecs]
 
     if _run:  # run the entire study
@@ -205,23 +212,28 @@ if all_required_inputs(ghenv.Component):
         # intersect the rays with the mesh
         if vt_str == 'Sky View':  # account for the normals of the surface
             normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
-            int_matrix = intersect_mesh_rays(
+            int_matrix, angles = intersect_mesh_rays(
                 shade_mesh, points, view_vecs, normals, parallel=parallel_)
         else:
-            int_matrix = intersect_mesh_rays(
+            int_matrix, angles = intersect_mesh_rays(
                 shade_mesh, points, view_vecs, parallel=parallel_)
 
         # compute the results
         int_mtx = objectify_output('View Intersection Matrix', int_matrix)
         vec_count = len(view_vecs)
+        results = []
         if vt_str == 'Sky View':  # weight intersections by angle before output
-            angles = vector_angles(normals, view_vecs)
-            results = []
             for int_vals, angles in zip(int_matrix, angles):
-                w_res = [ival * 2 * math.cos(ang) for ival, ang in zip(int_vals, angles)]
-                results.append(sum(w_res) * 100 / vec_count)
-        else:  # no need to wieght results
-            results = [sum(int_list) * 100 / vec_count for int_list in int_matrix]
+                w_res = (ival * 2 * math.cos(ang) for ival, ang in zip(int_vals, angles))
+                weight_result = sum(r * w for r, w in zip(w_res, patch_wghts))
+                results.append(weight_result * 100 / vec_count)
+        else:
+            if patch_wghts:
+                for int_list in int_matrix:
+                    weight_result = sum(r * w for r, w in zip(int_list, patch_wghts))
+                    results.append(weight_result * 100 / vec_count)
+            else:
+                results = [sum(int_list) * 100 / vec_count for int_list in int_matrix]
 
         # create the mesh and legend outputs
         graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)

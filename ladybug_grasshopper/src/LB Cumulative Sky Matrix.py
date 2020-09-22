@@ -59,16 +59,23 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
 ghenv.Component.Name = 'LB Cumulative Sky Matrix'
 ghenv.Component.NickName = 'SkyMatrix'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
 
 import os
 import subprocess
+import math
+
+try:
+    from ladybug_geometry.geometry2d.pointvector import Vector2D
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
 
 try:
     from ladybug.wea import Wea
+    from ladybug.viewsphere import view_sphere
     from ladybug.config import folders as lb_folders
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
@@ -98,34 +105,33 @@ except ImportError as e:
 
 
 # constants for converting RGB values output by gendaymtx to broadband irradiance
-TREGENZA_COUNT = (30, 30, 24, 24, 18, 12, 6, 1)
-REINHART_COUNT = (60, 60, 60, 60, 48, 48, 48, 48, 36, 36, 24, 24, 12, 12, 1)
-TREGENZA_COEFFICIENTS = \
-    (0.0435449227, 0.0416418006, 0.0473984151, 0.0406730411, 0.0428934136,
-     0.0445221864, 0.0455168385, 0.0344199465)
-REINHART_COEFFICIENTS = \
-    (0.0113221971, 0.0111894547, 0.0109255262, 0.0105335058, 0.0125224872,
-     0.0117312774, 0.0108025291, 0.00974713106, 0.011436609, 0.00974295956,
-     0.0119026242, 0.00905126163, 0.0121875626, 0.00612971396, 0.00921483254)
-PATCH_COUNTS = {1: 145, 2: 577}
-PATCHES_PER_ROW = {1: TREGENZA_COUNT, 2: REINHART_COUNT}
-PATCH_ROW_COEFFICIENTS = {1 : TREGENZA_COEFFICIENTS, 2: REINHART_COEFFICIENTS}
+PATCHES_PER_ROW = {
+    1: view_sphere.TREGENZA_PATCHES_PER_ROW + (1,),
+    2: view_sphere.REINHART_PATCHES_PER_ROW + (1,)
+}
+PATCH_ROW_COEFF = {
+    1 : view_sphere.TREGENZA_COEFFICIENTS,
+    2: view_sphere.REINHART_COEFFICIENTS
+}
 
 
-def broadband_irradiance(patch_row_str, row_number, sky_density=1):
+def broadband_irradiance(patch_row_str, row_number, wea_duration, sky_density=1):
     """Parse a row of gendaymtx RGB patch data to a broadband irradiance value.
 
     Args:
         patch_row_str: Text string for a single row of RGB patch data.
         row_number: Interger for the row number that the patch corresponds to.
         sky_density: Integer (either 1 or 2) for the density.
+        wea_duration: Number for the duration of the Wea in hours. This is used
+            to convert between the average value output by the command and the
+            cumulative value that is needed for all ladybug analyses.
     """
     R, G, B = patch_row_str.split(' ')
     weight_val = 0.265074126 * float(R) + 0.670114631 * float(G) + 0.064811243 * float(B)
-    return weight_val * PATCH_ROW_COEFFICIENTS[sky_density][row_number]
+    return weight_val * PATCH_ROW_COEFF[sky_density][row_number] * wea_duration / 1000
 
 
-def parse_mtx_data(data_str, sky_density=1):
+def parse_mtx_data(data_str, wea_duration, sky_density=1):
     """Parse a string of Radiance gendaymtx data to a list of one value per patch.
 
     This function handles the removing of the header and the conversion of the
@@ -134,6 +140,9 @@ def parse_mtx_data(data_str, sky_density=1):
 
     Args:
         data_str: The string that has been output by gendaymtx to stdout.
+        wea_duration: Number for the duration of the Wea in hours. This is used
+            to convert between the average value output by the command and the
+            cumulative value that is needed for all ladybug analyses.
         sky_density: Integer (either 1 or 2) for the density.
     """
     # split lines and remove the header, ground patch and last line break
@@ -145,7 +154,8 @@ def parse_mtx_data(data_str, sky_density=1):
     patch_counter = 0
     for i, row_patch_count in enumerate(PATCHES_PER_ROW[sky_density]):
         row_slice = patch_lines[patch_counter:patch_counter + row_patch_count]
-        irr_vals = (broadband_irradiance(row, i, sky_density) for row in row_slice)
+        irr_vals = (broadband_irradiance(row, i, wea_duration, sky_density)
+                    for row in row_slice)
         broadband_irr.extend(irr_vals)
         patch_counter += row_patch_count
     return broadband_irr
@@ -170,6 +180,7 @@ if all_required_inputs(ghenv.Component):
 
     # create the wea and write it to the default_epw_folder
     wea = Wea(_location, _direct_rad, _diffuse_rad)
+    wea_duration = len(wea) / wea.timestep
     wea_folder = _folder_ if _folder_ is not None else \
         os.path.join(lb_folders.default_epw_folder, 'sky_matrices')
     metd = _direct_rad.header.metadata
@@ -179,21 +190,21 @@ if all_required_inputs(ghenv.Component):
 
     # execute the Radiance gendaymtx command
     use_shell = True if os.name == 'nt' else False
-    # command for diffuse patches
-    cmds = [gendaymtx_exe, '-m', str(density), '-s', '-O1', '-A', wea_file]
-    process = subprocess.Popen(cmds, stdout=subprocess.PIPE, shell=use_shell)
-    stdout = process.communicate()
-    diff_data_str = stdout[0]
     # command for direct patches
     cmds = [gendaymtx_exe, '-m', str(density), '-d', '-O1', '-A', wea_file]
     process = subprocess.Popen(cmds, stdout=subprocess.PIPE, shell=use_shell)
     stdout = process.communicate()
     dir_data_str = stdout[0]
+    # command for diffuse patches
+    cmds = [gendaymtx_exe, '-m', str(density), '-s', '-O1', '-A', wea_file]
+    process = subprocess.Popen(cmds, stdout=subprocess.PIPE, shell=use_shell)
+    stdout = process.communicate()
+    diff_data_str = stdout[0]
 
     # parse the data into a single matrix
-    diff_vals = parse_mtx_data(diff_data_str, density)
-    dir_vals = parse_mtx_data(dir_data_str, density)
+    dir_vals = parse_mtx_data(dir_data_str, wea_duration, density)
+    diff_vals = parse_mtx_data(diff_data_str, wea_duration, density)
 
     # wrap everything together into an object to output from the component
-    mtx_data = (north_, diff_vals, dir_vals)
+    mtx_data = (north_, dir_vals, diff_vals)
     sky_mtx = objectify_output('Cumulative Sky Matrix', mtx_data)
