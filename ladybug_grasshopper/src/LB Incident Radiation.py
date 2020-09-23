@@ -99,7 +99,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB Incident Radiation"
 ghenv.Component.NickName = 'IncidentRadiation'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -176,7 +176,7 @@ if all_required_inputs(ghenv.Component):
 
         # create the mesh and legend outputs
         graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)
-        graphic.legend_parameters.title = 'kWh'
+        graphic.legend_parameters.title = 'kWh/m2'
         title = text_objects(
             'Incident Radiation', graphic.lower_title_location,
             graphic.legend_parameters.text_height * 1.5,
