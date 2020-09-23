@@ -40,7 +40,7 @@ Use this component to generate colors based on values and legend parameters.
 
 ghenv.Component.Name = 'LB Spatial Heatmap'
 ghenv.Component.NickName = 'Heatmap'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

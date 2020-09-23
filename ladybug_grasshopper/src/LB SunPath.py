@@ -31,8 +31,9 @@ analysis and shading design.
         solar_time_: A boolean to indicate if the input hours should be treated
              as solar time instead of standard or daylight time. (Default: False)
         _center_pt_: A point for the center of the sun path. (Default: (0, 0, 0))
-        _scale_: Input a number here to change the scale of the sun path.
-            The default is set to 1.
+        _scale_: A number to set the scale of the sun path. The default is 1,
+            which corresponds to a radius of 100 meters in the current Rhino
+            model's unit system.
         projection_: Optional text for the name of a projection to use from the sky
             dome hemisphere to the 2D plane. If None, a 3D sun path will be drawn
             instead of a 2D one. (Default: None) Choose from the following:
@@ -77,7 +78,7 @@ analysis and shading design.
         daily: A set of arcs that mark the path of the sun across the sky
             dome over the course of a day.
         compass: A set of circles, lines and text objects that mark the cardinal
-            directions in relation to the sun.
+            directions in relation to the sun path.
         legend: Geometry representing the legend for the input data_. Will be None
             if no _data is connected.
         title: A text object for the title of the sunpath.
@@ -91,7 +92,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '0.2.2'
+ghenv.Component.Message = '0.2.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
