@@ -59,7 +59,7 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
 ghenv.Component.Name = 'LB Cumulative Sky Matrix'
 ghenv.Component.NickName = 'SkyMatrix'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -76,6 +76,7 @@ except ImportError as e:
 try:
     from ladybug.wea import Wea
     from ladybug.viewsphere import view_sphere
+    from ladybug.dt import DateTime
     from ladybug.config import folders as lb_folders
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
@@ -87,7 +88,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
-# TODO: Remove dependency on honeybee + Radiance after genskymtx is in its own extension
+# TODO: Remove dependency on honeybee + Radiance after genskymtx is in its own LB extension
 try:
     from honeybee_radiance.config import folders as hb_folders
     rad_url = 'https://github.com/LBNL-ETA/Radiance/releases/tag/012cb178'
@@ -104,7 +105,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import honeybee_radiance:\n\t{}'.format(e))
 
 
-# constants for converting RGB values output by gendaymtx to broadband irradiance
+# constants for converting RGB values output by gendaymtx to broadband radiation
 PATCHES_PER_ROW = {
     1: view_sphere.TREGENZA_PATCHES_PER_ROW + (1,),
     2: view_sphere.REINHART_PATCHES_PER_ROW + (1,)
@@ -115,8 +116,12 @@ PATCH_ROW_COEFF = {
 }
 
 
-def broadband_irradiance(patch_row_str, row_number, wea_duration, sky_density=1):
-    """Parse a row of gendaymtx RGB patch data to a broadband irradiance value.
+def broadband_radiation(patch_row_str, row_number, wea_duration, sky_density=1):
+    """Parse a row of gendaymtx RGB patch data in W/sr/m2 to radiation in kWh/m2.
+
+    This includes aplying broadband weighting to the RGB bands, multiplication
+    by the steradians of each patch, and multiplying by the duration of time that
+    they sky matrix represents in hours.
 
     Args:
         patch_row_str: Text string for a single row of RGB patch data.
@@ -132,11 +137,11 @@ def broadband_irradiance(patch_row_str, row_number, wea_duration, sky_density=1)
 
 
 def parse_mtx_data(data_str, wea_duration, sky_density=1):
-    """Parse a string of Radiance gendaymtx data to a list of one value per patch.
+    """Parse a string of Radiance gendaymtx data to a list of radiation-per-patch.
 
     This function handles the removing of the header and the conversion of the
-    RGB values to single broadband irradiance. It also removes the first patch,
-    which is the ground and is not used by Ladybug.
+    RGB irradianc-=per-steraidian values to broadband radiation. It also removes
+    the first patch, which is the ground and is not used by Ladybug.
 
     Args:
         data_str: The string that has been output by gendaymtx to stdout.
@@ -149,12 +154,12 @@ def parse_mtx_data(data_str, wea_duration, sky_density=1):
     data_lines = data_str.split('\n')
     patch_lines = data_lines[9:-1]
 
-    # loop through the rows and convert the irradiance RGB values
+    # loop through the rows and convert the radiation RGB values
     broadband_irr = []
     patch_counter = 0
     for i, row_patch_count in enumerate(PATCHES_PER_ROW[sky_density]):
         row_slice = patch_lines[patch_counter:patch_counter + row_patch_count]
-        irr_vals = (broadband_irradiance(row, i, wea_duration, sky_density)
+        irr_vals = (broadband_radiation(row, i, wea_duration, sky_density)
                     for row in row_slice)
         broadband_irr.extend(irr_vals)
         patch_counter += row_patch_count
@@ -205,6 +210,15 @@ if all_required_inputs(ghenv.Component):
     dir_vals = parse_mtx_data(dir_data_str, wea_duration, density)
     diff_vals = parse_mtx_data(diff_data_str, wea_duration, density)
 
+    # collect sky metadata like the north, which will be used by other components
+    metadata = [north_]
+    if _hoys_:
+        metadata.extend([DateTime.from_hoy(h) for h in (_hoys_[0], _hoys_[-1])])
+    else:
+        metadata.extend([wea.analysis_period.st_time, wea.analysis_period.end_time])
+    for key, val in _direct_rad.header.metadata.items():
+        metadata.append('{} : {}'.format(key, val))
+
     # wrap everything together into an object to output from the component
-    mtx_data = (north_, dir_vals, diff_vals)
+    mtx_data = (metadata, dir_vals, diff_vals)
     sky_mtx = objectify_output('Cumulative Sky Matrix', mtx_data)

@@ -99,7 +99,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB Incident Radiation"
 ghenv.Component.NickName = 'IncidentRadiation'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -148,8 +148,8 @@ if all_required_inputs(ghenv.Component):
         total_sky_rad = [dir_rad + dif_rad for dir_rad, dif_rad in zip(mtx[1], mtx[2])]
         lb_vecs = view_sphere.tregenza_dome_vectors if len(total_sky_rad) == 145 \
             else view_sphere.reinhart_dome_vectors
-        if mtx[0] != 0:  # there is a north input for sky; rotate vectors
-            north_angle = math.radians(mtx[0])
+        if mtx[0][0] != 0:  # there is a north input for sky; rotate vectors
+            north_angle = math.radians(mtx[0][0])
             lb_vecs = [vec.rotate_xy(north_angle) for vec in lb_vecs]
         sky_vecs = [from_vector3d(vec) for vec in lb_vecs]
 
