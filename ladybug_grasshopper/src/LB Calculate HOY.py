@@ -8,7 +8,7 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Calculate hour of the year, day of the year, and datetime.
+Calculate hour of the year from month, day, hour, minute.
 -
 
     Args:
@@ -16,7 +16,7 @@ Calculate hour of the year, day of the year, and datetime.
         _day_: Integer for day (1-31).
         _hour_: Integer for hour (0-23).
         _minute_: Integer for minute (0-59).
-    
+
     Returns:
         hoy: Hour of the year.
         doy: Day of the year.
@@ -25,7 +25,7 @@ Calculate hour of the year, day of the year, and datetime.
 
 ghenv.Component.Name = 'LB Calculate HOY'
 ghenv.Component.NickName = 'HOY'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
