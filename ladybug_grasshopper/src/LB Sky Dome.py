@@ -43,20 +43,24 @@ dome, subdivided into patches with a radiation value for each patch.
             All vectors are unit vectors and point from the center towards each
             of the patches. They can be used to construct visualizations of the
             rays used to perform radiation analysis.
-        patch_angles: A list of values that sum to 2 * pi and correspond to the
-            unit-sphere area that each of the sky dome patches occupies
-            (aka. the solid angle in steradians). These can be used to
-            convert patch radiation values in kWh/m2 to patch radiance in
-            W/sr/m2. They can also be used more generally to acount for the
-            relative importance of each of the patch_vecs.
         patch_values: Radiation values for each of the sky patches in kWh/m2. This
             will be one list if show_comp_ is "False" and a list of 3 lists (aka.
             a Data Tree) for total, direct, diffuse if show_comp_ is "True".
+        mesh_values: Radiation values for each face of the dome mesh in kWh/m2. This
+            can be used to post-process the radiation data and then regenerate
+            the dome visualization using the mesh output from this component
+            and the "LB Spatial Heatmap" component. Examples of useful post-
+            processing include converting the units to something other than
+            kWh/m2, inverting the +/- sign of radiation values depending on
+            whether radiation is helpful or harmful to building thermal loads,
+            etc. This will be one list if show_comp_ is "False" and a list of
+            3 lists (aka. a Data Tree) for total, direct, diffuse if show_comp_
+            is "True".
 """
 
 ghenv.Component.Name = 'LB Sky Dome'
 ghenv.Component.NickName = 'SkyDome'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -103,7 +107,8 @@ def draw_dome(dome_data, center, dome_name, legend_par):
         dome_mesh: A colored mesh for the dome based on dome_data.
         dome_compass: A compass for the dome.
         dome_legend: A leend for the colored dome mesh.
-        dome_title: A title for the dome
+        dome_title: A title for the dome.
+        values: A list of radiation values that align with the dome_mesh faces.
     """
     # create the dome mesh and ensure patch values align with mesh faces
     if len(dome_data) == 145:  # tregenza sky
@@ -142,8 +147,9 @@ def draw_dome(dome_data, center, dome_name, legend_par):
         lb_mesh = Mesh3D(pts3d, lb_mesh.faces)
 
     # output the dome visualization, including legend and compass
-    min_pt = lb_mesh.min.move(Vector3D(0, -radius * 0.1, 0))
-    max_pt = lb_mesh.max.move(Vector3D(radius * 0.1, 0, 0))
+    move_fac = radius * 0.15
+    min_pt = lb_mesh.min.move(Vector3D(-move_fac, -move_fac, 0))
+    max_pt = lb_mesh.max.move(Vector3D(move_fac, move_fac, 0))
     graphic = GraphicContainer(values, min_pt, max_pt, legend_par)
     graphic.legend_parameters.title = 'kWh/m2'
     lb_mesh.colors = graphic.value_colors
@@ -162,7 +168,7 @@ def draw_dome(dome_data, center, dome_name, legend_par):
                               graphic.legend_parameters.text_height,
                               graphic.legend_parameters.font)
 
-    return dome_mesh, dome_compass, dome_legend, dome_title
+    return dome_mesh, dome_compass, dome_legend, dome_title, values
 
 
 if all_required_inputs(ghenv.Component):
@@ -182,42 +188,36 @@ if all_required_inputs(ghenv.Component):
     total = [dirr + difr for dirr, difr in zip(direct, diffuse)] # total radiation
 
     # override the legend default min and max to make sense for domes
-    l_par = legend_par_ if legend_par_ is not None else LegendParameters()
+    l_par = legend_par_.duplicate() if legend_par_ is not None else LegendParameters()
     if l_par.min is None:
         l_par.min = 0
     if l_par.max is None:
         l_par.max = max(total)
 
-    # output patch solid angles and patch mesh
-    if len(total) == 145:  # tregenza sky
-        patch_vecs_lb = view_sphere.tregenza_dome_vectors
-        angles = view_sphere.TREGENZA_COEFFICIENTS
-        patch_rows = view_sphere.TREGENZA_PATCHES_PER_ROW + (1,)
-    else:
-        patch_vecs_lb = view_sphere.reinhart_dome_vectors
-        angles = view_sphere.REINHART_COEFFICIENTS
-        patch_rows = view_sphere.REINHART_PATCHES_PER_ROW + (1,)
-    patch_angles = []
-    for ang, p_count in zip(angles, patch_rows):
-        patch_angles.extend([ang] * p_count)
+    # output patch patch vectors
+    patch_vecs_lb = view_sphere.tregenza_dome_vectors if len(total) == 145 \
+        else view_sphere.reinhart_dome_vectors
     patch_vecs = [from_vector3d(vec) for vec in patch_vecs_lb]
 
     # create the dome meshes
     if not show_comp_:  # only create the total dome mesh
-        mesh, compass, legend, title = draw_dome(total, center_pt3d, 'Total', l_par)
+        mesh, compass, legend, title, mesh_values = \
+            draw_dome(total, center_pt3d, 'Total', l_par)
         patch_values = total
     else:  # create domes for total, direct and diffuse
         # loop through the 3 radiation types and produce a dome
-        mesh, compass, legend, title = [], [], [], []
+        mesh, compass, legend, title, mesh_values = [], [], [], [], []
         rad_types = ('Total', 'Direct', 'Diffuse')
         rad_data = (total, direct, diffuse)
         for dome_i in range(3):
-            cent_pt = Point3D(center_pt3d.x + radius * 2.8 * dome_i,
+            cent_pt = Point3D(center_pt3d.x + radius * 3 * dome_i,
                               center_pt3d.y, center_pt3d.z)
-            dome_mesh, dome_compass, dome_legend, dome_title = draw_dome(
-                rad_data[dome_i], cent_pt, rad_types[dome_i], l_par)
+            dome_mesh, dome_compass, dome_legend, dome_title, dome_values = \
+                draw_dome(rad_data[dome_i], cent_pt, rad_types[dome_i], l_par)
             mesh.append(dome_mesh)
             compass.extend(dome_compass)
             legend.extend(dome_legend)
             title.append(dome_title)
+            mesh_values.append(dome_values)
         patch_values = list_to_data_tree(rad_data)
+        mesh_values = list_to_data_tree(mesh_values)
