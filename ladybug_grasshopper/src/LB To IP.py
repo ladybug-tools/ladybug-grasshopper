@@ -13,14 +13,14 @@ Convert a DataCollection to IP values.
 
     Args:
         _data_si: A DataCollection in SI units.
-    
+
     Returns:
         data_ip: The DataCollection in IP units.
 """
 
 ghenv.Component.Name = 'LB To IP'
 ghenv.Component.NickName = 'ToIP'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

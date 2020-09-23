@@ -69,7 +69,7 @@ Equivalent Temperature (PET) model should be used.
 
 ghenv.Component.Name = 'LB UTCI Comfort'
 ghenv.Component.NickName = 'UTCI'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.1.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

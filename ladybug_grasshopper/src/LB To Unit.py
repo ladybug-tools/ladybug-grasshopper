@@ -12,18 +12,20 @@ Convert a DataCollection to the input _to_unit.
 -
 
     Args:
-        _data: A DataCollection for which you want to convert units.
-        _to_unit: Text representing the unit that you would like to convert the
-            DataCollection to.
-    
+        _data: A DataCollection to be converted to different units.
+        to_unit_: Text representing the unit to convert the DataCollection to (eg. m2).
+            Connect the _data and see the all_unit output for a list of all
+            currently-supported units for a given collection. The default won't
+            perform any unit conversion on the output data.
+
     Returns:
         all_unit: A list of all possible units that the input _data can be converted to.
-        data: The converted DataCollection
+        data: The converted DataCollection.
 """
 
 ghenv.Component.Name = 'LB To Unit'
 ghenv.Component.NickName = 'ToUnit'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -43,5 +45,4 @@ if all_required_inputs(ghenv.Component):
     assert isinstance(_data, BaseCollection), \
         '_data must be a Data Collection. Got {}.'.format(type(_data))
     all_unit = _data.header.data_type.units
-    if _to_unit:
-        data = _data.to_unit(_to_unit)
+    data = _data.to_unit(to_unit_) if to_unit_ else _data

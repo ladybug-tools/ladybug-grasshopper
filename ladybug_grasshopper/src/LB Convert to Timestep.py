@@ -10,7 +10,7 @@
 """
 Convert a hourly Ladybug data collection to a continuous collection at a
 specific timestep.
--
+_
 This will be done either through linear interpolation or by culling out values
 that do not fit the timestep.  It can also be used to convert a discontinous
 data collection to a continuous one by linearly interpolating over holes in
@@ -19,19 +19,20 @@ the data set.
 
     Args:
         _data: A Ladybug Hourly DataCollection object.  This can be either
-            Continuous or discontinuous.
+            continuous or discontinuous.
         _timestep_: The timestep to which the data will be converted. If this
-            is higher than the input _data timestep, values will be linerarly
-            interpolated to the new timestep.  If it is lower, values that do
-            not fit the timestep will be culled out of the DataCollection.
-            Default is 1.
+            is higher than the input _data timestep, values will be
+            linerarly interpolated to the new timestep.  If it is lower,
+            values that do not fit the timestep will be removed from the
+            DataCollection. (Defaut: 1)
+
     Returns:
         data: A Continuous DataCollection at the input _timestep_.
 """
 
 ghenv.Component.Name = 'LB Convert to Timestep'
 ghenv.Component.NickName = 'ToStep'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

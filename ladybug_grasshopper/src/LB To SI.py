@@ -13,14 +13,14 @@ Convert a DataCollection to SI values.
 
     Args:
         _data_ip: A DataCollection in IP (or other) units.
-    
+
     Returns:
         data_si: The DataCollection in SI units.
 """
 
 ghenv.Component.Name = "LB To SI"
 ghenv.Component.NickName = 'ToSI'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '0.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

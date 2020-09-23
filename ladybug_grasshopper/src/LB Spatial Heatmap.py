@@ -43,7 +43,7 @@ this component using the "LB Generate Point Grid" component.
 
 ghenv.Component.Name = 'LB Spatial Heatmap'
 ghenv.Component.NickName = 'Heatmap'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.1.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

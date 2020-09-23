@@ -24,7 +24,7 @@ Get statitics of thermal comfort from a Ladybug Comfort Object.
 
 ghenv.Component.Name = 'LB Comfort Statistics'
 ghenv.Component.NickName = 'ComfStat'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

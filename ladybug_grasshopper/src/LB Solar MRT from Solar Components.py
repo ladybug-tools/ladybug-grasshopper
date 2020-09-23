@@ -18,16 +18,16 @@ radiant exchange.
 
     Args:
         _location: A Ladybug Location object.
+        _longwave_mrt: A single number or an hourly data collection with the long-wave
+            mean radiant temperature around the person in degrees C.
+            This includes the temperature of the ground and any other
+            surfaces between the person and their view to the sky.
+            Typically, air temperature is used when such surface
+            temperatures are unknown.
         _dir_horiz_rad: Hourly Data Collection with the direct horizontal solar
             irradiance in W/m2.
         _diff_horiz_rad: Hourly Data Collection with diffuse horizontal solar
             irradiance in W/m2.
-        _longwave_mrt: A single number or an hourly data collection with the
-            long wave mean radiant temperature around the person in degrees C.
-            This includes the temperature of the ground and any other surfaces
-            between the person and their view to the sky.
-            Typically, dry bulb temperature is used when such surface
-            temperatures are unknown.
         fract_body_exp_: A single number between 0 and 1 or a data collection
             representing the fraction of the body exposed to direct sunlight.
             Note that this does not include the body’s self-shading; only the
@@ -39,6 +39,7 @@ radiant exchange.
         _solar_body_par_: Optional Solar Body Parameter object to account for
             properties of the human geometry.
         _run: Set to True to run the component.
+
     Returns:
         report: Reports, errors, warnings, etc.
         erf: Data collection of effective radiant field (ERF) in W/m2.
@@ -48,7 +49,7 @@ radiant exchange.
 
 ghenv.Component.Name = 'LB Solar MRT from Solar Components'
 ghenv.Component.NickName = 'ComponentSolarMRT'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

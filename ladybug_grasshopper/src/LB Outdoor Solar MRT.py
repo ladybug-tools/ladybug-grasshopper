@@ -18,23 +18,23 @@ radiant exchange.
 -
 
     Args:
-        _location: A Ladybug Location object.
+        _location: A Ladybug Location object, used to determine the altitude and
+            azimuth of the sun.
+        _surface_temp: A single number or an hourly data collection with the temperature
+            of surfaces around the person in degrees C. This includes the
+            ground and any other surfaces blocking the view to the sky.
+            Typically, outdoor dry bulb temperature is used when such surface
+            temperatures are unknown.
         _dir_norm_rad: Hourly Data Collection with the direct normal solar
             irradiance in W/m2.
         _diff_horiz_rad: Hourly Data Collection with diffuse horizontal solar
             irradiance in W/m2.
         _horiz_infrared: Hourly Data Collection with the horizontal infrared
             radiation intensity from the sky in W/m2.
-        _surface_temp: A single number or an hourly data collection with the
-            temperature of surfaces around the person in degrees C. This includes
-            the ground and any other surfaces blocking the view to the sky.
-            Typically, outdoor dry bulb temperature is used when such surface
-            temperatures are unknown.
-        fract_body_exp_: A single number between 0 and 1 or a data collection
-            representing the fraction of the body exposed to direct sunlight.
-            Note that this does not include the body’s self-shading; only the
-            shading from surroundings.
-            Default is 1 for a person standing in an open area.
+        fract_body_exp_: A single number between 0 and 1 or a data collection for
+            the fraction of the body exposed to direct sunlight. Note that
+            this does NOT include the body’s self-shading. Only the shading
+            from furniture and surroundings. (Default: 1 for an open area).
         sky_exposure_: A single number between 0 and 1 or a data collection
             representing the fraction of the sky vault in occupant’s view.
             Default is 1 for a person standing in an open area.
@@ -58,7 +58,7 @@ radiant exchange.
 
 ghenv.Component.Name = 'LB Outdoor Solar MRT'
 ghenv.Component.NickName = 'OutdoorSolarMRT'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '6'

@@ -24,13 +24,13 @@ comfort model should be used.
             Default is a very low speed of 0.1 m/s.
         _rel_humid: Data Collection or individual value of relative humidity in %.
         _met_rate_: Data Collection or individual value of metabolic rate in met.
-            .
+            _
             1 met = Metabolic rate of a resting seated person
             1.2 met = Metabolic rate of a standing person
-            2 met = Metabolic rate of a wlaking person
+            2.4 met = Metabolic rate of a person walking at ~1 m/s (2 mph)
             Default is set to 1.1 met for seated, typing.
         _clothing_: Data Collection or individual value of clothing insulation in clo.
-            .
+            _
             1 clo = Three-piece suit
             0.5 clo = Shorts + T-shirt
             0 clo = No clothing
@@ -40,13 +40,14 @@ comfort model should be used.
             will assume a PPD threshold of 10%, no absolute humidity constraints
             and a still air threshold of 0.1 m/s.
         _run: Set to True to run the component.
+
     Returns:
         report: Reports, errors, warnings, etc.
         pmv: Predicted Mean Vote (PMV).
-            .
+            _
             PMV is a seven-point scale from cold (-3) to hot (+3) that was used
             in comfort surveys of P.O. Fanger.
-            .
+            _
             Each interger value of the scale indicates the following:
                 -3 = Cold
                 -2 = Cool
@@ -56,13 +57,13 @@ comfort model should be used.
                 +2 = Warm
                 +3 = Hot
         ppd: Percentage of People Dissatisfied (PPD).
-            .
+            _
             Specifically, this is defined by the percent of people who would have
             a PMV beyond acceptable thresholds (typically <-0.5 and >+0.5).
             Note that, with the PMV model, the best possible PPD achievable is 5%
             and most standards aim to have a PPD below 10%.
         set: Standard Effective Temperature (SET) in Celcius.
-            .
+            _
             These temperatures describe what the given input conditions "feel like"
             in relation to a standard environment of 50% relative humidity,
             <0.1 m/s average air speed, and mean radiant temperature equal to
@@ -72,25 +73,25 @@ comfort model should be used.
             actual environment.
         comfort: Integers noting whether the input conditions are acceptable
             according to the assigned comfort_parameter.
-            .
+            _
             Values are one of the following:
                 0 = uncomfortable
                 1 = comfortable
         condition: Integers noting the thermal status of a subject according to
             the assigned comfort_parameter.
-            .
+            _
             Values are one of the following:
                 -1 = cold
                  0 = netural
                 +1 = hot
-            .
+            _
             Additionally, if pmv_par_ are connected with humidity ratio lmits,
             the following values may also be included:
                 -2 = too dry (but thermally neutral)
                 +2 = too humid (but thermally neutral)
         heat_loss: A list of 6 terms for heat loss from the human energy
             balance calculation that underlies PMV. Valeus are in W.
-            .
+            _
             The terms are ordered as follows:
                 - Conduction
                 - Sweating
@@ -105,7 +106,7 @@ comfort model should be used.
 
 ghenv.Component.Name = 'LB PMV Comfort'
 ghenv.Component.NickName = 'PMV'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
