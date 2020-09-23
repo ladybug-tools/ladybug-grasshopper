@@ -8,7 +8,10 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Use this component to generate colors based on values and legend parameters.
+Color a mesh as a heatmap using values that align with the mesh faces or vertices.
+_
+Note that any brep can be converted to a gridded mesh that can be consumed by 
+this component using the "LB Generate Point Grid" component.
 -
 
     Args:
@@ -28,7 +31,7 @@ Use this component to generate colors based on values and legend parameters.
         global_title_: A text string to label the entire mesh.  It will be
             displayed in the lower left of the result mesh. Default is for no
             title.
-    
+
     Returns:
         mesh: The input _mesh that has been colored with results.
         legend: Geometry representing the legend for the mesh.
@@ -40,7 +43,7 @@ Use this component to generate colors based on values and legend parameters.
 
 ghenv.Component.Name = 'LB Spatial Heatmap'
 ghenv.Component.NickName = 'Heatmap'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
