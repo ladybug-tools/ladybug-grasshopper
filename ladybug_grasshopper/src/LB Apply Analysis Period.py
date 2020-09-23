@@ -13,15 +13,15 @@ Apply an analysis period to a data collection.
 
     Args:
         _data: A Ladybug data collection object.
-        _period: A Ladybug analysis period.
-    
+        _period: A Ladybug analysis period from the "LB AnalysisPeriod" component.
+
     Returns:
         data: The data collection with the analysis period applied to it.
 """
 
 ghenv.Component.Name = 'LB Apply Analysis Period'
 ghenv.Component.NickName = 'ApplyPer'
-ghenv.Component.Message = '0.1.2'
+ghenv.Component.Message = '0.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

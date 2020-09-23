@@ -9,12 +9,12 @@
 
 """
 Perform time interval operations on an hourly data collection.
-.
+_
 This includes operations like:
 - Average
 - Total
 - Percentile
-.
+_
 These actions can be performed over the following time intervals:
 - Daily
 - Monthly
@@ -25,21 +25,22 @@ These actions can be performed over the following time intervals:
         _data: A Ladybug data collection object.
         _operation_: Text indicating the operation that should be performed on
             the input hourly data.
-            .
+            _
             Such text must be one of the following:
                 - average
                 - total
                 - [a number between 0 and 100]
-            .
+            _
             In the case of the last option, the number will be interpreted as
             a percentile of the data over the time period. For example,
             inputting 75 will return the 75th percentile value of each
             day/month/hour, inputting 0 will give the minimum value of each 
             day/month/hour and inputting 100 will give the max value of each
             day/month/hour.
-            .
+            _
             Default is 'average' if the input data type is not cumulative and
             'total' if the data type is not cumulative.
+
     Returns:
         daily: Daily data collection derived from the input _data and _operation_.
         monthly: Monthly data collection derived from the input _data and _operation_.
@@ -49,7 +50,7 @@ These actions can be performed over the following time intervals:
 
 ghenv.Component.Name = 'LB Time Interval Operation'
 ghenv.Component.NickName = 'TimeOp'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.1.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
