@@ -1,0 +1,85 @@
+{
+  "version": "0.1.4", 
+  "nickname": "UTCI", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "utci", 
+        "description": "Universal Thermal Climate Index (UTCI) in Celcius.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "comfort", 
+        "description": "Integers noting whether the input conditions result in no\nthermal stress.\n.\nValues are one of the following:\n0 = thermal stress\n1 = no thremal stress", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "condition", 
+        "description": "Integers noting the thermal status of a subject.\n.\nValues are one of the following:\n-1 = cold\n0 = netural\n+1 = hot", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "category", 
+        "description": "Integers noting the category that the UTCI conditions fall\nunder on an 11-point scale.\n.\nValues are one of the following:\n-5 = Extreme Cold Stress       (UTCI < -40)\n-4 = Very Strong Cold Stress   (-40 <= UTCI < -27)\n-3 = Strong Cold Stress        (-27 <= UTCI < -13)\n-2 = Moderate Cold Stress      (-12 <= UTCI < 0)\n-1 = Slight Cold Stress        (0 <= UTCI < 9)\n0 = No Thermal Stress         (9 <= UTCI < 26)\n+1 = Slight Heat Stress        (26 <= UTCI < 28)\n+2 = Moderate Heat Stress      (28 <= UTCI < 32)\n+3 = Strong Heat Stress        (32 <= UTCI < 38)\n+4 = Very Strong Heat Stress   (38 <= UTCI < 46)\n+5 = Extreme Heat Stress       (46 < UTCI)", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "comf_obj", 
+        "description": "A Python object containing all inputs and results of the\nanalysis.  This can be plugged into components like the \"Comfort\nStatistics\" component to get further information.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_air_temp", 
+      "description": "Data Collection or individual value of air temperature in C.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_mrt_", 
+      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp..", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_wind_vel_", 
+      "description": "Data Collection or individual of air speed values in m/s.\nDefault is a low speed of 0.5 m/s, which is the lowest input\nspeed that is recommended for the UTCI model.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_rel_humid", 
+      "description": "Data Collection or individual value of relative humidity in %.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_run", 
+      "description": "Set to True to run the component.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datatype.temperature import Temperature\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_comfort.collection.utci import UTCI\n    from ladybug_comfort.parameter.utci import UTCIParameter\n    from ladybug_comfort.utci import universal_thermal_climate_index\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef extract_collections(input_list):\n    \"\"\"Process inputs into collections and floats.\"\"\"\n    defaults = [None, _air_temp, 0.5, None]\n    data_colls = []\n    for i, input in enumerate(input_list):\n        if input is None:\n            input_list[i] = defaults[i]\n        elif isinstance(input, BaseCollection):\n            data_colls.append(input)\n        else:\n            try:\n                input_list[i] = float(input)\n            except ValueError as e:\n                raise TypeError('input {} is not valid. Expected float or '\n                                'DataCollection. Got {}'.format(input, type(input)))\n    return input_list, data_colls\n\nif all_required_inputs(ghenv.Component) and _run is True:\n    # Process inputs and assign defaults.\n    input_list = [_air_temp, _mrt_, _wind_vel_, _rel_humid]\n    input, data_colls = extract_collections(input_list)\n    \n    if data_colls == []:\n        # The inputs are all individual values.\n        utci = universal_thermal_climate_index(\n            input[0], float(input[1]), input[2], input[3])\n        utci_par = UTCIParameter()\n        comfort = utci_par.is_comfortable(utci)\n        condition = utci_par.thermal_condition(utci)\n        category = utci_par.thermal_condition_eleven_point(utci)\n    else:\n        # The inputs include Data Collections.\n        if not isinstance(_air_temp, BaseCollection):\n            _air_temp = data_colls[0].get_aligned_collection(\n                float(_air_temp), Temperature(), 'C')\n        \n        comf_obj = UTCI(_air_temp, _rel_humid, _mrt_, _wind_vel_)\n        utci = comf_obj.universal_thermal_climate_index\n        comfort = comf_obj.is_comfortable\n        condition = comf_obj.thermal_condition\n        category = comf_obj.thermal_condition_eleven_point", 
+  "category": "Ladybug", 
+  "name": "LB UTCI Comfort", 
+  "description": "Calculate Universal Thermal Climate Index (UTCI).\n-\nUTCI is a thermal comfort model strictly for the outdoors.\nIt is an interational standard for outdoor temperature sensation\n(aka. \"feels-like\" temperature) and is the most common of such\n\"feels-like\" temperature metrics used by meteorologists.\n-\nWhile UTCI is valid in all climates, seasons, and scales, it assumes\nthat human subjects are walking and that they naturally adapt their\nclothing with the outdoor temperature.\nFor outdoor situations that do not fit these criteria, the Physiological\nEquivalent Temperature (PET) model should be used.\n-"
+}

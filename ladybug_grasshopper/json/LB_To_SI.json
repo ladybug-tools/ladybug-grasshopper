@@ -1,0 +1,29 @@
+{
+  "version": "0.1.1", 
+  "nickname": "ToSI", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data_si", 
+        "description": "The DataCollection in SI units.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data_ip", 
+      "description": "A DataCollection in IP (or other) units.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_data_ip, BaseCollection), \\\n        '_data_ip must be a Data Collection. Got {}.'.format(type(_data_ip))\n    data_si = _data_ip.to_si()", 
+  "category": "Ladybug", 
+  "name": "LB To SI", 
+  "description": "Convert a DataCollection to SI values.\n-"
+}

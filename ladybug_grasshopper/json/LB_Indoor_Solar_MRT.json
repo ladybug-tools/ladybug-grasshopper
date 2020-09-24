@@ -1,0 +1,106 @@
+{
+  "version": "0.1.3", 
+  "nickname": "IndoorSolarMRT", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "erf", 
+        "description": "Data collection of effective radiant field (ERF) in W/m2.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "dmrt", 
+        "description": "Data collection of mean radiant temperature delta in C.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "mrt", 
+        "description": "Data collection of mean radiant temperature in C.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_location", 
+      "description": "A Ladybug Location object, used to determine the altitude and\nazimuth of the sun.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_longwave_mrt", 
+      "description": "A single number or an hourly data collection with the long-wave\nmean radiant temperature around the person in degrees C.\nThis includes the temperature of the ground and any other\nsurfaces between the person and their view to the sky.\nTypically, indoor air temperature is used when such surface\ntemperatures are unknown.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_dir_norm_rad", 
+      "description": "Hourly Data Collection with the direct normal solar\nirradiance in W/m2.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_diff_horiz_rad", 
+      "description": "Hourly Data Collection with diffuse horizontal solar\nirradiance in W/m2.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "fract_body_exp_", 
+      "description": "A single number between 0 and 1 or a data collection for\nthe fraction of the body exposed to direct sunlight. Note that\nthis does NOT include the body\u2019s self-shading. Only shading from\nfurniture and surroundings. (Default: 1 for an fully-glazed area).", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "sky_exposure_", 
+      "description": "A single number between 0 and 1 or a data collection\nrepresenting the fraction of the sky vault in occupant\u2019s view.\nDefault is 1 for a person standing in an open area.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_ground_ref_", 
+      "description": "A single number between 0 and 1 or a data collection\nthat represents the reflectance of the floor. Default is for 0.25\nwhich is characteristic of concrete.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_window_trans_", 
+      "description": "A Data Collection or number between 0 and 1 that represents the\nbroadband solar transmittance of the window through which the\nsun is coming. Such values tend to be slightly less than the\nSHGC. Values might be as low as 0.2 and could be as high as 0.85\nfor a single pane of glass. Default is 0.4 assuming a double pane\nwindow with a relatively mild low-e coating.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_solar_body_par_", 
+      "description": "Optional Solar Body Parameter object to account for\nproperties of the human geometry.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_run", 
+      "description": "Set to True to run the component.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug_comfort.collection.solarcal import IndoorSolarCal\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _run is True:\n    solar_mrt_obj = IndoorSolarCal(_location, _dir_norm_rad,\n                                   _diff_horiz_rad, _longwave_mrt,\n                                   fract_body_exp_, sky_exposure_,\n                                   _ground_ref_, _window_trans_, _solar_body_par_)\n\n    erf = solar_mrt_obj.effective_radiant_field\n    dmrt = solar_mrt_obj.mrt_delta\n    mrt = solar_mrt_obj.mean_radiant_temperature", 
+  "category": "Ladybug", 
+  "name": "LB Indoor Solar MRT", 
+  "description": "Calculate Mean Radiant Temperature (MRT) as a result of outdoor shortwave\nsolar shining directly onto people as well as longwave radiant exchange\nwith the sky.\n-\nThis component uses the SolarCal model of ASHRAE-55 to estimate the effects\nof shortwave solar and a simple sky exposure method to determine longwave\nradiant exchange.\n-"
+}

@@ -1,0 +1,36 @@
+{
+  "version": "0.1.1", 
+  "nickname": "ImportDDY", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "location", 
+        "description": "A Ladybug Location object describing the location data in the DDY file.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "design_days", 
+        "description": "A list of DesignDay objects representing the design days\ncontained within the ddy file.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_ddy_file", 
+      "description": "A .ddy file path on your system as a string.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "0 :: Import", 
+  "code": "\ntry:\n    from ladybug.ddy import DDY\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    ddy_obj = DDY.from_ddy_file(_ddy_file)\n    location = ddy_obj.location\n    design_days = ddy_obj.design_days\n", 
+  "category": "Ladybug", 
+  "name": "LB Import DDY", 
+  "description": "Import data from a standard .ddy file.\n-"
+}

@@ -1,0 +1,127 @@
+{
+  "version": "0.1.2", 
+  "nickname": "MonthlyChart", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data_mesh", 
+        "description": "A list of colored meshes that represent the different input data.\nThese meshes will resemble a bar chart in the case of monthly or\ndaily data and will resemble a band between two ranges for hourly\nand sub-hourly data. Multiple lists of meshes will be output for\nseveral input data streams.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "data_lines", 
+        "description": "A list of polylines that represent the different input data.\nThese will represent the average at each hour for hourly input data.\nMultiple lists of polylines will be output for several input\ndata streams.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "legend", 
+        "description": "Geometry representing the legend for the chart, noting which\ncolors correspond to which input data.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "borders", 
+        "description": "A list of lines and polylines representing the axes and intervals\nof the chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "labels", 
+        "description": "A list of text objects that label the borders with month name\nand the intervals of the Y-axis.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "y_title", 
+        "description": "A text oject for the Y-axis title.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "title", 
+        "description": "A text object for the global_title.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_data", 
+      "description": "Data collections (eg. HourlyCollection, MonthlyCollection, or\nDailyCollection), which will be used to generate the monthly chart.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_base_pt_", 
+      "description": "An optional Point3D to be used as a starting point to generate\nthe geometry of the chart (Default: (0, 0, 0)).", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_x_dim_", 
+      "description": "An optional number to set the X dimension of each month of the\nchart. (Default: 10 meters).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_y_dim_", 
+      "description": "An optional number to set the Y dimension of the entire\nchart (Default: 40 meters).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "stack_", 
+      "description": "Boolean to note whether multiple connected monthly or daily input\n_data with the same units should be stacked on top of each other.\nOtherwise, all bars for monthly/daily data will be placed next to\neach other.  (Default: False).", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "percentile_", 
+      "description": "An optional number between 0 and 50 to be used for the percentile\ndifference from the mean that hourly data meshes display at. For example,\nusing 34 will generate hourly data meshes with a range of one standard\ndeviation from the mean. Note that this input only has significance when\nthe input data collections are hourly. (Default: 34)", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "global_title_", 
+      "description": "A text string to label the entire entire chart.  It will be\ndisplayed in the lower left of the output chart.  The default will\ndisplay the metadata of the input _data.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "y_axis_title_", 
+      "description": "A text string to label the Y-axis of the chart.  This can\nalso be a list of 2 Y-axis titles if there are two different types\nof data connected to _data and there are two axes labels on either\nside of the chart.  The default will display the data type and\nunits of the first (and possibly the second) data collection\nconnected to _data.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "legend_par_", 
+      "description": "An optional LegendParameter object to change the display\nof the chart (Default: None).", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "2 :: Visualize Data", 
+  "code": "\ntry:\n    from ladybug.monthlychart import MonthlyChart\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Point2D\n    from ladybug_geometry.geometry3d.pointvector import Point3D\n    from ladybug_geometry.geometry3d.plane import Plane\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.config import tolerance\n    from ladybug_{{cad}}.togeometry import to_point2d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_mesh2d, \\\n        from_polyline2d, from_linesegment2d\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.fromobjects import legend_objects\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # set default values for the chart dimensions\n    z_val = _base_pt_.Z if _base_pt_ is not None else 0\n    z_val_tol = z_val + tolerance\n    _base_pt_ = to_point2d(_base_pt_) if _base_pt_ is not None else Point2D()\n    _x_dim_ = _x_dim_ if _x_dim_ is not None else 10.0 / conversion_to_meters()\n    _y_dim_ = _y_dim_ if _y_dim_ is not None else 40.0 / conversion_to_meters()\n    stack_ = stack_ if stack_ is not None else False\n    percentile_ = percentile_ if percentile_ is not None else 34.0\n    lpar = legend_par_[0] if len(legend_par_) != 0 else None\n\n    # create the monthly chart object and get the main pieces of geometry\n    month_chart = MonthlyChart(_data, lpar, _base_pt_, _x_dim_, _y_dim_,\n                               stack_, percentile_)\n    if len(legend_par_) > 1:\n        if legend_par_[1].min is not None:\n            month_chart.set_minimum_by_index(legend_par_[1].min, 1)\n        if legend_par_[1].max is not None:\n            month_chart.set_maximum_by_index(legend_par_[1].max, 1)\n\n    #  get the main pieces of geometry\n    d_meshes = month_chart.data_meshes\n    if d_meshes is not None:\n        data_mesh = [from_mesh2d(msh, z_val_tol) for msh in d_meshes]\n    d_lines = month_chart.data_polylines\n    if d_lines is not None:\n        data_lines = [from_polyline2d(lin, z_val_tol) for lin in d_lines]\n    borders = [from_polyline2d(month_chart.chart_border, z_val)] + \\\n            [from_linesegment2d(line, z_val) for line in month_chart.y_axis_lines] + \\\n            [from_linesegment2d(line, z_val_tol) for line in month_chart.month_lines]\n    legend = legend_objects(month_chart.legend)\n\n    # process all of the text-related outputs\n    title_txt = month_chart.title_text if global_title_ is None else global_title_\n    txt_hgt = month_chart.legend_parameters.text_height\n    font = month_chart.legend_parameters.font\n    title = text_objects(title_txt, month_chart.lower_title_location, txt_hgt, font)\n\n    # process the first y axis\n    y1_txt = month_chart.y_axis_title_text1 if len(y_axis_title_) == 0 else y_axis_title_[0]\n    y_title = text_objects(y1_txt, month_chart.y_axis_title_location1, txt_hgt, font)\n    label1 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_hgt, font, 1, 0)\n              for txt, pt in zip(month_chart.month_labels, month_chart.month_label_points)]\n    label2 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_hgt, font, 2, 3)\n              for txt, pt in zip(month_chart.y_axis_labels1, month_chart.y_axis_label_points1)]\n    labels = label1 + label2\n\n    # process the second y axis if it exists\n    if month_chart.y_axis_title_text2 is not None:\n        y2_txt = month_chart.y_axis_title_text2 if len(y_axis_title_) <= 1 else y_axis_title_[1]\n        y_title2 = text_objects(y2_txt, month_chart.y_axis_title_location2, txt_hgt, font)\n        y_title = [y_title, y_title2]\n        label3 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_hgt, font, 0, 3)\n                 for txt, pt in zip(month_chart.y_axis_labels2, month_chart.y_axis_label_points2)]\n        labels = labels + label3\n", 
+  "category": "Ladybug", 
+  "name": "LB Monthly Chart", 
+  "description": "Create a chart in the Rhino scene with data organized by month.\n_\nData will display as a bar chart if the input data is monthly or daily. If the\ndata is hourly or sub-hourly, it will be plotted with lines and/or a colored\nmesh that shows the range of the data within specific percentiles.\n-"
+}

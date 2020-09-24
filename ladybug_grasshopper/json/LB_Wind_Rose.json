@@ -1,0 +1,176 @@
+{
+  "version": "0.2.5", 
+  "nickname": "WindRose", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "mesh", 
+        "description": "A colored mesh representing the wind rose derived from the input data.\nMultiple meshes will be output for several data collections are input.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "compass", 
+        "description": "A set of circles, lines and text objects that mark the cardinal\ndirections in relation to the wind rose.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "orient_line", 
+        "description": "Line geometries representing the edges (or \"spokes\") of the wind\nrose directions.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "freq_line", 
+        "description": "Polygon geometries representing the frequency intervals of the wind\nrose.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "legend", 
+        "description": "Geometry representing the legend for the wind rose.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "title", 
+        "description": "A text object for the global_title.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "prevailing", 
+        "description": "The predominant direction of the outpt wind rose in clockwise\ndegrees from north. 0 is North, 90 is East, 180 is South, 270 is West.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "frequency", 
+        "description": "A list of integers for the number of values associated with\neach wind direction.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "avg_val", 
+        "description": "A list of average _data values with one value for each wind direction.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "The input _data after it has gone through any of the statement or\nperiod operations input to this component.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "north_", 
+      "description": "An optional number between -360 and 360 for the counterclockwise\ndifference between the North and the positive Y-axis in degrees. 90 is West\nand 270 is East. This can also be Vector for the direction to North", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_data", 
+      "description": "A HourlyContinuousCollection or HourlyDiscontinuousCollection of\nvalues corresponding to the wind directions, which is \"binned\" by\nthe direction intervals. This input usually consists of wind speed\nvalues, but is not limited to this data type. It can also be a list\nof data collections in which case multiple wind roses will be output.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_wind_direction", 
+      "description": "A HourlyContinuousCollection or HourlyDiscontinuousCollection\nof wind directions which will be used to \"bin\" the _data items for the\nwindrose.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_dir_count_", 
+      "description": "Number that determines the number of directions to the wind rose\nwill display. The number of directions must be greater then three to plot\nthe wind rose (Default: 16).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_center_pt_", 
+      "description": "Point3D to be used as a starting point to generate the geometry of\nthe plot (Default: (0, 0, 0)).", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_show_calmrose_", 
+      "description": "A boolean to indicate if the wind rose displays a calm rose. The\ncalm rose is a radial plot in the center of the wind rose with a radius\ncorresponding to the total zero values divided by the number of\ndirections. This allows the wind rose to represent zero values\nfrom _data even though such values don't have any direction\nassociated with them. (Default: False).", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_show_freq_", 
+      "description": "A boolean to show the frequency of _data data values in the\nwind direction bins. The frequency lines represent constant intervals\nin time while the color illustrates the average _data data values\nassociated with each interval. The number of frequency lines with\nsimilar colors therefore indicate a higher frequency of that\nvalue. (Default: True)", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_freq_dist_", 
+      "description": "The distance for the frequency interval in model units. If \n_show_calmrose is True, then the initial frequency interval corresponds\nto the number of calm hours in the data collection, which may not\nalign with this _freq_dist (Default: 5 meters)", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_freq_hours_", 
+      "description": "The number of hours in each frequency interval (Default: 50).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_max_freq_lines_", 
+      "description": "A number representing the maximum frequency intervals in\nthe rose, which determines the maximum amount of hours represented by the\noutermost ring of the windrose. Specifically, this number multiplied by the\n_freq_hours_ parameter will equal the maximum hours in that outermost\nring. By default, this value is determined by the wind direction with the\nlargest number of hours (the highest frequency) but you may want to change\nthis if you have several wind roses that you want to compare to each other.\nFor example, if you have wind roses for different months or seasons, which\neach have different maximum frequencies.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "legend_par_", 
+      "description": "An optional LegendParameter object to change the display of the\nWindRose plot. The number of segments in the legend determines the number of\nfrequency intervals in the wind rose. If nothing is provided, a default\nLegendParameter object is computed using values from the wind data with\n11 segments (Default: None).", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "statement_", 
+      "description": "A conditional statement as a string (e.g. a > 25) for\nthe _data and _wind_direction inputs.\n.\nThe variable of the first collection input to _data should always\nbe named 'a' (without quotations), the variable of the second list\nshould be named 'b', and so on. The wind direction is always the\nlast variable, though most statements won't have a need for it.\n.\nFor example, if three data collections are connected to _data\nand the following statement is applied:\n'18 < a < 26 and b < 80 and c > 2'\nThe resulting collections will only include values where the first\ndata collection is between 18 and 26, the second collection is less\nthan 80 and the third collection is greater than 2.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "period_", 
+      "description": "An optional Ladybug analysis period to be applied to all of\nthe input data.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "2 :: Visualize Data", 
+  "code": "\nimport math\n\ntry:\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.windrose import WindRose\n    from ladybug.datatype.speed import Speed\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D\n    from ladybug_geometry.geometry3d.pointvector import Point3D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.togeometry import to_point3d, to_vector2d\n    from ladybug_{{cad}}.fromgeometry import from_mesh2d, from_linesegment2d, \\\n        from_polygon2d\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.fromobjects import legend_objects, compass_objects\n    from ladybug_{{cad}}.{{plugin}} import \\\n        all_required_inputs, list_to_data_tree, data_tree_to_list\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef title_text(data_col):\n    \"\"\"Get a text string for the title of the windrose.\"\"\"\n    title_array = ['{} ({})'.format(data_col.header.data_type,\n                                    data_col.header.unit)]\n    for key, val in data_col.header.metadata.items():\n        title_array.append('{}: {}'.format(key, val))\n    title_array.append('period: {}'.format(data_col.header.analysis_period))\n    return '\\n'.join(title_array)\n\n\nif all_required_inputs(ghenv.Component):\n    # Apply any analysis periods and conditional statement to the input collections\n    if period_ is not None:\n        _data = [dat.filter_by_analysis_period(period_) for dat in _data]\n        _wind_direction = _wind_direction.filter_by_analysis_period(period_)\n\n    if statement_ is not None and statement_.strip() != \"\":\n        _fdata = HourlyContinuousCollection.filter_collections_by_statement(\n            _data + [_wind_direction], statement_)\n        _data = _fdata[:-1]\n        _wind_direction = _fdata[-1]\n\n    # filter zero speed values out of collections if speed is input\n    pattern = []\n    filt_wind_dir = _wind_direction\n    for dat in _data:\n        if isinstance(dat.header.data_type, Speed):\n            for val in dat.values:\n                pat = True if val > 1e-10 else False\n                pattern.append(pat)\n            break\n    if len(pattern) != 0:\n        for i, dat in enumerate(_data):\n            if not isinstance(dat.header.data_type, Speed):\n                _data[i] = dat.filter_by_pattern(pattern)\n        filt_wind_dir = _wind_direction.filter_by_pattern(pattern)\n\n    # set defaults and check errors in dir_count and north input\n    if _dir_count_ is None:\n        _dir_count_ = 16\n    assert _dir_count_ > 2, 'The number of directions must be greater then three to ' \\\n        'plot the wind rose. Got: {}'.format(_dir_count_)\n\n    if north_ is not None:  # process the north_\n        try:\n            north_ = math.degrees(to_vector2d(north_).angle_clockwise(Vector2D(0, 1)))\n        except AttributeError:  # north angle instead of vector\n            north_ = float(north_)\n            assert -360.0 <= north_ <= 360.0, 'The north orientation must be greater ' \\\n                'then -360 and less then 360 to plot the wind rose. ' \\\n                'Got: {}'.format(north_)\n    else:\n        north_ = 0.0\n\n    # set default values for the chart dimensions\n    _center_pt_ = to_point3d(_center_pt_) if _center_pt_ is not None else Point3D()\n    center_pt_2d = Point2D(_center_pt_.x, _center_pt_.y)\n\n    # set defaults frequency hours and distance so chart is same scale as other LB plots\n    if _freq_hours_ is None:\n        _freq_hours_ = 50.0\n    if _freq_dist_ is None:\n        _freq_dist_ = 5.0 / conversion_to_meters()\n\n    # set default show_freq and _show_calmrose_\n    _show_calmrose_ = False if _show_calmrose_ is None else _show_calmrose_\n    _show_freq_ = True if _show_freq_ is None else _show_freq_\n\n    # set up empty lists of objects to be filled\n    all_wind_avg_val = []\n    all_wind_frequency = []\n    all_mesh = []\n    all_compass = []\n    all_orient_line = []\n    all_freq_line = []\n    all_legends = []\n    all_title = []\n\n    # Calculate _max_freq_lines_ if it's not already set, to use to\n    # determine spacing for multiple plots.\n    if len(_data) > 1 and _max_freq_lines_ is None:\n        max_freqs = []\n        for i, _data_item in enumerate(_data):\n            win_dir = _wind_direction if isinstance(_data_item.header.data_type, Speed) \\\n                else filt_wind_dir\n            w = WindRose(win_dir, _data_item, _dir_count_)\n            if _freq_hours_ is not None:\n                w.frequency_hours = _freq_hours_\n            if _freq_dist_ is not None:\n                w.frequency_spacing_distance = _freq_dist_\n            max_freqs.append(w.frequency_intervals_compass)\n        _max_freq_lines_ = max(max_freqs)\n\n    # Plot the windroses\n    for i, speed_data in enumerate(_data):\n\n        # Make the windrose\n        win_dir = _wind_direction if isinstance(speed_data.header.data_type, Speed) \\\n            else filt_wind_dir\n        windrose = WindRose(win_dir, speed_data, _dir_count_)\n\n        if len(legend_par_) > 0:\n            try:  # sense when several legend parameters are connected\n                lpar = legend_par_[i]\n            except IndexError:\n                lpar = legend_par_[-1]\n            windrose.legend_parameters = lpar\n\n        if _freq_hours_ is not None:\n            windrose.frequency_hours = _freq_hours_\n\n        # Add and check optional visualization parameters\n        if _max_freq_lines_ is not None:\n            windrose.frequency_intervals_compass = _max_freq_lines_\n\n        if _freq_dist_ is not None:\n            windrose.frequency_spacing_distance = _freq_dist_\n\n        windrose.north = north_\n        windrose.show_freq = _show_freq_\n        if isinstance(speed_data.header.data_type, Speed):\n            windrose.show_zeros = _show_calmrose_\n        windrose.base_point = Point2D(center_pt_2d.x, center_pt_2d.y)\n\n        # Make the mesh\n        mesh = from_mesh2d(windrose.colored_mesh, _center_pt_.z)\n\n        # Make the graphic outputs\n        legend = legend_objects(windrose.legend)\n        title = text_objects(title_text(speed_data),\n                             windrose.container.lower_title_location,\n                             windrose.legend_parameters.text_height,\n                             windrose.legend_parameters.font)\n        compass = compass_objects(windrose.compass, _center_pt_.z, None)\n        orient_line = [from_linesegment2d(seg, _center_pt_.z)\n                            for seg in windrose.orientation_lines]\n        if _show_freq_:\n            freq_line = [from_polygon2d(poly) for poly in windrose.frequency_lines]\n\n        # move the center point so wind roses are not on top of one another\n        fac = (i + 1) * windrose.compass_radius * 3\n        center_pt_2d = Point2D(_center_pt_.x + fac, _center_pt_.y)\n\n        all_mesh.append(mesh)\n        all_compass.append(compass)\n        all_orient_line.append(orient_line)\n        all_freq_line.append(freq_line)\n        all_legends.append(legend)\n        all_title.append(title)\n        \n        # compute the average values\n        wind_avg_val = []\n        for bin in windrose.histogram_data:\n            try:\n                wind_avg_val.append(sum(bin) / len(bin))\n            except ZeroDivisionError:\n                wind_avg_val.append(0)\n        all_wind_avg_val.append(wind_avg_val)\n        all_wind_frequency.append([len(bin) for bin in windrose.histogram_data])\n\n    # convert nested lists into data trees\n    mesh = list_to_data_tree(all_mesh)\n    compass = list_to_data_tree(all_compass)\n    orient_line = list_to_data_tree(all_orient_line)\n    freq_line = list_to_data_tree(all_freq_line)\n    legend = list_to_data_tree(all_legends)\n    title = list_to_data_tree(all_title)\n    avg_val = list_to_data_tree(all_wind_avg_val)\n    frequency = list_to_data_tree(all_wind_frequency)\n\n    # output prevailing direction and processed data\n    prevailing = windrose.prevailing_direction\n    data = _data", 
+  "category": "Ladybug", 
+  "name": "LB Wind Rose", 
+  "description": "Create a plot of any hourly data by wind directions.\n-"
+}

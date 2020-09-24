@@ -1,0 +1,50 @@
+{
+  "version": "0.1.0", 
+  "nickname": "EPWtoDDY", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "ddy_file", 
+        "description": "A .ddy file path that has been written to your system.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_epw_file", 
+      "description": "An .epw file path on your system, from which a .ddy will\nbe generated.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_percentile_", 
+      "description": "A number between 0 and 50 for the percentile difference\nfrom the most extreme conditions within the EPW to be used for\nthe design day. Typical values are 0.4 and 1.0. (Default: 0.4).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_folder_", 
+      "description": "An optional file path to a directory into which the DDY file\nwill be written.  If None, the DDY file will be written to the\nladybug default weather data folder and placed in a sub-folder\ncalled \"ddy\".", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_write", 
+      "description": "Set to \"True\" to write the .ddy file.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "0 :: Import", 
+  "code": "\nimport os\n\ntry:\n    from ladybug.epw import EPW\n    from ladybug.config import folders\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _write:\n    # set default values\n    _percentile_ = 0.4 if _percentile_ is None else _percentile_\n    _folder_ = os.path.join(folders.default_epw_folder, 'ddy') if _folder_ \\\n        is None else _folder_\n    f_name = os.path.basename(_epw_file).replace('.epw', '.ddy')\n    f_path = os.path.join(_folder_, f_name)\n\n    # create the DDY file\n    epw = EPW(_epw_file)\n    ddy_file = epw.to_ddy(f_path, _percentile_)\n", 
+  "category": "Ladybug", 
+  "name": "LB EPW to DDY", 
+  "description": "Produce a DDY file with a heating and a cooling design day from an EPW.\n_\nThis method will first check if there is any heating or cooling design day information\ncontained within the EPW itself. If None is found, the heating and cooling design\ndays will be derived from analysis of the annual data within the EPW, which is\nusually less representative of the climate since only one year of data is used\nto derive the DDY (instead of the usual multi-year analysis that is performed for\nDDYs distributed with EPWs).\n_\nInformation on the uncertainty introduced by using only one year of data to create\ndesign days can be found in AHSRAE HOF 2013, Chapter 14.14.\n-"
+}

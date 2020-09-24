@@ -1,0 +1,49 @@
+{
+  "version": "0.1.1", 
+  "nickname": "ViewFromSun", 
+  "outputs": [
+    []
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_vector", 
+      "description": "A sun vector from which the the Rhino view will be generated.\nUse the \"LB SunPath\" component to generate sun vectors.", 
+      "type": "Vector3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_center_pt_", 
+      "description": "The target point of the camera for the Rhino view that will be\ngenerated.  This point should be close to the Rhino geometry that\nyou are interested in viewing from the sun. If no point is provided,\nthe Rhino origin will be used (0, 0, 0).", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "width_", 
+      "description": "An optional interger for the width (in pixels) of the Rhino\nviewport that will be generated.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "height_", 
+      "description": "An optional interger for the height (in pixels) of the Rhino\nviewport that will be generated.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "mode_", 
+      "description": "An optional text input for the display mode of the Rhino viewport\nthat will be generated. For example: Wireframe, Shaded, Rendered, etc.", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "3 :: Analyze Geometry", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.viewport import viewport_by_name, open_viewport, \\\n        set_iso_view_direction, set_view_display_mode\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, component_guid\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    view_name = 'ViewFromSun_{}'.format(component_guid(ghenv.Component))\n    print view_name  # print so that the user has the name if needed\n\n    # get the viewport from which the direction will be set\n    view_port = None\n    if not width_ and not height_:  # no need to generate new view; get existing one\n        try:\n            view_port = viewport_by_name(view_name)\n        except ValueError:  # the viewport does not yet exist\n            pass\n    if view_port is None:\n        view_port = open_viewport(view_name, width_, height_)\n\n    # set the direction of the viewport camera\n    set_iso_view_direction(view_port, _vector, _center_pt_)\n\n    # set the display mode if requested\n    if mode_:\n        set_view_display_mode(view_port, mode_)\n", 
+  "category": "Ladybug", 
+  "name": "LB View From Sun", 
+  "description": "Open a new viewport in Rhino that shows the parallel-projected view from the sun.\n_\nThis is useful for understanding what parts of Rhino geometry are shaded at a\nparticular hour of the day.\n-"
+}

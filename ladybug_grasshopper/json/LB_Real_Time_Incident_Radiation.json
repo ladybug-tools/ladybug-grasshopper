@@ -1,0 +1,36 @@
+{
+  "version": "0.1.0", 
+  "nickname": "RTrad", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "results", 
+        "description": "A list of numbers that aligns with the points of the original analysis\nperformed with the \"LB Incident Radiation\"  component. Each number\nindicates the cumulative incident radiation received by each of the\npoints from the sky matrix in kWh/m2. To visualize these radiation\nvalues in the Rhino scene, connect these values to the \"LB Spatial\nHeatmap\" component along with the mesh output from the original\nanalysis with the \"LB Incident Radiation\"  component.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_int_mtx", 
+      "description": "A Geometry/Sky Intersection Matrix from the \"LB Incident Radiation\" \ncomponent. This matrix contains the relationship between each point of\nthe analyzed geometry and each patch of the sky.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_sky_mtx", 
+      "description": "A Sky Matrix from the \"LB Cumulative Sky Matrix\" component, which\ndescribes the radiation coming from the various patches of the sky.\nThe \"LB Sky Dome\" component can be used to visualize any sky matrix.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "3 :: Analyze Geometry", 
+  "code": "\n\ntry:  # python 2\n    from itertools import izip as zip\nexcept ImportError:  # python 3\n    pass\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, de_objectify_output\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # deconstruct the matrices and get the total radiation from each patch\n    int_mtx = de_objectify_output(_int_mtx)\n    sky_mtx = de_objectify_output(_sky_mtx)\n    total_sky_rad = [dirr + difr for dirr, difr in zip(sky_mtx[1], sky_mtx[2])]\n\n    # compute the results\n    results = []\n    for pt_rel in int_mtx:\n        results.append(sum(r * w for r, w in zip(pt_rel, total_sky_rad)))\n", 
+  "category": "Ladybug", 
+  "name": "LB Real Time Incident Radiation", 
+  "description": "Compute Incident Radiation values for any sky matrix in real time using the Geometry/Sky\nintersection matrix produced by the \"LB Incident Radiation\" component.\n_\nUsing this component enables one to scroll through radiation on an hour-by-hour\nor month-by-month basis in a manner that is an order of magnitude faster than\nrunning each sky matrix through the \"LB Incident Radiation\" component.\n_\nThe speed of this component is thanks to the fact that the Geometry/Sky intersection\nmatrix contains the relationship between the geometry and each patch of the sky.\nSo computing new radiation values is as simple as multiplying the sky matrix by\nthe intersection matrix.\n-"
+}

@@ -1,0 +1,64 @@
+{
+  "version": "0.1.3", 
+  "nickname": "HDD_CDD", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "hourly_heat", 
+        "description": "A data collection of heating degree-days.\nPlug this into the 'Time Interval Operation' component to get\nthe number of degree-days at different time intervals.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "hourly_cool", 
+        "description": "A data collection of cooling degree-days.\nPlug this into the 'Time Interval Operation' component to get\nthe number of degree-days at different time intervals.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "heat_deg_days", 
+        "description": "A value indicating the total number of heating degree-days\nover the entire input _dry_bulb collection.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "cool_deg_days", 
+        "description": "A value indicating the total number of cooling degree-days\nover the entire input _dry_bulb collection.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_dry_bulb", 
+      "description": "A data collection representing outdoor dry bulb temperature [C]", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_heat_base_", 
+      "description": "A number for the base temperature below which a given hour\nis considered to be in heating mode. Default is 18 Celcius, which is\na common balance point for buildings.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_cool_base_", 
+      "description": "A number for the base temperature above which a given hour\nis considered to be in cooling mode. Default is 23 Celcius, which is\na common balance point for buildings.", 
+      "type": "double", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug_comfort.degreetime import heating_degree_time, cooling_degree_time\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.datatype.temperaturetime import HeatingDegreeTime, CoolingDegreeTime\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    if _heat_base_ is None:\n        _heat_base_ = 18\n    if _cool_base_ is None:\n        _cool_base_ = 23\n    \n    hourly_heat = HourlyContinuousCollection.compute_function_aligned(\n        heating_degree_time, [_dry_bulb, _heat_base_],\n        HeatingDegreeTime(), 'degC-hours')\n    hourly_heat.convert_to_unit('degC-days')\n    \n    hourly_cool = HourlyContinuousCollection.compute_function_aligned(\n        cooling_degree_time, [_dry_bulb, _cool_base_],\n        CoolingDegreeTime(), 'degC-hours')\n    hourly_cool.convert_to_unit('degC-days')\n    \n    heat_deg_days = hourly_heat.total\n    cool_deg_days = hourly_cool.total", 
+  "category": "Ladybug", 
+  "name": "LB Degree Days", 
+  "description": "Calculate humidity metrics from relative humidity, dry bulb temperature and\n(if present) atmospheric pressure.\n-"
+}

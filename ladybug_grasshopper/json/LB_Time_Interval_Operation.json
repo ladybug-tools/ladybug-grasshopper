@@ -1,0 +1,50 @@
+{
+  "version": "0.1.4", 
+  "nickname": "TimeOp", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "daily", 
+        "description": "Daily data collection derived from the input _data and _operation_.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "monthly", 
+        "description": "Monthly data collection derived from the input _data and _operation_.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "mon_per_hr", 
+        "description": "Monthly Per Hour data collection derived from the input\n_data and _operation_.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data", 
+      "description": "A Ladybug data collection object.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_operation_", 
+      "description": "Text indicating the operation that should be performed on\nthe input hourly data.\n_\nSuch text must be one of the following:\n- average\n- total\n- [a number between 0 and 100]\n_\nIn the case of the last option, the number will be interpreted as\na percentile of the data over the time period. For example,\ninputting 75 will return the 75th percentile value of each\nday/month/hour, inputting 0 will give the minimum value of each\nday/month/hour and inputting 100 will give the max value of each\nday/month/hour.\n_\nDefault is 'average' if the input data type is not cumulative and\n'total' if the data type is not cumulative.", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datacollection import HourlyDiscontinuousCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_data, HourlyDiscontinuousCollection), \\\n        '_data must be an Hourly Data Collection.' \\\n        ' Got {}.'.format(type(_data))\n    if _operation_ is None:\n        _operation_ = 'total' if _data.header.data_type.cumulative else 'average'\n\n    if _operation_.lower() == 'average':\n        daily = _data.average_daily()\n        monthly = _data.average_monthly()\n        mon_per_hr = _data.average_monthly_per_hour()\n    elif _operation_.lower() == 'total':\n        daily = _data.total_daily()\n        monthly = _data.total_monthly()\n        mon_per_hr = _data.total_monthly_per_hour()\n    else:\n        try:\n            percentile = float(_operation_)\n        except ValueError as e:\n            raise TypeError(\" Input '{}' for _operation_ is not valid. \\n\"\n                            \"operation_ must be one of the following:\\n\"\n                            \" average\\n total\\n [a number between 0 and \"\n                            \"100]\".format(_operation_))\n        else:\n            daily = _data.percentile_daily(percentile)\n            monthly = _data.percentile_monthly(percentile)\n            mon_per_hr = _data.percentile_monthly_per_hour(percentile)", 
+  "category": "Ladybug", 
+  "name": "LB Time Interval Operation", 
+  "description": "Perform time interval operations on an hourly data collection.\n_\nThis includes operations like:\n- Average\n- Total\n- Percentile\n_\nThese actions can be performed over the following time intervals:\n- Daily\n- Monthly\n- Monthly per Hour\n-"
+}

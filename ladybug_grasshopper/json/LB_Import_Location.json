@@ -1,0 +1,29 @@
+{
+  "version": "0.1.1", 
+  "nickname": "ImportLoc", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "location", 
+        "description": "Location data (use this output to construct the sun path).", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_epw_file", 
+      "description": "An epw file path on your system as a string.", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "0 :: Import", 
+  "code": "\ntry:\n    import ladybug.epw as epw\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    ep = epw.EPW(_epw_file)\n    location = ep.location", 
+  "category": "Ladybug", 
+  "name": "LB Import Location", 
+  "description": "Import location from an epw file.\n-"
+}

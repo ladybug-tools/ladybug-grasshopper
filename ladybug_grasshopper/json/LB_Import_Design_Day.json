@@ -1,0 +1,106 @@
+{
+  "version": "0.1.1", 
+  "nickname": "ImportDesignDay", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "location", 
+        "description": "A Ladybug Location object describing the location of the\ndesign day.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "dry_bulb_temperature", 
+        "description": "The houlry dry bulb temperature over the design\nday, in C.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "dew_point_temperature", 
+        "description": "The hourly dew point temperature over the design\nday, in C.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "relative_humidity", 
+        "description": "The hourly Relative Humidity over the design day\nin percent.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "wind_speed", 
+        "description": "The hourly wind speed over the design day in m/sec.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "wind_direction", 
+        "description": "The hourly wind direction over the design day in degrees.\nThe convention is that North=0.0, East=90.0, South=180.0, West=270.0.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "direct_normal_rad", 
+        "description": "The hourly Direct Normal Radiation over the design\nday in Wh/m2.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "diffuse_horizontal_rad", 
+        "description": "The hourly Diffuse Horizontal Radiation over\nthe design day in Wh/m2.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "global_horizontal_rad", 
+        "description": "The hourly Global Horizontal Radiation over the\ndesign day in Wh/m2.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "horizontal_infrared_rad", 
+        "description": "The Horizontal Infrared Radiation Intensity\nover the design day in Wh/m2.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "total_sky_cover", 
+        "description": "The fraction for total sky cover over the design day\nin tenths of coverage.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "barometric_pressure", 
+        "description": "The hourly weather station pressure over the\ndesign day in Pa.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_design_day", 
+      "description": "A DesignDay object to import.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "0 :: Import", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    dry_bulb_temperature = _design_day.hourly_dry_bulb\n    dew_point_temperature = _design_day.hourly_dew_point\n    relative_humidity = _design_day.hourly_relative_humidity\n    wind_speed = _design_day.hourly_wind_speed\n    wind_direction = _design_day.hourly_wind_direction\n    direct_normal_rad, diffuse_horizontal_rad, global_horizontal_rad = \\\n        _design_day.hourly_solar_radiation\n    horizontal_infrared_rad = _design_day.hourly_horizontal_infrared\n    total_sky_cover = _design_day.hourly_sky_cover\n    barometric_pressure = _design_day.hourly_barometric_pressure\n", 
+  "category": "Ladybug", 
+  "name": "LB Import Design Day", 
+  "description": "Import hourly climate data from a Ladybug DesignDay object.\n-"
+}

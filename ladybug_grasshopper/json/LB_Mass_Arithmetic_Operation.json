@@ -1,0 +1,43 @@
+{
+  "version": "0.1.4", 
+  "nickname": "MassArithOp", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "A Ladybug data collection object derived from the operation between\nthe two data inputs.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_data", 
+      "description": "A list of Data Collections to be used in the arithmetic operation.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_operator_", 
+      "description": "Text for the operator to use between the Data Collections.\nValid examples include (+, -, *, /). By default this is + for addition.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "type_", 
+      "description": "Optional text for a new \"type\" key in the Data Collection's metadata.\nThis will usually show up in most Ladybug visualiztions and it should\nusually change for most types of operations.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # build the arithmetic statement\n    operator = '+' if _operator_ is None else _operator_\n    statement = 'data {} data_i'.format(operator)\n\n    # perform the arithmetic operation\n    data = _data[0]\n    for data_i in _data[1:]:\n        data = eval(statement, {'data': data, 'data_i': data_i})  # I love Python!\n\n    # try to replace the data collection type\n    try:\n        data = data.duplicate()\n        if type_:\n            data.header.metadata['type'] = type_\n        elif 'type' in data.header.metadata:\n            del data.header.metadata['type']\n        if 'System' in data.header.metadata:\n            del data.header.metadata['System']\n        if 'Zone' in data.header.metadata:\n            del data.header.metadata['Zone']\n    except AttributeError:\n        pass  # data was not a data collection; just return it anyway", 
+  "category": "Ladybug", 
+  "name": "LB Mass Arithmetic Operation", 
+  "description": "Perform a \"mass\" arithmetic operation between Data Collections. For example,\nadding a list of Data Collections into one Data Collection.\n-\nNote that Data Collections must be aligned in order for this component to run\nsuccessfully.\n-\nUsing this component will often be much faster and more elegant compared to\ndeconstructing the data collection, performing the operation with native\nGrasshopper components, and rebuilding the collection.\n-"
+}

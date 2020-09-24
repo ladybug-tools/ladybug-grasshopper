@@ -1,0 +1,43 @@
+{
+  "version": "0.1.1", 
+  "nickname": "ToUnit", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "all_unit", 
+        "description": "A list of all possible units that the input _data can be converted to.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "The converted DataCollection.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data", 
+      "description": "A DataCollection to be converted to different units.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "to_unit_", 
+      "description": "Text representing the unit to convert the DataCollection to (eg. m2).\nConnect the _data and see the all_unit output for a list of all\ncurrently-supported units for a given collection. The default won't\nperform any unit conversion on the output data.", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_data, BaseCollection), \\\n        '_data must be a Data Collection. Got {}.'.format(type(_data))\n    all_unit = _data.header.data_type.units\n    data = _data.to_unit(to_unit_) if to_unit_ else _data", 
+  "category": "Ladybug", 
+  "name": "LB To Unit", 
+  "description": "Convert a DataCollection to the input _to_unit.\n-"
+}

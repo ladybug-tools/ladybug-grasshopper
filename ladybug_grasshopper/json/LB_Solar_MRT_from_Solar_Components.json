@@ -1,0 +1,92 @@
+{
+  "version": "0.1.2", 
+  "nickname": "ComponentSolarMRT", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "erf", 
+        "description": "Data collection of effective radiant field (ERF) in W/m2.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "dmrt", 
+        "description": "Data collection of mean radiant temperature delta in C.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "mrt", 
+        "description": "Data collection of mean radiant temperature in C.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_location", 
+      "description": "A Ladybug Location object.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_longwave_mrt", 
+      "description": "A single number or an hourly data collection with the long-wave\nmean radiant temperature around the person in degrees C.\nThis includes the temperature of the ground and any other\nsurfaces between the person and their view to the sky.\nTypically, air temperature is used when such surface\ntemperatures are unknown.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_dir_horiz_rad", 
+      "description": "Hourly Data Collection with the direct horizontal solar\nirradiance in W/m2.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_diff_horiz_rad", 
+      "description": "Hourly Data Collection with diffuse horizontal solar\nirradiance in W/m2.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "fract_body_exp_", 
+      "description": "A single number between 0 and 1 or a data collection\nrepresenting the fraction of the body exposed to direct sunlight.\nNote that this does not include the body\u2019s self-shading; only the\nshading from surroundings.\nDefault is 1 for a person standing in an open area.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_ground_ref_", 
+      "description": "A single number between 0 and 1 or a data collection\nthat represents the reflectance of the floor. Default is for 0.25\nwhich is characteristic of outdoor grass or dry bare soil.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_solar_body_par_", 
+      "description": "Optional Solar Body Parameter object to account for\nproperties of the human geometry.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_run", 
+      "description": "Set to True to run the component.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug_comfort.collection.solarcal import HorizontalSolarCal\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _run is True:\n    solar_mrt_obj = HorizontalSolarCal(_location, _dir_horiz_rad,\n                                       _diff_horiz_rad, _longwave_mrt,\n                                       fract_body_exp_, _ground_ref_, _solar_body_par_)\n\n    erf = solar_mrt_obj.effective_radiant_field\n    dmrt = solar_mrt_obj.mrt_delta\n    mrt = solar_mrt_obj.mean_radiant_temperature", 
+  "category": "Ladybug", 
+  "name": "LB Solar MRT from Solar Components", 
+  "description": "Calculate Mean Radiant Temperature (MRT) as a result of shortwave solar using\nhorizontal solar components (direct horizontal and diffuse horizontal solar).\n-\nThis component uses the SolarCal model of ASHRAE-55 to estimate the effects\nof shortwave solar and a simple sky exposure method to determine longwave\nradiant exchange.\n-"
+}

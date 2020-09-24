@@ -1,0 +1,36 @@
+{
+  "version": "0.1.1", 
+  "nickname": "RelHumid", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "rel_humid", 
+        "description": "A data collection or value indicating the relative humidity [%]", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_dry_bulb", 
+      "description": "A value or data collection representing dry bulb temperature [C]", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_dew_point", 
+      "description": "A value or data collection representing dew point temperature [C]", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.psychrometrics import rel_humid_from_db_dpt\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.datatype.fraction import RelativeHumidity\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    rel_humid = HourlyContinuousCollection.compute_function_aligned(\n        rel_humid_from_db_dpt, [_dry_bulb, _dew_point], RelativeHumidity(), '%')\n", 
+  "category": "Ladybug", 
+  "name": "LB Relative Humidity from Dew Point", 
+  "description": "Calculate relative humidity from Dry Bulb Temperature and Dew Point Temperature.\n-"
+}

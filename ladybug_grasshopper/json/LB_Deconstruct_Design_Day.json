@@ -1,0 +1,113 @@
+{
+  "version": "0.1.1", 
+  "nickname": "DecnstrDesignDay", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "name", 
+        "description": "The name of the DesignDay object.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "day_type", 
+        "description": "Text indicating the type of design day (ie. 'SummerDesignDay',\n'WinterDesignDay' or other EnergyPlus days).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "location", 
+        "description": "A Ladybug Location object describing the location of the design day.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "date", 
+        "description": "Date for the day of the year the design day", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "dry_bulb_max", 
+        "description": "Maximum dry bulb temperature over the design day (in C).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "dry_bulb_range", 
+        "description": "Dry bulb range over the design day (in C).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "humidity_type", 
+        "description": "Type of humidity to use. Will be one of the following:\n* Wetbulb\n* Dewpoint\n* HumidityRatio\n* Enthalpy", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "humidity_value", 
+        "description": "The value of the humidity condition above.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "barometric_p", 
+        "description": "Barometric pressure in Pa.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "wind_speed", 
+        "description": "Wind speed over the design day in m/s.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "wind_dir", 
+        "description": "Wind direction over the design day in degrees.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "sky_type", 
+        "description": "Script output sky_type.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "sky_properties", 
+        "description": "A list of properties describing the sky above.\nFor ASHRAEClearSky this is a single value for clearness.\nFor ASHRAETau, this is the tau_beam and tau_diffuse.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_design_day", 
+      "description": "A DesignDay object to deconstruct.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "0 :: Import", 
+  "code": "\ntry:\n    from ladybug.designday import ASHRAEClearSky, ASHRAETau\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # extract typical design day properties\n    name = _design_day.name\n    day_type = _design_day.day_type\n    location  = _design_day.location\n    date = _design_day.sky_condition.date\n    dry_bulb_max = _design_day.dry_bulb_condition.dry_bulb_max\n    dry_bulb_range = _design_day.dry_bulb_condition.dry_bulb_range\n    humidity_type = _design_day.humidity_condition.humidity_type\n    humidity_value = _design_day.humidity_condition.humidity_value\n    barometric_p = _design_day.humidity_condition.barometric_pressure\n    wind_speed = _design_day.wind_condition.wind_speed\n    wind_dir = _design_day.wind_condition.wind_direction\n    \n    # extract properties of the sky condition\n    if isinstance(_design_day.sky_condition, ASHRAETau):\n        sky_type = 'ASHRAETau'\n        sky_properties = [_design_day.sky_condition.tau_b,\n                          _design_day.sky_condition.tau_d]\n    elif isinstance(_design_day.sky_condition, ASHRAEClearSky):\n        sky_type = 'ASHRAEClearSky'\n        sky_properties = _design_day.sky_condition.clearness", 
+  "category": "Ladybug", 
+  "name": "LB Deconstruct Design Day", 
+  "description": "Deconstruct design day into parameters.\n-"
+}

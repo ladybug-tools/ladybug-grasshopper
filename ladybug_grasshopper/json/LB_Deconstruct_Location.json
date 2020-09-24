@@ -1,0 +1,57 @@
+{
+  "version": "0.1.1", 
+  "nickname": "DecnstrLoc", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "name", 
+        "description": "Name of the location.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "latitude", 
+        "description": "Latitude of the location.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "longitude", 
+        "description": "Longitude of the location.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "time_zone", 
+        "description": "Time zone of the location.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "elevation", 
+        "description": "Elevation of the location.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_location", 
+      "description": "The output from the importEPW or constructLocation component.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "0 :: Import", 
+  "code": "\ntry:\n    from ladybug.location import Location\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # in case someone uses the input from an older version of ladybug\n    location = Location.from_location(_location)\n    name = location.city\n    latitude = location.latitude\n    longitude = location.longitude\n    time_zone = location.time_zone\n    elevation = location.elevation", 
+  "category": "Ladybug", 
+  "name": "LB Deconstruct Location", 
+  "description": "Deconstruct location into its component properties.\n-"
+}

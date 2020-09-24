@@ -1,0 +1,36 @@
+{
+  "version": "0.1.2", 
+  "nickname": "+Data", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "A Ladybug data collection object.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_header", 
+      "description": "A Ladybug header object describing the metadata of the data collection.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_values", 
+      "description": "A list of numerical values for the data collection.", 
+      "type": "double", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datacollection import HourlyContinuousCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    data = HourlyContinuousCollection(_header, _values)", 
+  "category": "Ladybug", 
+  "name": "LB Construct Data", 
+  "description": "Construct a Ladybug data collection from header and values.\n-"
+}

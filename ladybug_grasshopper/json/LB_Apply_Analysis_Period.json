@@ -1,0 +1,36 @@
+{
+  "version": "0.1.3", 
+  "nickname": "ApplyPer", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "The data collection with the analysis period applied to it.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data", 
+      "description": "A Ladybug data collection object.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_period", 
+      "description": "A Ladybug analysis period from the \"LB AnalysisPeriod\" component.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.analysisperiod import AnalysisPeriod\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_data, BaseCollection), \\\n        '_data must be a Data Collection. Got {}.'.format(type(_data))\n    assert isinstance(_period, AnalysisPeriod), '_period must be an Analysis' \\\n        ' Period. Got {}.'.format(type(_period))\n    data = _data.filter_by_analysis_period(_period)", 
+  "category": "Ladybug", 
+  "name": "LB Apply Analysis Period", 
+  "description": "Apply an analysis period to a data collection.\n-"
+}

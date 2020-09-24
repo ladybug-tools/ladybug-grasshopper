@@ -1,0 +1,64 @@
+{
+  "version": "0.1.4", 
+  "nickname": "GenPts", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "points", 
+        "description": "Test points at the center of each mesh face.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "vectors", 
+        "description": "Vectors for the normal direction at each of the points.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "face_areas", 
+        "description": "Area of each mesh face.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "mesh", 
+        "description": "Analysis mesh that can be passed to the 'Color Mesh' component.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_geometry", 
+      "description": "Brep or Mesh from which to generate the points and grid.", 
+      "type": "GeometryBase", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_grid_size", 
+      "description": "Number for the size of the test grid.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_offset_dist_", 
+      "description": "Number for the distance to move points from the surfaces\nof the input _geometry.  Typically, this should be a small positive\nnumber to ensure points are not blocked by the mesh. Default is 0.", 
+      "type": "double", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.togeometry import to_gridded_mesh3d, to_mesh3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_point3d, from_vector3d\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # check the input and generate the mesh.\n    _offset_dist_ = _offset_dist_ or 0\n    try:  # assume it's a {{Cad}} Brep\n        lb_mesh = to_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)\n    except TypeError:  # assume it's a {{Cad}} Mesh\n        try:\n            lb_mesh = to_mesh3d(_geometry)\n        except TypeError:  # unidientified geometry type\n            raise TypeError(\n                '_geometry must be a Brep or a Mesh. Got {}.'.format(type(_geometry)))\n    \n    # generate the test points, vectors, and areas.\n    points = [from_point3d(pt) for pt in lb_mesh.face_centroids]\n    vectors = [from_vector3d(vec) for vec in lb_mesh.face_normals]\n    face_areas = lb_mesh.face_areas\n    mesh = from_mesh3d(lb_mesh)", 
+  "category": "Ladybug", 
+  "name": "LB Generate Point Grid", 
+  "description": "Genrate a mesh with corresponding test points.\nThe resulting mesh will be in a format that the 'Color Mesh' component will accept.\n-"
+}

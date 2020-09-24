@@ -1,0 +1,43 @@
+{
+  "version": "0.1.2", 
+  "nickname": "OrientCam", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "geo", 
+        "description": "The input geometry that has been oriented to the camera of the active\nRhino viewport.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_geo", 
+      "description": "A series of geometries to be oriented to the camera of the active\nRhino viewport.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_position_", 
+      "description": "A point to be used as the origin around which the the geometry\nwill be oriented. If None, the lower left corner of the bounding box\naround the geometry will be used.", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "refresh_", 
+      "description": "Connect a Grasshopper \"button\" component to refresh the orientation\nupon hitting the button. You can also connect a Grasshopper \"Timer\"\ncomponent to update the view in real time as you navigate through\nthe Rhino scene.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\n    from ladybug_{{cad}}.viewport import orient_to_camera\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    geo = orient_to_camera(_geo, _position_)\n", 
+  "category": "Ladybug", 
+  "name": "LB Orient to Camera", 
+  "description": "Orient a series of geometries to the active viewport camera.\n-"
+}

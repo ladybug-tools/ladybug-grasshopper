@@ -1,0 +1,57 @@
+{
+  "version": "0.1.0", 
+  "nickname": "DateTime", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "month", 
+        "description": "The month of the year on which the input hoy falls.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "day", 
+        "description": "The day of the month on which the input hoy falls.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "hour", 
+        "description": "The hour of the day on which the input hoy falls.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "minute", 
+        "description": "The minute of the hour on which the input hoy falls.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "date", 
+        "description": "The input information as a human-readable date time.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_hoy", 
+      "description": "A number between 0 and 8759 for an hour of the year.", 
+      "type": "int", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.dt import DateTime\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    month = []\n    day = []\n    hour = []\n    minute = []\n    date = []\n\n    for hoy in _hoy:\n        datetime = DateTime.from_hoy(hoy)\n        month.append(datetime.month)\n        day.append(datetime.day)\n        hour.append(datetime.hour)\n        minute.append(datetime.minute)\n        date.append(datetime)\n", 
+  "category": "Ladybug", 
+  "name": "LB HOY to DateTime", 
+  "description": "Calculate date information from an hour of the year.\n_\nDate information includes the month of the year, day of the month and the\nhour + minute of the day.\n-"
+}
