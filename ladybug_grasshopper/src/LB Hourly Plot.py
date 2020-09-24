@@ -26,8 +26,9 @@ Create a colored plot of any hourly data collection.
         reverse_y_: Boolean to note whether the Y-axis of the chart is reversed
             If True, time over the course of the day will flow from the top of
             the chart to the bottom instead of the bottom to the top.
-        legend_par_: An optional LegendParameter object to change the display
-            of the HourlyPlot (Default: None).
+        legend_par_: An optional LegendParameter object to change the display of the
+            HourlyPlot. This can also be a list of legend parameters to be
+            applied to the different connected _data.
         statement_: A conditional statement as a string (e.g. a > 25).
             .
             The variable of the first data collection should always be named 'a'
@@ -56,7 +57,7 @@ Create a colored plot of any hourly data collection.
 
 ghenv.Component.Name = "LB Hourly Plot"
 ghenv.Component.NickName = 'HourlyPlot'
-ghenv.Component.Message = '0.2.2'
+ghenv.Component.Message = '0.2.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -100,12 +101,8 @@ if all_required_inputs(ghenv.Component):
     _z_dim_ = _z_dim_ if _z_dim_ is not None else 0
     reverse_y_ = reverse_y_ if reverse_y_ is not None else False
 
-    # set up empty lists of objects to be filled
-    mesh = []
-    title = []
-    all_legends = []
-    all_borders = []
-    all_labels = []
+    # empty lists of objects to be filled with visuals
+    mesh, title, all_legends, all_borders, all_labels = [], [], [], [], []
 
     for i, data_coll in enumerate(_data):
         try:  # sense when several legend parameters are connected
