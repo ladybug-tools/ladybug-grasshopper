@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0", 
+  "version": "0.3.1", 
   "nickname": "ExportUO", 
   "outputs": [
     []
@@ -35,7 +35,7 @@
     }
   ], 
   "subcategory": "5 :: Version", 
-  "code": "\ntry:\n    from ladybug_{{cad}}.versioning.gather import gather_canvas_components, \\\n        gather_connected_components\n    from ladybug_{{cad}}.versioning.userobject import validate_change_type\n    from ladybug_{{cad}}.versioning.export import export_component, refresh_toolbar\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif _export and _folder and len(_components) != 0:\n    change_type = validate_change_type(_change_type_)\n    comps_to_export = gather_connected_components(ghenv.Component) \\\n        if str(_components[0]) != '*' \\\n        else gather_canvas_components(ghenv.Component)\n    for comp in comps_to_export:\n        print('Processing %s...' % comp.Name)\n        export_component(_folder, comp, _change_type_)\n    refresh_toolbar()  # try to update the toolbar\nelse:\n    print('Connect _components and _folder')\n", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.versioning.gather import gather_canvas_components, \\\n        gather_connected_components\n    from ladybug_{{cad}}.versioning.diff import validate_change_type\n    from ladybug_{{cad}}.versioning.export import export_component, refresh_toolbar\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif _export and _folder and len(_components) != 0:\n    change_type = validate_change_type(_change_type_)\n    comps_to_export = gather_connected_components(ghenv.Component) \\\n        if str(_components[0]) != '*' \\\n        else gather_canvas_components(ghenv.Component)\n    for comp in comps_to_export:\n        print('Processing %s...' % comp.Name)\n        export_component(_folder, comp, _change_type_)\n    refresh_toolbar()  # try to update the toolbar\nelse:\n    print('Connect _components and _folder')\n", 
   "category": "Ladybug", 
   "name": "LB Export UserObject", 
   "description": "Export a Ladybug Tools Grasshopper GHPython component as a UserObject that can\nbe installed on other's machines.\n-"

@@ -61,7 +61,8 @@ analysis and shading design.
             data collection is between 18 and 26, the second collection is less
             than 80 and the third collection is greater than 2.
         legend_par_: An optional LegendParameter object to change the display
-            of the data on the sun path (Default: None).
+            of the data on the sun path. This can also be a list of legend
+            parameters to be applied to the different connected data_.
 
     Returns:
         vectors: Vector(s) indicating the direction of sunlight for each sun
@@ -92,7 +93,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '0.2.3'
+ghenv.Component.Message = '0.2.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -255,16 +256,14 @@ if all_required_inputs(ghenv.Component):
             suns.append(sun)
 
     if len(data_) > 0 and len(hoys_) > 0:  # build a sunpath for each data collection
-        new_data = []
-        title = []
-        all_sun_pts = []
-        all_analemma = []
-        all_daily = []
-        all_compass = []
-        all_colors = []
-        all_col_pts = []
-        all_legends = []
+        title, all_sun_pts, all_analemma, all_daily, all_compass, all_col_pts, all_legends = \
+            [], [], [], [], [], [], []
         for i, data in enumerate(data_):
+            try:  # sense when several legend parameters are connected
+                lpar = legend_par_[i]
+            except IndexError:
+                lpar = None if len(legend_par_) == 0 else legend_par_[-1]
+
             # move the center point so sun paths are not on top of one another
             fac = i* radius * 3
             center_pt_i = Point2D(center_pt.x + fac, center_pt.y)
@@ -277,7 +276,7 @@ if all_required_inputs(ghenv.Component):
             n_data = data.filter_by_moys(moys)  # filter data collection by sun-up hours
             graphic = GraphicContainer(
                 n_data.values, lb_compass.min_point3d(z), lb_compass.max_point3d(z),
-                legend_par_, n_data.header.data_type, n_data.header.unit)
+                lpar, n_data.header.data_type, n_data.header.unit)
             all_legends.append(legend_objects(graphic.legend))
             title.append(text_objects(
                 title_text(n_data), graphic.lower_title_location,
@@ -318,7 +317,8 @@ if all_required_inputs(ghenv.Component):
     else:  # no data connected; just output one sunpath
         sun_pts = draw_sun_positions(suns, radius, center_pt3d)
         analemma, daily = draw_analemma_and_arcs(sp, datetimes, radius, center_pt3d)
-        font = legend_par_.font if legend_par_ is not None else 'Arial'
+        font = legend_par_[0].font if len(legend_par_) != 0 and \
+            legend_par_[0] is not None else 'Arial'
         compass = compass_objects(Compass(radius, center_pt, north_), z, None, projection_, font)
         if _location.city:
             title = text_objects(

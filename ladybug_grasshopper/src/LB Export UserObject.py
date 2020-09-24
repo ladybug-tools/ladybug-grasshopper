@@ -56,7 +56,7 @@ be installed on other's machines.
 
 ghenv.Component.Name = 'LB Export UserObject'
 ghenv.Component.NickName = 'ExportUO'
-ghenv.Component.Message = '0.3.0'
+ghenv.Component.Message = '0.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -64,7 +64,7 @@ ghenv.Component.AdditionalHelpFromDocStrings = '0'
 try:
     from ladybug_rhino.versioning.gather import gather_canvas_components, \
         gather_connected_components
-    from ladybug_rhino.versioning.userobject import validate_change_type
+    from ladybug_rhino.versioning.diff import validate_change_type
     from ladybug_rhino.versioning.export import export_component, refresh_toolbar
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
