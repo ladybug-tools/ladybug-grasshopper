@@ -43,7 +43,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '0.4.0'
+ghenv.Component.Message = '0.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -57,13 +57,13 @@ except ImportError as e:
 try:
     from ladybug_rhino.pythonpath import iron_python_search_path, create_python_package_dir
     from ladybug_rhino.download import download_file_by_name
+    from ladybug_rhino.versioning.userobject import UO_FOLDER, GHA_FOLDER
     from ladybug_rhino.grasshopper import all_required_inputs, give_warning
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 import os
 import subprocess
-from Grasshopper.Folders import UserObjectFolders, DefaultAssemblyFolder
 
 
 def get_python_exe():
@@ -292,19 +292,17 @@ if all_required_inputs(ghenv.Component) and _update is True:
     # install the grasshopper components
     print 'Installing Ladybug Tools Grasshopper components.'
     gh_ver = ver_dict['lbt-grasshopper']
-    uo_folder = UserObjectFolders[0]
-    stderr = update_libraries_pip(py_exe, 'lbt-grasshopper', gh_ver, uo_folder)
+    stderr = update_libraries_pip(py_exe, 'lbt-grasshopper', gh_ver, UO_FOLDER)
     lbgh_ver = ver_dict['ladybug-grasshopper']
-    if os.path.isdir(os.path.join(uo_folder, 'ladybug_grasshopper-{}.dist-info'.format(lbgh_ver))):
+    if os.path.isdir(os.path.join(UO_FOLDER, 'ladybug_grasshopper-{}.dist-info'.format(lbgh_ver))):
         print 'Ladybug Tools Grasshopper components successfully installed!\n '
-        remove_dist_info_files(uo_folder)  # remove the .dist-info files
+        remove_dist_info_files(UO_FOLDER)  # remove the .dist-info files
     else:
         give_warning(ghenv.Component, stderr)
         print stderr
 
     # install the .gha Grasshopper components
-    gha_folder = DefaultAssemblyFolder
-    gha_location = os.path.join(gha_folder, 'ladybug_grasshopper_dotnet')
+    gha_location = os.path.join(GHA_FOLDER, 'ladybug_grasshopper_dotnet')
     if os.path.isdir(gha_location):
         msg = '.gha files already exist in your Components folder and cannot be ' \
             'deleted while Grasshopper is open.\nClose Grasshopper, delete the ' \
@@ -314,12 +312,12 @@ if all_required_inputs(ghenv.Component) and _update is True:
         print msg
     else:
         gha_ver = ver_dict['ladybug-grasshopper-dotnet']
-        stderr = update_libraries_pip(py_exe, 'ladybug-grasshopper-dotnet', gha_ver, gha_folder)
+        stderr = update_libraries_pip(py_exe, 'ladybug-grasshopper-dotnet', gha_ver, GHA_FOLDER)
         package_dir = os.path.join(
-            gha_folder, 'ladybug_grasshopper_dotnet-{}.dist-info'.format(gha_ver))
+            GHA_FOLDER, 'ladybug_grasshopper_dotnet-{}.dist-info'.format(gha_ver))
         if os.path.isdir(package_dir):
             print 'Ladybug Tools .gha Grasshopper components successfully installed!\n '
-            remove_dist_info_files(gha_folder)  # remove the dist-info files
+            remove_dist_info_files(GHA_FOLDER)  # remove the dist-info files
         else:
             give_warning(stderr)
             print stderr

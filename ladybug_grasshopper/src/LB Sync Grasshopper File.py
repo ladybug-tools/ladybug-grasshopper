@@ -32,12 +32,13 @@ outputs have changed) will be circled in red and should be replaced manually.
 
 ghenv.Component.Name = 'LB Sync Grasshopper File'
 ghenv.Component.NickName = 'SyncGHFile'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '0.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
+    from ladybug_rhino.versioning.gather import gather_canvas_components
     from ladybug_rhino.grasshopper import all_required_inputs, give_warning
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
@@ -46,49 +47,6 @@ import Grasshopper.Kernel as gh
 from Grasshopper.Folders import UserObjectFolders
 import System.Drawing as sd
 import os
-
-
-# Master array of all identifiers of Ladybug Tools components
-ladybug_tools = ('LB', 'HB', 'DF', 'Ladybug', 'Honeybee', 'Butterfly', 'HoneybeePlus')
-
-def is_ladybug_tools(component):
-    """Check if a component is a part of Ladybug Tools."""
-    return component.Name.split(' ')[0] in ladybug_tools or \
-        component.Name.split('_')[0] in ladybug_tools
-
-
-def collect_ladybug_tools_components(document=None):
-    """Collect all of the Ladybug Tools GHPython components on the Grasshopper canvass.
-    
-    Args:
-        document: A Grasshopper document to be arched for components. The current
-            document will be used if None.
-    """
-    components = []
-    document = document or ghenv.Component.OnPingDocument()
-
-    # check if there is any cluster and collect the objects inside clusters
-    for obj in document.Objects:
-        if type(obj) == gh.Special.GH_Cluster:
-            cluster_doc = obj.Document("")
-            if not cluster_doc:
-                continue
-            for cluster_obj in  cluster_doc.Objects:
-                if type(cluster_obj) == type(ghenv.Component)and \
-                        is_ladybug_tools(cluster_obj):
-                    if cluster_obj.Locked:
-                        continue
-                    components.append(cluster_obj)
-        elif type(obj) == type(ghenv.Component)and is_ladybug_tools(obj):
-            if obj.Locked:
-                continue
-            components.append(obj)
-
-    # remove this sync component from the array
-    components = tuple(comp for comp in components if \
-                       comp.InstanceGuid != ghenv.Component.InstanceGuid)
-
-    return components
 
 
 def has_version_changed(uo, component):
@@ -244,12 +202,12 @@ def update_component(component, uofolder):
     return 'Updated %s' % component.Name
 
 
-if _sync:
+if all_required_inputs(ghenv.Component) and _sync:
     # find the Grasshopper UserObjects folder and get the current canvass
     uofolder = UserObjectFolders[0]
     doc = ghenv.Component.OnPingDocument()
-    
+
     # load all of the GHPython userobjects and update the versions
-    components = collect_ladybug_tools_components(doc)
+    components = gather_canvas_components(ghenv.Component)
     report_init = (update_component(comp, uofolder) for comp in components)
     report = '\n'.join(r for r in report_init if r)
