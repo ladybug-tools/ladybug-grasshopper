@@ -1,0 +1,120 @@
+{
+  "version": "0.2.0", 
+  "nickname": "ImportSTAT", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "location", 
+        "description": "A Ladybug Location object describing the location data in the STAT file.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "ashrae_zone", 
+        "description": "The ASHRAE climate zone of the STAT file. Numbers in the zone\ndenote average temperature (0 = Hottest; 8 = Coldest). Letters in\nthe zone denote wetness (A = Humid; B = Dry; C = Marine)", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "koppen_zone", 
+        "description": "The Koppen climate zone of the STAT file. The Koppen climate\nsystem uses vegetation as in indicator fo climate and combines\naverage monthly temperatures, precipitation, and the seasonality\nof precipitation.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "clear_dir_norm_rad", 
+        "description": "The hourly \"Clear Sky\" Direct Normal Radiation in Wh/m2.\nSuch clear sky radiation is typically used for sizing cooling\nsystems. If monthly optical depths are found within the STAT\nfile, these values will come from the Revised ASHARAE Clear Sky\n(Tau model). If no optical depths are found, they will come from\nthe original ASHARE lear sky model.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "clear_diff_horiz_rad", 
+        "description": "The hourly \"Clear Sky\" Diffuse Horizontal Radiation\nin Wh/m2. Such clear sky radiation is typically used for sizing\ncooling systems. If monthly optical depths are found within the\nSTAT file, these values will come from the Revised ASHARAE Clear Sky\n(Tau model). If no optical depths are found, they will come from\nthe original ASHARE lear sky model.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "ann_heat_dday_996", 
+        "description": "A DesignDay object representing the annual 99.6%\nheating design day.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "ann_heat_dday_990", 
+        "description": "A DesignDay object representing the annual 99.0%\nheating design day.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "ann_cool_dday_004", 
+        "description": "A DesignDay object representing the annual 0.4%\ncooling design day.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "ann_cool_dday_010", 
+        "description": "A DesignDay object representing the annual 1.0%\ncooling design day.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "monthly_ddays_050", 
+        "description": "A list of 12 DesignDay objects representing monthly\n5.0% cooling design days.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "monthly_ddays_100", 
+        "description": "A list of 12 DesignDay objects representing monthly\n10.0% cooling design days.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "extreme_cold_week", 
+        "description": "A Ladybug AnalysisPeriod object representing the\ncoldest week within the corresponding EPW.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "extreme_hot_week", 
+        "description": "A Ladybug AnalysisPeriod object representing the\nhottest week within the corresponding EPW.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "typical_weeks", 
+        "description": "A list of Ladybug AnalysisPeriod objects representing\ntypical weeks within the corresponding EPW.\nThe type of week can vary depending on the climate.\n_\nFor mid and high lattitude climates with 4 seasons (eg. New York),\nthese weeks are for each of the 4 seasons ordered as follows:\nWinter, Spring, Summer, Autumn\n_\nFor low lattitude climates with wet/dry seasons (eg. Mumbai),\nthese weeks might also include:\nWet Season, Dry Season\n_\nFor equitorial climates with no seasons (eg. Singapore),\nThis output is usually a single week representing typical\nconditions of the entire year.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_stat_file", 
+      "description": "A .stat file path on your system as a string.", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "0 :: Import", 
+  "code": "\n\ntry:\n    from ladybug.stat import STAT\n    from ladybug.wea import Wea\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    stat_obj = STAT(_stat_file)\n\n    # output location and climate zone\n    location = stat_obj.location\n    ashrae_zone = stat_obj.ashrae_climate_zone\n    koppen_zone = stat_obj.koppen_climate_zone\n\n    # output clear sky radiation\n    try:  # first see if we can get the values from monthly optical depths\n        wea = Wea.from_stat_file(_stat_file)\n    except:  # no optical data was found; use the original clear sky\n        wea = Wea.from_ashrae_clear_sky(location)\n    clear_dir_norm_rad = wea.direct_normal_irradiance\n    clear_diff_horiz_rad = wea.diffuse_horizontal_irradiance\n\n    # output design day objects\n    ann_heat_dday_996 = stat_obj.annual_heating_design_day_996\n    ann_heat_dday_990 = stat_obj.annual_heating_design_day_990\n    ann_cool_dday_004 = stat_obj.annual_cooling_design_day_004\n    ann_cool_dday_010 = stat_obj.annual_cooling_design_day_010\n    monthly_ddays_050 = stat_obj.monthly_cooling_design_days_050\n    monthly_ddays_100 = stat_obj.monthly_cooling_design_days_100\n\n    # output extreme and typical weeks\n    extreme_cold_week = stat_obj.extreme_cold_week\n    extreme_hot_week = stat_obj.extreme_hot_week\n    typical_weeks = []\n    seasonal_wks = [stat_obj.typical_winter_week, stat_obj.typical_spring_week,\n                   stat_obj.typical_summer_week, stat_obj.typical_autumn_week]\n    for wk in seasonal_wks:\n        if wk is not None:\n            typical_weeks.append(wk)\n    typical_weeks.extend(stat_obj.other_typical_weeks)", 
+  "category": "Ladybug", 
+  "name": "LB Import STAT", 
+  "description": "Import data from a standard .stat file.\n-"
+}

@@ -1,0 +1,43 @@
+{
+  "version": "0.1.2", 
+  "nickname": "ComfStat", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "pct_hot", 
+        "description": "The percent of time that conditions are hotter than acceptable limits.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "pct_neutral", 
+        "description": "The percent of time that conditions are within acceptable limits\n(aka. the percent of time comfortable).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "pct_cold", 
+        "description": "The percent of time that conditions are colder than acceptable limits.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_comf_obj", 
+      "description": "A Ladybug ComfortCollection object from any of the comfort\nmodel components.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug_comfort.collection.base import ComfortCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_comf_obj, ComfortCollection), '_comf_obj must be a ' \\\n        'Ladybug ComfortCollection object. Got {}.'.format(type(_comf_obj))\n\n    pct_hot = _comf_obj.percent_hot\n    pct_neutral = _comf_obj.percent_neutral\n    pct_cold = _comf_obj.percent_cold", 
+  "category": "Ladybug", 
+  "name": "LB Comfort Statistics", 
+  "description": "Get statitics of thermal comfort from a Ladybug Comfort Object.\n-"
+}

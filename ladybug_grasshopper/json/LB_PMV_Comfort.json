@@ -1,0 +1,120 @@
+{
+  "version": "0.1.3", 
+  "nickname": "PMV", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "pmv", 
+        "description": "Predicted Mean Vote (PMV).\n_\nPMV is a seven-point scale from cold (-3) to hot (+3) that was used\nin comfort surveys of P.O. Fanger.\n_\nEach interger value of the scale indicates the following:\n-3 = Cold\n-2 = Cool\n-1 = Slightly Cool\n0 = Neutral\n+1 = Slightly Warm\n+2 = Warm\n+3 = Hot", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "ppd", 
+        "description": "Percentage of People Dissatisfied (PPD).\n_\nSpecifically, this is defined by the percent of people who would have\na PMV beyond acceptable thresholds (typically <-0.5 and >+0.5).\nNote that, with the PMV model, the best possible PPD achievable is 5%\nand most standards aim to have a PPD below 10%.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "set", 
+        "description": "Standard Effective Temperature (SET) in Celcius.\n_\nThese temperatures describe what the given input conditions \"feel like\"\nin relation to a standard environment of 50% relative humidity,\n<0.1 m/s average air speed, and mean radiant temperature equal to\naverage air temperature, in which the total heat loss from the skin\nof an imaginary occupant with an activity level of 1.0 met and a\nclothing level of 0.6 clo is the same as that from a person in the\nactual environment.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "comfort", 
+        "description": "Integers noting whether the input conditions are acceptable\naccording to the assigned comfort_parameter.\n_\nValues are one of the following:\n0 = uncomfortable\n1 = comfortable", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "condition", 
+        "description": "Integers noting the thermal status of a subject according to\nthe assigned comfort_parameter.\n_\nValues are one of the following:\n-1 = cold\n0 = netural\n+1 = hot\n_\nAdditionally, if pmv_par_ are connected with humidity ratio lmits,\nthe following values may also be included:\n-2 = too dry (but thermally neutral)\n+2 = too humid (but thermally neutral)", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "heat_loss", 
+        "description": "A list of 6 terms for heat loss from the human energy\nbalance calculation that underlies PMV. Valeus are in W.\n_\nThe terms are ordered as follows:\n- Conduction\n- Sweating\n- Latent Respiration\n- Dry Respiration\n- Radiation\n- Convection", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "comf_obj", 
+        "description": "A Python object containing all inputs and results of the\nanalysis.  This can be plugged into components like the \"Comfort\nStatistics\" component to get further information.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_air_temp", 
+      "description": "Data Collection or individual value of air temperature in C.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_mrt_", 
+      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp..", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_air_speed_", 
+      "description": "Data Collection or individual of air speed values in m/s.\nDefault is a very low speed of 0.1 m/s.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_rel_humid", 
+      "description": "Data Collection or individual value of relative humidity in %.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_met_rate_", 
+      "description": "Data Collection or individual value of metabolic rate in met.\n_\n1 met = Metabolic rate of a resting seated person\n1.2 met = Metabolic rate of a standing person\n2.4 met = Metabolic rate of a person walking at ~1 m/s (2 mph)\nDefault is set to 1.1 met for seated, typing.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_clothing_", 
+      "description": "Data Collection or individual value of clothing insulation in clo.\n_\n1 clo = Three-piece suit\n0.5 clo = Shorts + T-shirt\n0 clo = No clothing\nDefault is set to 0.7 clo for long sleeve shirt and pants.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "pmv_par_", 
+      "description": "Optional PMV Parameter object to specify parameters \nunder which conditions are considered acceptable. If None, default\nwill assume a PPD threshold of 10%, no absolute humidity constraints\nand a still air threshold of 0.1 m/s.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_run", 
+      "description": "Set to True to run the component.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.psychrometrics import humid_ratio_from_db_rh\n    from ladybug.datatype.temperature import Temperature\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_comfort.collection.pmv import PMV\n    from ladybug_comfort.parameter.pmv import PMVParameter\n    from ladybug_comfort.pmv import predicted_mean_vote\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef extract_collections(input_list):\n    \"\"\"Process inputs into collections and floats.\"\"\"\n    defaults = [None, _air_temp, 0.1, None, 1.1, 0.7]\n    data_colls = []\n    for i, input in enumerate(input_list):\n        if input is None:\n            input_list[i] = defaults[i]\n        elif isinstance(input, BaseCollection):\n            data_colls.append(input)\n        else:\n            try:\n                input_list[i] = float(input)\n            except ValueError as e:\n                raise TypeError('input {} is not valid. Expected float or '\n                                'DataCollection. Got {}'.format(input, type(input)))\n    return input_list, data_colls\n\nif all_required_inputs(ghenv.Component) and _run is True:\n    # Process inputs and assign defaults.\n    input_list = [_air_temp, _mrt_, _air_speed_, _rel_humid, _met_rate_, _clothing_]\n    input, data_colls = extract_collections(input_list)\n    pmv_par = pmv_par_ or PMVParameter()\n    \n    if data_colls == []:\n        # The inputs are all individual values.\n        pmv_result = predicted_mean_vote(input[0], float(input[1]), input[2],\n                                         input[3], input[4], input[5], 0,\n                                         pmv_par.still_air_threshold)\n        pmv = pmv_result['pmv']\n        ppd = pmv_result['ppd']\n        set = pmv_result['set']\n        hr = humid_ratio_from_db_rh(input[0], input[3])\n        comfort = pmv_par.is_comfortable(pmv_result['ppd'], hr)\n        condition = pmv_par.discomfort_reason(pmv_result['pmv'], pmv_result['ppd'])\n        heat_loss = [pmv_result['heat_loss']['cond'],\n                    pmv_result['heat_loss']['sweat'],\n                    pmv_result['heat_loss']['res_l'],\n                    pmv_result['heat_loss']['res_s'],\n                    pmv_result['heat_loss']['rad'],\n                    pmv_result['heat_loss']['conv']]\n    else:\n        # The inputs include Data Collections.\n        if not isinstance(_air_temp, BaseCollection):\n            _air_temp = data_colls[0].get_aligned_collection(\n                float(_air_temp), Temperature(), 'C')\n        \n        comf_obj = PMV(_air_temp, _rel_humid, _mrt_, _air_speed_, _met_rate_,\n            _clothing_, 0, pmv_par)\n        pmv = comf_obj.predicted_mean_vote\n        ppd = comf_obj.percentage_people_dissatisfied\n        set = comf_obj.standard_effective_temperature\n        comfort = comf_obj.is_comfortable\n        condition = comf_obj.discomfort_reason\n        heat_loss = [comf_obj.heat_loss_conduction,\n                    comf_obj.heat_loss_sweating,\n                    comf_obj.heat_loss_latent_respiration,\n                    comf_obj.heat_loss_dry_respiration,\n                    comf_obj.heat_loss_radiation,\n                    comf_obj.heat_loss_convection]", 
+  "category": "Ladybug", 
+  "name": "LB PMV Comfort", 
+  "description": "Calculate Predicted Mean Vote (PMV).\n-\nPMV is a thermal comfort model for use on the interior of buildings\nwhere a heating or cooling system is operational.\nNote that, for naturally ventilated buildings, the Adaptive thermal\ncomfort model should be used.\n-"
+}

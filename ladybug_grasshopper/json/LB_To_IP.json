@@ -1,0 +1,29 @@
+{
+  "version": "0.1.1", 
+  "nickname": "ToIP", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data_ip", 
+        "description": "The DataCollection in IP units.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data_si", 
+      "description": "A DataCollection in SI units.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_data_si, BaseCollection), \\\n        '_data_si must be a Data Collection. Got {}.'.format(type(_data_si))\n    data_ip = _data_si.to_ip()", 
+  "category": "Ladybug", 
+  "name": "LB To IP", 
+  "description": "Convert a DataCollection to IP values.\n-"
+}

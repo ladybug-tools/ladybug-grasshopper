@@ -1,0 +1,113 @@
+{
+  "version": "0.1.1", 
+  "nickname": "LegendParCategorized", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "leg_par", 
+        "description": "A legend parameter object that can be plugged into any of the\nLadybug components with a legend.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_domain", 
+      "description": "A list of one or more numbers noting the bondaries of the data\ncategories. For example, [100, 2000] creates three categories of\n(<100, 100-2000, >2000). Values must always be ordered from lowest\nto highest.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_colors", 
+      "description": "An list of color objects with a length equal to the number of items\nin the domain + 1. These are used to color each of the categories of data.", 
+      "type": "Color", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "categories_", 
+      "description": "An optional list of text strings with a length equal to the\ncolors. These will be used to name each of the categories in the legend.\nIf None, the legend text will simply mark the numerical ranges of the\ncategories. (Default: None).", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "continuous_cols_", 
+      "description": "Boolean noting whether colors generated are continuous\nor discrete. If True, the colors generated from the corresponding\nlegend will be in a continuous gradient. If False, they will be\ncategorized in incremental groups according to the segment_count.", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "continuous_leg_", 
+      "description": "Boolean. If True, the colors along the legend will be in\na continuous gradient. If False, they will be categorized in\nincremental groups according to the number_of_segments.\nDefault is False for depicting discrete categories.", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "num_decimals_", 
+      "description": "An optional integer to set the number of decimal\nplaces for the numbers in the legend text. Default is 2.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "larger_smaller_", 
+      "description": "Boolean noting whether to include larger than and\nsmaller than (> and <) values after the upper and lower legend segment\ntext. Default is False.", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "vert_or_horiz_", 
+      "description": "Boolean. If True, the legend mesh and text points\nwill be generated vertically.  If False, they will genrate a\nhorizontal legend. Default is True for a vertically-oriented legend.", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "base_plane_", 
+      "description": "A Plane to note the starting point and orientation from\nwhere the legend will be genrated. The default is the world XY plane\nat origin (0, 0, 0).", 
+      "type": "Plane", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "seg_height_", 
+      "description": "An optional number to set the height of each of the legend\nsegments. Default is 1.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "seg_width_", 
+      "description": "An optional number to set the width of each of the legend\nsegments. Default is 1 when legend is vertical. When horizontal, the\ndefault is (text_height * (number_decimal_places + 2)).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "text_height_", 
+      "description": "An optional number to set the size of the text in model units.\nDefault is half of the segment_height.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "font_", 
+      "description": "An optional text string to specify the font to be used for the text.\nExamples include \"Arial\", \"Times New Roman\", \"Courier\" (all without\nquotations). Default is \"Arial\".", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\n\ntry:\n    from ladybug.legend import LegendParametersCategorized\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_plane\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    if base_plane_:\n        base_plane_ = to_plane(base_plane_)\n    if len(categories_) == 0:\n        categories_ = None\n\n    leg_par = LegendParametersCategorized(\n        domain=_domain, colors=_colors, category_names=categories_,\n        base_plane=base_plane_)\n\n    leg_par.continuous_colors = continuous_cols_\n    leg_par.continuous_legend = continuous_leg_\n    leg_par.decimal_count = num_decimals_\n    leg_par.include_larger_smaller = larger_smaller_\n    leg_par.vertical = vert_or_horiz_\n    leg_par.segment_height = seg_height_\n    leg_par.segment_width = seg_width_\n    leg_par.text_height = text_height_\n    leg_par.font = font_\n", 
+  "category": "Ladybug", 
+  "name": "LB Legend Parameters Categorized", 
+  "description": "Use this component to change the colors, range, and display of any Ladybug legend\nalong with the corresponding colored mesh that the legend refers to.\n-\nThe legend parameters from this component have more limitations than the normal\nLegend Parameters. However, these legend parameters will do auto-categorization\nof data, binning values into groups based on custom ranges.\n-"
+}

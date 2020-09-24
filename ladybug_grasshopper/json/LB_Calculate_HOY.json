@@ -1,0 +1,64 @@
+{
+  "version": "0.1.3", 
+  "nickname": "HOY", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "hoy", 
+        "description": "Hour of the year.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "doy", 
+        "description": "Day of the year.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "date", 
+        "description": "Human readable date time.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_month_", 
+      "description": "Integer for month (1-12).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_day_", 
+      "description": "Integer for day (1-31).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_hour_", 
+      "description": "Integer for hour (0-23).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_minute_", 
+      "description": "Integer for minute (0-59).", 
+      "type": "int", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.dt import DateTime\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\nmonth = _month_ or 9\nday = _day_ or 21\nhour = _hour_ if _hour_ is not None else 12\nminute = _minute_ or 0\n\ndatetime = DateTime(month, day, hour, minute)\nhoy = datetime.hoy\ndoy = datetime.doy\ndate = datetime\n", 
+  "category": "Ladybug", 
+  "name": "LB Calculate HOY", 
+  "description": "Calculate hour of the year from month, day, hour, minute.\n-"
+}

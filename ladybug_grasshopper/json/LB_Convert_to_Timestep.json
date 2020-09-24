@@ -1,0 +1,36 @@
+{
+  "version": "0.1.3", 
+  "nickname": "ToStep", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "A Continuous DataCollection at the input _timestep_.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data", 
+      "description": "A Ladybug Hourly DataCollection object.  This can be either\ncontinuous or discontinuous.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_timestep_", 
+      "description": "The timestep to which the data will be converted. If this\nis higher than the input _data timestep, values will be\nlinerarly interpolated to the new timestep.  If it is lower,\nvalues that do not fit the timestep will be removed from the\nDataCollection. (Defaut: 1)", 
+      "type": "int", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datacollection import HourlyDiscontinuousCollection, \\\n        HourlyContinuousCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # check the inputs\n    assert isinstance(_data, HourlyDiscontinuousCollection), \\\n        ' Connected _data is not a Hourly Data Collection. Got{}'.format(type(_data))\n    if _timestep_ is not None:\n        valid_timesteps = _data.header.analysis_period.VALIDTIMESTEPS\n        assert _timestep_ in valid_timesteps, ' Connected _timestep_ is not a'\\\n            ' hourly timestep.\\n Got {}. Choose from: {}'.format(\n            _timestep_, sorted(valid_timesteps.keys()))\n\n    # if the data is not continuous, interpolate over holes.\n    if not isinstance(_data, HourlyContinuousCollection):\n        if _data.validated_a_period is False:\n            _data = data.validate_analysis_period\n        _data = _data.interpolate_holes()\n\n    # convert the data to the timestep\n    if _timestep_ and _timestep_ != _data.header.analysis_period.timestep:\n        if _timestep_ < _data.header.analysis_period.timestep:\n            data = _data.cull_to_timestep(_timestep_)\n        else:\n            data = _data.interpolate_to_timestep(_timestep_)\n    else:\n        data = _data", 
+  "category": "Ladybug", 
+  "name": "LB Convert to Timestep", 
+  "description": "Convert a hourly Ladybug data collection to a continuous collection at a\nspecific timestep.\n_\nThis will be done either through linear interpolation or by culling out values\nthat do not fit the timestep.  It can also be used to convert a discontinous\ndata collection to a continuous one by linearly interpolating over holes in\nthe data set.\n-"
+}

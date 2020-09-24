@@ -1,0 +1,43 @@
+{
+  "version": "0.1.1", 
+  "nickname": "ConstrType", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "type", 
+        "description": "A Ladybug DataType object that can be assigned to the header\nof a Ladybug DataCollection.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_name", 
+      "description": "A name for the data type as a string.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_unit", 
+      "description": "A unit for the data type as a string.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "categories_", 
+      "description": "An optional list of text for categories to be associated with\nthe data type. These categories will show up in the legend whenever\ndata with this data type is visualized. Input should be text strings\nwith a category number (integer) and name separated by a colon.\n(eg. ['-1: Cold', '0: Neutral', '1: Hot'])", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datatype.generic import GenericType\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # process the categories_ if they are supplied\n    unit_descr = None\n    if categories_ != []:\n        unit_descr = {}\n        for prop in categories_:\n            key, value = prop.split(':')\n            unit_descr[int(key)] = value.strip()\n\n    type = GenericType(_name, _unit, unit_descr=unit_descr)", 
+  "category": "Ladybug", 
+  "name": "LB Construct Data Type", 
+  "description": "Construct a Ladybug DataType to be used in the header of a ladybug DataCollection.\n-"
+}

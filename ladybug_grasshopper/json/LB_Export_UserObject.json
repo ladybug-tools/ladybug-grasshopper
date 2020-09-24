@@ -1,0 +1,44 @@
+{
+  "version": "0.3.0", 
+  "nickname": "ExportUO", 
+  "outputs": [
+    []
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_components", 
+      "description": "A Ladybug Tools GHPython component to be exported. This\ncan also be a list of of components to be exported together. Lastly,\nthis can be a \"*\" and all of the Ladybug Tools components on the\nGrasshopper canvass will be exported.", 
+      "type": "System.Object", 
+      "default": [
+        "*"
+      ]
+    }, 
+    {
+      "access": "item", 
+      "name": "_folder", 
+      "description": "Full path to folder to copy the updated UserObject and the\nsource code. It is usually path to where you have cloned the\nrepository from GitHub. Exported contents will be created under src\nand userobject folders.", 
+      "type": "string", 
+      "default": "C:\\\\ladybug\\\\export_test"
+    }, 
+    {
+      "access": "item", 
+      "name": "_change_type_", 
+      "description": "One of the values listed below based on the type of\nchange made to the component. Export component will validate the\nversion of the newly created UserObject against the version of the\ncurrent installed UserObject with the same name based on the change\ntype. If an older version of the component does not exist the\ncurrent version of the component will be used. The version is\nstructured as major.minor.patch. (Default: fix)\n_\n* release: You are changing the versions for a new release.\nBump the major with 1 and set minor and patch to 0.\n_\n* feat: You have added a new feature. Adding a new feature usually\nresults in a change in inputs or outputs of the component.\nBump minor by 1 and set patch to 0.\n_\n* perf: You have improved the component for better performance.\nSimilar to adding a feature you should bump the minor by 1 and\nset patch to 0.\n_\n* fix: You have fixed the code inside the component. It results in\na single bump in patch.\n_\n* docs: You have improved the documentation. No change in version.\n_\n* ignore: This is an exception to the rule and you want the change\ntype to be ignored. You should use this option only in rare\noccasional cases.", 
+      "type": "string", 
+      "default": "ignore"
+    }, 
+    {
+      "access": "item", 
+      "name": "_export", 
+      "description": "Set to True to export the component.", 
+      "type": "System.Object", 
+      "default": true
+    }
+  ], 
+  "subcategory": "5 :: Version", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.versioning.gather import gather_canvas_components, \\\n        gather_connected_components\n    from ladybug_{{cad}}.versioning.userobject import validate_change_type\n    from ladybug_{{cad}}.versioning.export import export_component, refresh_toolbar\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _export:\n    change_type = validate_change_type(_change_type_)\n    comps_to_export = gather_connected_components(ghenv.Component) \\\n        if str(_components[0]) != '*' \\\n        else gather_canvas_components(ghenv.Component)\n    for comp in comps_to_export:\n        print('Processing %s...' % comp.Name)\n        export_component(_folder, comp, _change_type_)\n    refresh_toolbar()  # try to update the toolbar\nelse:\n    print('Connect _components and _folder')", 
+  "category": "Ladybug", 
+  "name": "LB Export UserObject", 
+  "description": "Export a Ladybug Tools Grasshopper GHPython component as a UserObject that can\nbe installed on other's machines.\n-"
+}

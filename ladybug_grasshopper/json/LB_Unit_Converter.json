@@ -1,0 +1,50 @@
+{
+  "version": "0.1.0", 
+  "nickname": "Units", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "all_u", 
+        "description": "A text string indicating all possible units\nthat can be plugged into _from_u and _to_u.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "values", 
+        "description": "The converted numerical values.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_values", 
+      "description": "Values to be converted from one unit type to another.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_from_u", 
+      "description": "Text indicating the units of the input _values (eg. 'C')", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_to_u", 
+      "description": "Text indicating the units of the output values (eg. 'K')", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    import ladybug.datatype\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nall_u = [': '.join([key, ', '.join(val)]) for key, val in ladybug.datatype.UNITS.items()]\n\nif all_required_inputs(ghenv.Component):\n    base_type = None\n    for key in ladybug.datatype.UNITS:\n        if _from_u in ladybug.datatype.UNITS[key]:\n            base_type = ladybug.datatype.TYPESDICT[key]()\n    assert base_type, 'Input _from_u \"{}\" is not recgonized as a valid unit.\\n' \\\n        'Check all_u for acceptable units'.format(_from_u)\n    \n    values = base_type.to_unit(_values, _to_u, _from_u)", 
+  "category": "Ladybug", 
+  "name": "LB Unit Converter", 
+  "description": "Convert a value or list of values from one unit to another.\n-"
+}

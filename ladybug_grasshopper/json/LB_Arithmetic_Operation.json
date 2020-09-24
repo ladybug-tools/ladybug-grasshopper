@@ -1,0 +1,50 @@
+{
+  "version": "0.1.3", 
+  "nickname": "ArithOp", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "A Ladybug data collection object derived from the operation between\nthe two data inputs.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_data_1", 
+      "description": "The first Data Collection in the operation. If the operator is\nnot commutative, this collection comes before the operator. For\nexample, in subtraction, this is the collection being subtracted from.\nThis can also be a list of Data Collections that align with _data_2.\nIt cal also be a single number that will be added, multiplied, etc.\nto all of _data_2.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_data_2", 
+      "description": "The second Data Collection in the operation. If the operator is\nnot commutative, this collection comes after the operator. For\nexample, in subtraction, this is the collection being subtracted with.\nThis can also be a list of Data Collections that align with _data_1.\nIt cal also be a single number that will be added, multiplied, etc.\nto all of _data_1.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_operator_", 
+      "description": "Text for the operator to use between the two Data Collections.\nValid examples include (+, -, *, /). By default this is + for addition.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "type_", 
+      "description": "Optional text for a new \"type\" key in the Data Collection's metadata.\nThis will usually show up in most Ladybug visualiztions and it should\nusually change for most types of operations.", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\ntry:\n    from itertools import izip as zip  # python 2\nexcept ImportError:\n    pass  # some future time when {{PLGN}}Python upgrades to python 3\n\n\nif all_required_inputs(ghenv.Component):\n    # build the arithmetic statement\n    operator = '+' if _operator_ is None else _operator_\n    statement = 'data_1 {} data_2'.format(operator)\n\n    # perform the arithmetic operation\n    data = []\n    for data_1, data_2 in zip(_data_1, _data_2):\n        result = eval(statement, {'data_1': data_1, 'data_2': data_2})  # I love Python!\n\n        # try to replace the data collection type\n        try:\n            result = result.duplicate()\n            if type_:\n                result.header.metadata['type'] = type_\n            elif 'type' in result.header.metadata:\n                del result.header.metadata['type']\n        except AttributeError:\n            pass  # result was not a data collection; just return it anyway\n        data.append(result)", 
+  "category": "Ladybug", 
+  "name": "LB Arithmetic Operation", 
+  "description": "Perform simple arithmetic operations between Data Collections. For example,\nadding two Data Collections together, subtracting one collection from another,\nor multiplying/dividing a data in a collection by a factor.\n-\nNote that Data Collections must be aligned in order for this component to run\nsuccessfully.\n-\nUsing this component will often be much faster and more elegant compared to\ndeconstructing the data collection, performing the operation with native\nGrasshopper components, and rebuilding the collection.\n-"
+}

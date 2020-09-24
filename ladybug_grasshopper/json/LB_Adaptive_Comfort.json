@@ -1,0 +1,99 @@
+{
+  "version": "0.1.3", 
+  "nickname": "Adaptive", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "prevail_temp", 
+        "description": "Data Collection of prevailing outdoor temperature in\ndegrees C.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "neutral_temp", 
+        "description": "Data Collection of the desired neutral temperature in\ndegrees C.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "deg_neutral", 
+        "description": "Data Collection of the degrees from desired neutral\ntemperature in degrees C.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "comfort", 
+        "description": "Integers noting whether the input conditions are acceptable\naccording to the assigned comfort_parameter.\n_\nValues are one of the following:\n0 = uncomfortable\n1 = comfortable", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "condition", 
+        "description": "Integers noting the thermal status of a subject according to\nthe assigned comfort_parameter.\n_\nValues are one of the following:\n-1 = cold\n0 = netural\n+1 = hot", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "comf_obj", 
+        "description": "A Python object containing all inputs and results of the\nanalysis.  This can be plugged into components like the \"Comfort\nStatistics\" component to get further information.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_out_temp", 
+      "description": "Outdoor temperatures in one of the following formats:\n_\n1 - A Data Collection of prevailing outdoor temperature values in C.\nThis Data Collection must align with the _air_temp or _mrt_\ninputs and bear the PrevailingOutdoorTemperature data type in\nits header.\n2 - A single prevailing outdoor temperature value in C to be used\nfor all of the _air_temp or _mrt_ inputs.\n3 - A Data Collection of outdoor dry bulb temperatures recorded over\nthe entire year. This Data Collection must be continouous and\nmust either be an Hourly Collection or Daily Collection. In the event\nthat the input adapt_par_ has a _avgm_or_runmean_ set to True,\nMonthly collections are also acceptable here. Note that, because\nan annual input is required, this input collection does not have\nto align with the _air_temp or _mrt_ inputs.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_air_temp", 
+      "description": "Data Collection or individual value of air temperature in C.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_mrt_", 
+      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_air_speed_", 
+      "description": "Data Collection or individual of air speed value in m/s.\nDefault is a very low speed of 0.1 m/s.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "adapt_par_", 
+      "description": "Optional Adaptive Parameter object to specify parameters \nunder which conditions are considered acceptable. If None, default\nwill assume ASHRAE-55 criteria.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_run", 
+      "description": "Set to True to run the component.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datatype.temperature import Temperature\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_comfort.collection.adaptive import Adaptive\n    from ladybug_comfort.parameter.adaptive import AdaptiveParameter\n    from ladybug_comfort.adaptive import t_operative, \\\n        adaptive_comfort_ashrae55, adaptive_comfort_en15251, \\\n        cooling_effect_ashrae55, cooling_effect_en15251, \\\n        adaptive_comfort_conditioned\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef extract_collections(input_list):\n    \"\"\"Process inputs into collections and floats.\"\"\"\n    defaults = [None, None, _air_temp, 0.1]\n    data_colls = []\n    for i, input in enumerate(input_list):\n        if input is None:\n            input_list[i] = defaults[i]\n        elif isinstance(input, BaseCollection):\n            data_colls.append(input)\n        else:\n            try:\n                input_list[i] = float(input)\n            except ValueError as e:\n                raise TypeError('input {} is not valid. Expected float or '\n                                'DataCollection. Got {}'.format(input, type(input)))\n    return input_list, data_colls\n\nif all_required_inputs(ghenv.Component) and _run is True:\n    # Process inputs and assign defaults.\n    input_list = [_out_temp, _air_temp, _mrt_, _air_speed_]\n    input, data_colls = extract_collections(input_list)\n    adapt_par = adapt_par_ or AdaptiveParameter()\n\n    if data_colls == []:\n        # The inputs are all individual values.\n        prevail_temp = input[0]\n        to = t_operative(input[1], float(input[2]))\n        \n        # Determine the ralationship to the neutral temperature\n        if adapt_par.conditioning != 0:\n            comf_result = adaptive_comfort_conditioned(prevail_temp, to,\n                adapt_par.conditioning, adapt_par.standard)\n        elif adapt_par.ashrae55_or_en15251 is True:\n            comf_result = adaptive_comfort_ashrae55(prevail_temp, to)\n        else:\n            comf_result = adaptive_comfort_en15251(prevail_temp, to)\n        \n        # Determine the cooling effect\n        if adapt_par.discrete_or_continuous_air_speed is True:\n            ce = cooling_effect_ashrae55(input[3], to)\n        else:\n            ce = cooling_effect_en15251(input[3], to)\n        \n        # Output results\n        neutral_temp = comf_result['t_comf']\n        deg_neutral = comf_result['deg_comf']\n        comfort = adapt_par.is_comfortable(comf_result, ce)\n        condition = adapt_par.thermal_condition(comf_result, ce)\n    else:\n        # The inputs include Data Collections.\n        if not isinstance(_air_temp, BaseCollection):\n            _air_temp = data_colls[0].get_aligned_collection(\n                float(_air_temp), Temperature(), 'C')\n        \n        comf_obj = Adaptive.from_air_and_rad_temp(_out_temp, _air_temp, _mrt_,\n                                                 _air_speed_, adapt_par)\n        prevail_temp = comf_obj.prevailing_outdoor_temperature\n        neutral_temp = comf_obj.neutral_temperature\n        deg_neutral = comf_obj.degrees_from_neutral\n        comfort = comf_obj.is_comfortable\n        condition = comf_obj.thermal_condition", 
+  "category": "Ladybug", 
+  "name": "LB Adaptive Comfort", 
+  "description": "Calculate Predicted Mean Vote (PMV).\n-\nPMV is a thermal comfort model for use on the interior of buildings\nwhere a heating or cooling system is operational.\nNote that, for naturally ventilated buildings, the Adaptive thermal\ncomfort model should be used.\n-"
+}

@@ -1,0 +1,92 @@
+{
+  "version": "0.1.4", 
+  "nickname": "Heatmap", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "mesh", 
+        "description": "The input _mesh that has been colored with results.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "legend", 
+        "description": "Geometry representing the legend for the mesh.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "title", 
+        "description": "A text object for the global_title.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "colors", 
+        "description": "The colors associated with each input value.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "legend_par", 
+        "description": "The input legend parameters with defaults filled for\nunset properties.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_values", 
+      "description": "A list of numerical values with which to color the mesh.\nThe number of values must match the number of faces or vertices\nin the mesh.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_mesh", 
+      "description": "A Mesh object, with a number of faces or vertices that match\nthe number of input values and will be colored with restults.", 
+      "type": "Mesh", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "offset_dom_", 
+      "description": "Optional domain (or number for distance), which will\nbe used to offset the mesh faces or verticesto according to the\nvalues. Higher values will be offset further.", 
+      "type": "Interval", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "legend_par_", 
+      "description": "Optional legend parameters from the Ladybug\n'Legend Parameters' component.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "legend_title_", 
+      "description": "A text string for Legend title. Typically, the units\nof the data are used here but the type of data might also be used.\nDefault is an empty string.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "global_title_", 
+      "description": "A text string to label the entire mesh.  It will be\ndisplayed in the lower left of the result mesh. Default is for no\ntitle.", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug.graphic import GraphicContainer\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_mesh3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d\n    from ladybug_{{cad}}.fromobjects import legend_objects\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.color import color_to_color\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # generate Ladybug objects\n    lb_mesh = to_mesh3d(_mesh)\n    if offset_dom_:\n        lb_mesh = lb_mesh.height_field_mesh(\n            _values, (offset_dom_.T0, offset_dom_.T1))\n    graphic = GraphicContainer(_values, lb_mesh.min, lb_mesh.max, legend_par_)\n\n    # generate titles\n    if legend_title_ is not None:\n        graphic.legend_parameters.title = legend_title_\n    if global_title_ is not None:\n        title = text_objects(global_title_, graphic.lower_title_location,\n                             graphic.legend_parameters.text_height * 1.5,\n                             graphic.legend_parameters.font)\n\n    # draw {{cad}} objects\n    lb_mesh.colors = graphic.value_colors\n    mesh = from_mesh3d(lb_mesh)\n    legend = legend_objects(graphic.legend)\n    colors = [color_to_color(col) for col in lb_mesh.colors]\n    legend_par = graphic.legend_parameters\n", 
+  "category": "Ladybug", 
+  "name": "LB Spatial Heatmap", 
+  "description": "Color a mesh as a heatmap using values that align with the mesh faces or vertices.\n_\nNote that any brep can be converted to a gridded mesh that can be consumed by \nthis component using the \"LB Generate Point Grid\" component.\n-"
+}

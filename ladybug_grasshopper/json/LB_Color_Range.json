@@ -1,0 +1,29 @@
+{
+  "version": "0.1.1", 
+  "nickname": "ColRange", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "colors", 
+        "description": "A series of colors to be plugged into the \"LB Legend Parameters\"\ncomponent.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_index_", 
+      "description": "An index refering to one of the following possible gradients:\n0 - Orignal Ladybug\n1 - Nuanced Ladybug\n2 - Multi-colored Ladybug\n3 - Ecotect\n4 - View Study\n5 - Shadow Study\n6 - Glare Study\n7 - Annual Comfort\n8 - Thermal Comfort\n9 - Thermal Comfort (UTCI)\n10 - Heat Sensation\n11 - Cold Sensation\n12 - Benefit/Harm\n13 - Harm\n14 - Benefit\n15 - Shade Benefit/Harm\n16 - Shade Harm\n17 - Shade Benefit\n18 - Energy Balance\n19 - Energy Balance w/ Storage\n20 - THERM\n21 - Cloud Cover\n22 - Black to White\n23 - Blue, Green, Red\n24 - Multicolored 2\n25 - Multicolored 3", 
+      "type": "int", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug.color import Colorset\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.color import color_to_color\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\n_index_ = _index_ or 0\ncs = Colorset()\ncolors = [color_to_color(col) for col in cs[_index_]]\n", 
+  "category": "Ladybug", 
+  "name": "LB Color Range", 
+  "description": "Use this component to access a library of typical gradients useful throughout Ladybug. \nThe output from this component should be plugged into the colors_ input of the\n\"Legend Parameters\" component.\n-\nFor an image of each of the gardients in the library, check here:\nhttps://github.com/mostaphaRoudsari/ladybug/blob/master/resources/gradients.jpg\n-"
+}

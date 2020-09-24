@@ -1,0 +1,64 @@
+{
+  "version": "0.1.2", 
+  "nickname": "HumidityR", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "humid_ratio", 
+        "description": "A data collection or value for humidity ratio\n(aka. absolute humidity). Units are fractional (kg water / kg air).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "enthalpy", 
+        "description": "A data collection or value for enthalpy (kJ / Kg).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "wet_bulb", 
+        "description": "A data collection or value for wet bulb temperature (C).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "dew_point", 
+        "description": "A data collection or value for dew point temperature (C).", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_dry_bulb", 
+      "description": "A value or data collection representing  dry bulb temperature [C]", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_rel_humid", 
+      "description": "A value or data collection representing relative humidity [%]", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_pressure_", 
+      "description": "A value or data collection representing atmospheric pressure [Pa]\nDefault is to use air pressure at sea level (101,325 Pa).", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.psychrometrics import humid_ratio_from_db_rh, enthalpy_from_db_hr, \\\n        wet_bulb_from_db_rh, dew_point_from_db_rh\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.datatype.fraction import HumidityRatio\n    from ladybug.datatype.specificenergy import Enthalpy\n    from ladybug.datatype.temperature import WetBulbTemperature, DewPointTemperature\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    if _pressure_ is None:\n        _pressure_ = 101325\n\n    humid_ratio = HourlyContinuousCollection.compute_function_aligned(\n        humid_ratio_from_db_rh, [_dry_bulb, _rel_humid, _pressure_],\n        HumidityRatio(), 'fraction')\n    \n    enthalpy = HourlyContinuousCollection.compute_function_aligned(\n        enthalpy_from_db_hr, [_dry_bulb, humid_ratio], Enthalpy(), 'kJ/kg')\n\n    wet_bulb = HourlyContinuousCollection.compute_function_aligned(\n        wet_bulb_from_db_rh, [_dry_bulb, _rel_humid, _pressure_],\n        WetBulbTemperature(), 'C')\n\n    dew_point = HourlyContinuousCollection.compute_function_aligned(\n        dew_point_from_db_rh, [_dry_bulb, _rel_humid],\n        DewPointTemperature(), 'C')", 
+  "category": "Ladybug", 
+  "name": "LB Humidity Metrics", 
+  "description": "Calculate humidity metrics from relative humidity, dry bulb temperature and\n(if present) atmospheric pressure.\n-"
+}

@@ -1,0 +1,36 @@
+{
+  "version": "0.1.2", 
+  "nickname": "XData", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "header", 
+        "description": "The header of the DataCollection (containing metadata).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "values", 
+        "description": "The numerical values of the DataCollection.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data", 
+      "description": "A Ladybug DataCollection object.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_data, BaseCollection), \\\n        '_data must be a Data Collection. Got {}.'.format(type(_data))\n    header = _data.header\n    values = _data.values", 
+  "category": "Ladybug", 
+  "name": "LB Deconstruct Data", 
+  "description": "Deconstruct a Ladybug DataCollection into a header and values.\n-"
+}
