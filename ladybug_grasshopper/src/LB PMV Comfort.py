@@ -20,9 +20,9 @@ comfort model should be used.
         _air_temp: Data Collection or individual value of air temperature in C.
         _mrt_: Data Collection or individual value of mean radiant temperature
             (MRT) in C. Default is the same as the air_temp..
+        _rel_humid: Data Collection or individual value of relative humidity in %.
         _air_speed_: Data Collection or individual of air speed values in m/s.
             Default is a very low speed of 0.1 m/s.
-        _rel_humid: Data Collection or individual value of relative humidity in %.
         _met_rate_: Data Collection or individual value of metabolic rate in met.
             _
             1 met = Metabolic rate of a resting seated person
@@ -106,7 +106,7 @@ comfort model should be used.
 
 ghenv.Component.Name = 'LB PMV Comfort'
 ghenv.Component.NickName = 'PMV'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.1.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

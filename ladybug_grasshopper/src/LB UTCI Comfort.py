@@ -26,12 +26,13 @@ Equivalent Temperature (PET) model should be used.
     Args:
         _air_temp: Data Collection or individual value of air temperature in C.
         _mrt_: Data Collection or individual value of mean radiant temperature
-            (MRT) in C. Default is the same as the air_temp..
+            (MRT) in C. Default is the same as the air_temp.
+        _rel_humid: Data Collection or individual value of relative humidity in %.
         _wind_vel_: Data Collection or individual of air speed values in m/s.
             Default is a low speed of 0.5 m/s, which is the lowest input
             speed that is recommended for the UTCI model.
-        _rel_humid: Data Collection or individual value of relative humidity in %.
         _run: Set to True to run the component.
+
     Returns:
         report: Reports, errors, warnings, etc.
         utci: Universal Thermal Climate Index (UTCI) in Celcius.
@@ -69,7 +70,7 @@ Equivalent Temperature (PET) model should be used.
 
 ghenv.Component.Name = 'LB UTCI Comfort'
 ghenv.Component.NickName = 'UTCI'
-ghenv.Component.Message = '0.1.4'
+ghenv.Component.Message = '0.1.5'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

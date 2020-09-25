@@ -1,5 +1,5 @@
 {
-  "version": "0.1.3", 
+  "version": "0.1.4", 
   "nickname": "OutdoorSolarMRT", 
   "outputs": [
     [
@@ -79,14 +79,14 @@
     {
       "access": "item", 
       "name": "fract_body_exp_", 
-      "description": "A single number between 0 and 1 or a data collection for\nthe fraction of the body exposed to direct sunlight. Note that\nthis does NOT include the body\u2019s self-shading. Only the shading\nfrom furniture and surroundings. (Default: 1 for an open area).", 
+      "description": "A single number between 0 and 1 or a data collection for\nthe fraction of the body exposed to direct sunlight. The \"LB\nHuman to Sky Relationship\" component can be used to estimate this\ninput for a given set of context geometry and position of the\nhuman. Note that this parameter does NOT include the body\u2019s\nself-shading. It only includes the shading from furniture and\nsurroundings. (Default: 1 for an open area).", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "sky_exposure_", 
-      "description": "A single number between 0 and 1 or a data collection\nrepresenting the fraction of the sky vault in occupant\u2019s view.\nDefault is 1 for a person standing in an open area.", 
+      "description": "A single number between 0 and 1 or a data collection representing\nthe fraction of the sky vault in the human subject\u2019s view. The \"LB\nHuman to Sky Relationship\" component can be used to estimate this\ninput for a given set of context geometry and position of the\nhuman. (Default: 1 for a person standing in an open area).", 
       "type": "System.Object", 
       "default": null
     }, 

@@ -1,5 +1,5 @@
 {
-  "version": "0.1.4", 
+  "version": "0.1.5", 
   "nickname": "UTCI", 
   "outputs": [
     [
@@ -51,14 +51,7 @@
     {
       "access": "item", 
       "name": "_mrt_", 
-      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp..", 
-      "type": "System.Object", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "_wind_vel_", 
-      "description": "Data Collection or individual of air speed values in m/s.\nDefault is a low speed of 0.5 m/s, which is the lowest input\nspeed that is recommended for the UTCI model.", 
+      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp.", 
       "type": "System.Object", 
       "default": null
     }, 
@@ -66,6 +59,13 @@
       "access": "item", 
       "name": "_rel_humid", 
       "description": "Data Collection or individual value of relative humidity in %.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_wind_vel_", 
+      "description": "Data Collection or individual of air speed values in m/s.\nDefault is a low speed of 0.5 m/s, which is the lowest input\nspeed that is recommended for the UTCI model.", 
       "type": "System.Object", 
       "default": null
     }, 

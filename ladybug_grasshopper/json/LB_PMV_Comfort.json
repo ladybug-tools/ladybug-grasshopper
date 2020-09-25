@@ -1,5 +1,5 @@
 {
-  "version": "0.1.3", 
+  "version": "0.1.4", 
   "nickname": "PMV", 
   "outputs": [
     [
@@ -71,15 +71,15 @@
     }, 
     {
       "access": "item", 
-      "name": "_air_speed_", 
-      "description": "Data Collection or individual of air speed values in m/s.\nDefault is a very low speed of 0.1 m/s.", 
+      "name": "_rel_humid", 
+      "description": "Data Collection or individual value of relative humidity in %.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
-      "name": "_rel_humid", 
-      "description": "Data Collection or individual value of relative humidity in %.", 
+      "name": "_air_speed_", 
+      "description": "Data Collection or individual of air speed values in m/s.\nDefault is a very low speed of 0.1 m/s.", 
       "type": "System.Object", 
       "default": null
     }, 
