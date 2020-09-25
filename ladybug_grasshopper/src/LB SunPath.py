@@ -93,7 +93,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '0.2.4'
+ghenv.Component.Message = '0.2.5'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -237,13 +237,7 @@ if all_required_inputs(ghenv.Component):
     sp = Sunpath.from_location(_location, north_, dl_saving_)
 
     # process all of the input hoys into altitudes, azimuths and vectors
-    altitudes = []
-    azimuths = []
-    datetimes = []
-    moys = []
-    hoys = []
-    vectors = []
-    suns = []
+    altitudes, azimuths, datetimes, moys, hoys, vectors, suns = [], [], [], [], [], [], []
     for hoy in hoys_:
         sun = sp.calculate_sun_from_hoy(hoy, solar_time_)
         if sun.is_during_day:

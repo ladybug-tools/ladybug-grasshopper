@@ -32,19 +32,24 @@ radiant exchange.
         _horiz_infrared: Hourly Data Collection with the horizontal infrared
             radiation intensity from the sky in W/m2.
         fract_body_exp_: A single number between 0 and 1 or a data collection for
-            the fraction of the body exposed to direct sunlight. Note that
-            this does NOT include the body’s self-shading. Only the shading
-            from furniture and surroundings. (Default: 1 for an open area).
-        sky_exposure_: A single number between 0 and 1 or a data collection
-            representing the fraction of the sky vault in occupant’s view.
-            Default is 1 for a person standing in an open area.
+            the fraction of the body exposed to direct sunlight. The "LB
+            Human to Sky Relationship" component can be used to estimate this
+            input for a given set of context geometry and position of the
+            human. Note that this parameter does NOT include the body’s
+            self-shading. It only includes the shading from furniture and
+            surroundings. (Default: 1 for an open area).
+        sky_exposure_: A single number between 0 and 1 or a data collection representing
+            the fraction of the sky vault in the human subject’s view. The "LB
+            Human to Sky Relationship" component can be used to estimate this
+            input for a given set of context geometry and position of the
+            human. (Default: 1 for a person standing in an open area).
         _ground_ref_: A single number between 0 and 1 or a data collection
             that represents the reflectance of the floor. Default is for 0.25
             which is characteristic of outdoor grass or dry bare soil.
         _solar_body_par_: Optional Solar Body Parameter object to account for
             properties of the human geometry.
         _run: Set to True to run the component.
-    
+
     Returns:
         report: Reports, errors, warnings, etc.
         short_erf: Data collection of shortwave effective radiant field (ERF) in W/m2.
@@ -58,7 +63,7 @@ radiant exchange.
 
 ghenv.Component.Name = 'LB Outdoor Solar MRT'
 ghenv.Component.NickName = 'OutdoorSolarMRT'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.1.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '6'
