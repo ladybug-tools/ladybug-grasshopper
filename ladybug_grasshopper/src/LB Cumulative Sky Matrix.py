@@ -59,7 +59,7 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
 ghenv.Component.Name = 'LB Cumulative Sky Matrix'
 ghenv.Component.NickName = 'SkyMatrix'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '0.1.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -91,13 +91,15 @@ except ImportError as e:
 # TODO: Remove dependency on honeybee + Radiance after genskymtx is in its own LB extension
 try:
     from honeybee_radiance.config import folders as hb_folders
-    rad_url = 'https://github.com/LBNL-ETA/Radiance/releases/tag/012cb178'
+    compatible_rad_date = (2020, 9, 3)
+    hb_url = 'https://github.com/ladybug-tools/lbt-grasshopper/wiki/1.4-Compatibility-Matrix'
+    rad_msg = 'Download and install the version of Radiance listed in the Ladybug ' \
+        'Tools compatibility matrix\n{}'.format(hb_url)
     assert hb_folders.radiance_path is not None, \
-        'No Radiance installation was found on this machine.\n' \
-        'Download and install Radiance from\n{}.'.format(rad_url)
-    assert hb_folders.radiance_version[:2] >= (5, 3), \
-        'The installed Radiance is not version 5.3 or greater.\n' \
-        'Download and install Radiance from\n{}.'.format(rad_url)
+        'No Radiance installation was found on this machine.\n{}'.format(rad_msg)
+    assert hb_folders.radiance_version_date >= compatible_rad_date, \
+        'The installed Radiance is not from {} or later.' \
+        '\n{}'.format('/'.join(str(v) for v in compatible_rad_date), rad_msg)
     # get the path to the gemdaymtx executable
     gendaymtx_exe = os.path.join(hb_folders.radbin_path, 'gendaymtx.exe') if \
         os.name == 'nt' else os.path.join(hb_folders.radbin_path, 'gendaymtx')
