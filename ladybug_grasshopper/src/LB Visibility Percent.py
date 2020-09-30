@@ -61,9 +61,7 @@ point of interest.
     Returns:
         report: ...
         points: The grid of points on the test _geometry that are be used to perform
-            the visibility analysis.  Note that these points are generated even
-            when _run is set to "False" so that an estimate of study run time can
-            be obtained.
+            the visibility analysis.
         results: A list of numbers that aligns with the points. Each number indicates
             the percentage of the _view_points that are not blocked by context geometry.
         mesh: A colored mesh of the test _geometry representing the percentage of
@@ -107,22 +105,21 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
-if all_required_inputs(ghenv.Component):
-    # set the default values
-    _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
-        else 0.1 / conversion_to_meters()
-    if pt_weights_:
-        assert len(pt_weights_) == len(_view_points), \
-            'The number of pt_weights_({}) must match the number of _view_points ' \
-            '({}).'.format(len(pt_weights_), len(_view_points))
+if all_required_inputs(ghenv.Component) and _run:
+        # set the default values
+        _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
+            else 0.1 / conversion_to_meters()
+        if pt_weights_:
+            assert len(pt_weights_) == len(_view_points), \
+                'The number of pt_weights_({}) must match the number of _view_points ' \
+                '({}).'.format(len(pt_weights_), len(_view_points))
 
-    # create the gridded mesh from the geometry
-    study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
-    points = [from_point3d(pt) for pt in study_mesh.face_centroids]
-
-    if _run:  # run the entire study
-        # hide the study points and mesh the geometry and context
+        # create the gridded mesh from the geometry
+        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
+        points = [from_point3d(pt) for pt in study_mesh.face_centroids]
         hide_output(ghenv.Component, 1)
+
+        # mesh the geometry and context
         shade_mesh = join_geometry_to_mesh(_geometry + context_) if _geo_block_ \
             or _geo_block_ is None else join_geometry_to_mesh(context_)
 
@@ -157,6 +154,3 @@ if all_required_inputs(ghenv.Component):
         study_mesh.colors = graphic.value_colors
         mesh = from_mesh3d(study_mesh)
         legend = legend_objects(graphic.legend)
-
-    else:  # only show the points and the view vectors
-        show_output(ghenv.Component, 1)
