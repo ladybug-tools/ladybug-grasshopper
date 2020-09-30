@@ -103,13 +103,9 @@ honeybee-radiance should be used.
     Returns:
         report: ...
         points: The grid of points on the test _geometry that are be used to perform
-            the view analysis.  Note that these points are generated even
-            when _run is set to "False" so that an estimate of study run time can
-            be obtained.
+            the view analysis.
         view_vecs: A list of vectors which are projected from each of the points
-            to evaluate view. Note that these vectors are generated even
-            when _run is set to "False" so that an understanding of the study's
-            field fo view and resolution can be obtained before running the study.
+            to evaluate view.
         results: A list of numbers that aligns with the points. Each number indicates
             the percentage of the view_vecs that are not blocked by context geometry.
         mesh: A colored mesh of the test _geometry representing the percentage of
@@ -175,37 +171,36 @@ VIEW_TYPES = {
 }
 
 
-if all_required_inputs(ghenv.Component):
-    # process the view_type_ and set the default values
-    vt_str = VIEW_TYPES[_view_type]
-    _resolution_ = _resolution_ if _resolution_ is not None else 1
-    _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
-        else 0.1 / conversion_to_meters()
-    if _geo_block_ is None:
-        _geo_block_ = True if vt_str in ('Sky Exposure', 'Sky View') else False
+if all_required_inputs(ghenv.Component) and _run:
+        # process the view_type_ and set the default values
+        vt_str = VIEW_TYPES[_view_type]
+        _resolution_ = _resolution_ if _resolution_ is not None else 1
+        _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
+            else 0.1 / conversion_to_meters()
+        if _geo_block_ is None:
+            _geo_block_ = True if vt_str in ('Sky Exposure', 'Sky View') else False
 
-    # create the gridded mesh from the geometry
-    study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
-    points = [from_point3d(pt) for pt in study_mesh.face_centroids]
-
-    # get the view vectors based on the view type
-    patch_wghts = None
-    if vt_str == 'Horizontal Radial':
-        lb_vecs = view_sphere.horizontal_radial_vectors(30 * _resolution_)
-    elif vt_str == 'Horizontal 30-Degree Offset':
-        patch_mesh, lb_vecs = view_sphere.horizontal_radial_patches(30, _resolution_)
-        patch_wghts = view_sphere.horizontal_radial_patch_weights(30, _resolution_)
-    elif vt_str == 'Spherical':
-        patch_mesh, lb_vecs = view_sphere.sphere_patches(_resolution_)
-        patch_wghts = view_sphere.sphere_patch_weights(_resolution_)
-    else:
-        patch_mesh, lb_vecs = view_sphere.dome_patches(_resolution_)
-        patch_wghts = view_sphere.dome_patch_weights(_resolution_)
-    view_vecs = [from_vector3d(pt) for pt in lb_vecs]
-
-    if _run:  # run the entire study
-        # hide the study points and mesh the geometry and context
+        # create the gridded mesh from the geometry
+        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
+        points = [from_point3d(pt) for pt in study_mesh.face_centroids]
         hide_output(ghenv.Component, 1)
+
+        # get the view vectors based on the view type
+        patch_wghts = None
+        if vt_str == 'Horizontal Radial':
+            lb_vecs = view_sphere.horizontal_radial_vectors(30 * _resolution_)
+        elif vt_str == 'Horizontal 30-Degree Offset':
+            patch_mesh, lb_vecs = view_sphere.horizontal_radial_patches(30, _resolution_)
+            patch_wghts = view_sphere.horizontal_radial_patch_weights(30, _resolution_)
+        elif vt_str == 'Spherical':
+            patch_mesh, lb_vecs = view_sphere.sphere_patches(_resolution_)
+            patch_wghts = view_sphere.sphere_patch_weights(_resolution_)
+        else:
+            patch_mesh, lb_vecs = view_sphere.dome_patches(_resolution_)
+            patch_wghts = view_sphere.dome_patch_weights(_resolution_)
+        view_vecs = [from_vector3d(pt) for pt in lb_vecs]
+
+        # mesh the geometry and context
         shade_mesh = join_geometry_to_mesh(_geometry + context_) if _geo_block_ \
             else join_geometry_to_mesh(context_)
 
@@ -251,6 +246,3 @@ if all_required_inputs(ghenv.Component):
         study_mesh.colors = graphic.value_colors
         mesh = from_mesh3d(study_mesh)
         legend = legend_objects(graphic.legend)
-
-    else:  # only show the points and the view vectors
-        show_output(ghenv.Component, 1)

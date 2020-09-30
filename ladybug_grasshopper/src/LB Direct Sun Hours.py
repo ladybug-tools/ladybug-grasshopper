@@ -54,17 +54,11 @@ honeybee-radiance should be used.
             other computational processes that might be running on your
             machine. (Default: False).
         _run: Set to "True" to run the component and perform direct sun analysis.
-            If set to "False" but all other required inputs are specified, this
-            component will output points showing the resolution of the analysis
-            (but not run the study) so that an estimate of study run time can
-            be obtained.
 
     Returns:
         report: ...
         points: The grid of points on the test _geometry that are be used to perform
-            the direct sun analysis.  Note that these points are generated even
-            when _run is set to "False" so that an estimate of study run time can
-            be obtained.
+            the direct sun analysis.
         results: A list of numbers that aligns with the points. Each number indicates
             the number of hours of direct sunlight received by each of the
             points.  Note that is is the number of hours out of the total
@@ -110,18 +104,17 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
-if all_required_inputs(ghenv.Component):
-    # set the default offset distance
-    _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
-        else 0.1 / conversion_to_meters()
+if all_required_inputs(ghenv.Component) and _run:
+        # set the default offset distance
+        _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
+            else 0.1 / conversion_to_meters()
 
-    # create the gridded mesh from the geometry
-    study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
-    points = [from_point3d(pt) for pt in study_mesh.face_centroids]
-
-    if _run:  # run the entire study
-        # hide the study points and mesh the geometry and context
+        # create the gridded mesh from the geometry
+        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
+        points = [from_point3d(pt) for pt in study_mesh.face_centroids]
         hide_output(ghenv.Component, 1)
+
+        # mesh the geometry and context
         shade_mesh = join_geometry_to_mesh(_geometry + context_)
 
         # get the study points and reverse the sun vectors (for backward ray-tracting)
@@ -152,6 +145,3 @@ if all_required_inputs(ghenv.Component):
         study_mesh.colors = graphic.value_colors
         mesh = from_mesh3d(study_mesh)
         legend = legend_objects(graphic.legend)
-
-    else:  # only show the the test points
-        show_output(ghenv.Component, 1)
