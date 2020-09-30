@@ -86,7 +86,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB Direct Sun Hours"
 ghenv.Component.NickName = 'DirectSunHours'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '1.0.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

@@ -63,7 +63,7 @@ Adaptive thermal comfort.
 
 ghenv.Component.Name = 'LB Adaptive Comfort Parameters'
 ghenv.Component.NickName = 'AdaptPar'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '1.0.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'

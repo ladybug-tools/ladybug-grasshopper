@@ -23,7 +23,7 @@ Deconstruct a Ladybug Header into its components.
 
 ghenv.Component.Name = "LB Deconstruct Header"
 ghenv.Component.NickName = 'XHeader'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '1.0.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
