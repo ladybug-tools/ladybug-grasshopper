@@ -32,7 +32,7 @@ outputs have changed) will be circled in red and should be replaced manually.
 
 ghenv.Component.Name = 'LB Sync Grasshopper File'
 ghenv.Component.NickName = 'SyncGHFile'
-ghenv.Component.Message = '0.3.0'
+ghenv.Component.Message = '0.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -48,5 +48,13 @@ except ImportError as e:
 if all_required_inputs(ghenv.Component) and _sync:
     # load all of the GHPython userobjects and update the versions
     components = gather_canvas_components(ghenv.Component)
-    report_init = (sync_component(comp, ghenv.Component) for comp in components)
+    report_init = []
+    for comp in components:
+        try:
+            report_init.append(sync_component(comp, ghenv.Component))
+        except Exception:
+            if hasattr(comp, 'Name'):
+                msg = 'Failed to Update "{}"'.format(comp.Name)
+                print msg
+                give_warning(ghenv.Component, msg)
     report = '\n'.join(r for r in report_init if r)
