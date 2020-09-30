@@ -48,7 +48,7 @@ mean radiant temperature (MRT) deltas as a result of being in the sun.
 
 ghenv.Component.Name = 'LB Solar Body Parameters'
 ghenv.Component.NickName = 'SolarBodyPar'
-ghenv.Component.Message = '0.1.0'
+ghenv.Component.Message = '1.0.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'

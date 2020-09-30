@@ -39,7 +39,7 @@ the data set.
 
 ghenv.Component.Name = 'LB Apply Conditional Statement'
 ghenv.Component.NickName = 'Statement'
-ghenv.Component.Message = '0.1.3'
+ghenv.Component.Message = '1.0.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

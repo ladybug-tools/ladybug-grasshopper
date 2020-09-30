@@ -20,7 +20,7 @@ Convert a DataCollection to SI values.
 
 ghenv.Component.Name = "LB To SI"
 ghenv.Component.NickName = 'ToSI'
-ghenv.Component.Message = '0.1.1'
+ghenv.Component.Message = '1.0.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
