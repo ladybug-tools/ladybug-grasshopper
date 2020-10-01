@@ -1,2 +1,3 @@
 recursive-include ladybug_grasshopper/user_objects *.ghuser
 recursive-exclude ladybug_grasshopper/json *.json
+recursive-exclude ladybug_grasshopper/icon *.png
