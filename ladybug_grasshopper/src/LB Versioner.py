@@ -43,7 +43,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.0.0'
+ghenv.Component.Message = '1.0.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -274,7 +274,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
     if os.path.isdir(os.path.join(py_lib, 'queenbee_luigi-{}.dist-info'.format(qb_ver))):
         print 'Queenbee core Python libraries successfully installed!\n '
     else:
-        give_warning(stderr)
+        give_warning(ghenv.Component, stderr)
         print stderr
 
     # install the library needed for interaction with Rhino
@@ -319,7 +319,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
             print 'Ladybug Tools .gha Grasshopper components successfully installed!\n '
             remove_dist_info_files(GHA_FOLDER)  # remove the dist-info files
         else:
-            give_warning(stderr)
+            give_warning(ghenv.Component, stderr)
             print stderr
 
     # install the honeybee_radiance_recipe package to recipe resources
@@ -333,7 +333,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
         print 'Honeybee recipes successfully installed!\n '
         remove_dist_info_files(recipe_dir)  # remove the dist-info files
     else:
-        give_warning(stderr)
+        give_warning(ghenv.Component, stderr)
         print stderr
 
     # install the honeybee-openstudio ruby gem
@@ -358,7 +358,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
         print 'Honeybee energy standards successfully installed!\n '
         remove_dist_info_files(stand_dir)  # remove the dist-info files
     else:
-        give_warning(stderr)
+        give_warning(ghenv.Component, stderr)
         print stderr
 
     # install the standards libraries if requested or they don't exist
@@ -372,7 +372,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
             print 'Honeybee standards successfully installed!\n '
             remove_dist_info_files(stand_dir)  # remove the dist-info files
         else:
-            give_warning(stderr)
+            give_warning(ghenv.Component, stderr)
             print stderr
 
     # delete the temp folder and give a completion message
