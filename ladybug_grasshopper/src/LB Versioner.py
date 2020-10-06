@@ -43,7 +43,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.0.1'
+ghenv.Component.Message = '1.0.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -55,6 +55,11 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
+    from honeybee.config import folders as hb_folders
+except ImportError as e:
+    raise ImportError('\nFailed to import honeybee:\n\t{}'.format(e))
+
+try:
     from ladybug_rhino.pythonpath import iron_python_search_path, create_python_package_dir
     from ladybug_rhino.download import download_file_by_name
     from ladybug_rhino.versioning.userobject import UO_FOLDER, GHA_FOLDER
@@ -64,21 +69,6 @@ except ImportError as e:
 
 import os
 import subprocess
-
-
-def get_python_exe():
-    """Get the path to the Python installed in the ladybug_tools folder.
-
-    Will be None if Python is not installed.
-    """
-    py_update = os.path.join(folders.ladybug_tools_folder, 'python')
-    py_exe_file = os.path.join(py_update, 'python.exe') if os.name == 'nt' else \
-        os.path.join(py_update, 'bin', 'python3')
-    py_site_pack = os.path.join(py_update, 'Lib', 'site-packages') if os.name == 'nt' else \
-        os.path.join(py_update, 'lib', 'python3.8', 'site-packages')
-    if os.path.isfile(py_exe_file):
-        return py_exe_file, py_site_pack
-    return None, None
 
 
 def get_recipe_directory():
@@ -245,9 +235,9 @@ def parse_lbt_gh_versions(lbt_gh_folder):
 
 if all_required_inputs(ghenv.Component) and _update is True:
     # ensure that Python has been installed in the ladybug_tools folder
-    py_exe, py_lib = get_python_exe()
-    assert py_exe is not None, \
-        'No Python instalation was found at: {}.\nThis is a requirement in ' \
+    py_exe, py_lib = hb_folders.python_exe_path, hb_folders.python_package_path
+    assert py_exe is not None and py_lib is not None, \
+        'No valid Python instalation was found at: {}.\nThis is a requirement in ' \
         'order to contine with installation'.format(
             os.path.join(folders.ladybug_tools_folder, 'python'))
 
