@@ -43,7 +43,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.0.2'
+ghenv.Component.Message = '1.0.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -296,9 +296,10 @@ if all_required_inputs(ghenv.Component) and _update is True:
     if os.path.isdir(gha_location):
         msg = '.gha files already exist in your Components folder and cannot be ' \
             'deleted while Grasshopper is open.\nClose Grasshopper, delete the ' \
-            '.gha files at\n{}\nand rerun this versioner component.\nOr simply keep '\
+            'ladybug_grasshopper_dotnet folder at\n{}\nand rerun this versioner ' \
+            'component to get the new .gha files.\nOr simply keep '\
             'using the old .gha component if you do not need the latest ' \
-            '.gha component features.\n '.format(gha_location)
+            '.gha features.\n '.format(gha_location)
         print msg
     else:
         gha_ver = ver_dict['ladybug-grasshopper-dotnet']
