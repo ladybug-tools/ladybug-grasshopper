@@ -1,4 +1,4 @@
-# Dragonfly: A Plugin for Environmental Analysis (GPL)
+# Ladybug: A Plugin for Environmental Analysis (GPL)
 # This file is part of Dragonfly.
 #
 # Copyright (c) 2020, Ladybug Tools.
@@ -20,7 +20,6 @@ _
 This component can also overwrite the user libraries of standards (constructions,
 schedules, modifiers) with a completely fresh copy if clean_standards_ is set to True.
 -
-
     Args:
         _update: Set to True to update your installation of Ladybug Tools to the
             latest development version or to be at the version specified below.
@@ -36,14 +35,13 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
             DO NOT SET TO TRUE IF YOU WANT TO KEEP ANY OBJECTS THAT YOU HAVE
             ADDED TO YOUR honeybee_standards FOLDER. If False or None, any
             existing standards will be left alone.
-
     Returns:
         Vviiiiiz!: !!!
 """
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.0.3'
+ghenv.Component.Message = '1.0.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -63,6 +61,7 @@ try:
     from ladybug_rhino.pythonpath import iron_python_search_path, create_python_package_dir
     from ladybug_rhino.download import download_file_by_name
     from ladybug_rhino.versioning.userobject import UO_FOLDER, GHA_FOLDER
+    from ladybug_rhino.versioning.diff import current_userobject_version
     from ladybug_rhino.grasshopper import all_required_inputs, give_warning
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
@@ -108,7 +107,6 @@ def remove_dist_info_files(directory):
 
 def update_libraries_pip(python_exe, package_name, version=None, target=None):
     """Change python libraries to be of a specific version using pip.
-
     Args:
         python_exe: The path to the Python executable to be used for installation.
         package_name: The name of the PyPI package to install.
@@ -137,7 +135,6 @@ def update_libraries_pip(python_exe, package_name, version=None, target=None):
 
 def download_repo_github(repo, target_directory, version=None):
     """Download a repo of a particular version from from github.
-
     Args:
         repo: The name of a repo to be downloaded (eg. 'lbt-grasshopper').
         target_directory: the directory where the library should be downloaded to.
@@ -150,7 +147,7 @@ def download_repo_github(repo, target_directory, version=None):
     else:
         url = "https://github.com/ladybug-tools/{}/archive/v{}.zip".format(repo, version)
     zip_file = os.path.join(target_directory, '%s.zip' % repo)
-    print 'Downloading "{}"  github repository to: {}'.format(repo, target_directory)
+    print ('Downloading "{}"  github repository to: {}'.format(repo, target_directory))
     download_file_by_name(url, target_directory, zip_file)
 
     #unzip the file
@@ -160,7 +157,7 @@ def download_repo_github(repo, target_directory, version=None):
     try:
         os.remove(zip_file)
     except:
-        print 'Failed to remove downloaded zip file: {}.'.format(zip_file)
+        print ('Failed to remove downloaded zip file: {}.'.format(zip_file))
 
     # return the directory where the unzipped files live
     if version is None:
@@ -171,14 +168,12 @@ def download_repo_github(repo, target_directory, version=None):
 
 def parse_lbt_gh_versions(lbt_gh_folder):
     """Parse versions of compatible libs from a clone of the lbt-grasshopper repo.
-
     Args:
         lbt_gh_folder: Path to the clone of the lbt-grasshopper repo
  
     Returns:
         A dictionary of library versions formatted like so (but with actual version
         numbers in place of '0.0.0':
-
         {
             'lbt-dragonfly' = '0.0.0',
             'ladybug-rhino' = '0.0.0',
@@ -248,48 +243,48 @@ if all_required_inputs(ghenv.Component) and _update is True:
     ver_dict['lbt-grasshopper'] = version_
 
     # install the core libraries
-    print 'Installing Ladybug Tools core Python libraries.'
+    print ('Installing Ladybug Tools core Python libraries.')
     df_ver = ver_dict['lbt-dragonfly']
     stderr = update_libraries_pip(py_exe, 'lbt-dragonfly[cli]', df_ver)
     if os.path.isdir(os.path.join(py_lib, 'lbt_dragonfly-{}.dist-info'.format(df_ver))):
-        print 'Ladybug Tools core Python libraries successfully installed!\n '
+        print ('Ladybug Tools core Python libraries successfully installed!\n ')
     else:
         give_warning(ghenv.Component, stderr)
-        print stderr
+        print (stderr)
 
     # install the queenbee core libraries
-    print 'Installing Queenbee core Python libraries.'
+    print ('Installing Queenbee core Python libraries.')
     qb_ver = ver_dict['queenbee-luigi']
     stderr = update_libraries_pip(py_exe, 'queenbee-luigi[cli]', qb_ver)
     if os.path.isdir(os.path.join(py_lib, 'queenbee_luigi-{}.dist-info'.format(qb_ver))):
-        print 'Queenbee core Python libraries successfully installed!\n '
+        print ('Queenbee core Python libraries successfully installed!\n ')
     else:
         give_warning(ghenv.Component, stderr)
-        print stderr
+        print (stderr)
 
     # install the library needed for interaction with Rhino
-    print 'Installing ladybug-rhino Python library.'
+    print ('Installing ladybug-rhino Python library.')
     rh_ver = ver_dict['ladybug-rhino']
     stderr = update_libraries_pip(py_exe, 'ladybug-rhino[cli]', rh_ver)
     if os.path.isdir(os.path.join(py_lib, 'ladybug_rhino-{}.dist-info'.format(rh_ver))):
-        print 'Ladybug-rhino Python library successfully installed!\n '
+        print ('Ladybug-rhino Python library successfully installed!\n ')
     else:
         give_warning(ghenv.Component, stderr)
-        print stderr
+        print (stderr)
     if os.name != 'nt':  # make sure libraries are copied to the rhino scripts folder
         iron_python_search_path(create_python_package_dir())
 
     # install the grasshopper components
-    print 'Installing Ladybug Tools Grasshopper components.'
+    print ('Installing Ladybug Tools Grasshopper components.')
     gh_ver = ver_dict['lbt-grasshopper']
     stderr = update_libraries_pip(py_exe, 'lbt-grasshopper', gh_ver, UO_FOLDER)
     lbgh_ver = ver_dict['ladybug-grasshopper']
     if os.path.isdir(os.path.join(UO_FOLDER, 'ladybug_grasshopper-{}.dist-info'.format(lbgh_ver))):
-        print 'Ladybug Tools Grasshopper components successfully installed!\n '
+        print ('Ladybug Tools Grasshopper components successfully installed!\n ')
         remove_dist_info_files(UO_FOLDER)  # remove the .dist-info files
     else:
         give_warning(ghenv.Component, stderr)
-        print stderr
+        print (stderr)
 
     # install the .gha Grasshopper components
     gha_location = os.path.join(GHA_FOLDER, 'ladybug_grasshopper_dotnet')
@@ -300,75 +295,87 @@ if all_required_inputs(ghenv.Component) and _update is True:
             'component to get the new .gha files.\nOr simply keep '\
             'using the old .gha component if you do not need the latest ' \
             '.gha features.\n '.format(gha_location)
-        print msg
+        print (msg)
     else:
         gha_ver = ver_dict['ladybug-grasshopper-dotnet']
         stderr = update_libraries_pip(py_exe, 'ladybug-grasshopper-dotnet', gha_ver, GHA_FOLDER)
         package_dir = os.path.join(
             GHA_FOLDER, 'ladybug_grasshopper_dotnet-{}.dist-info'.format(gha_ver))
         if os.path.isdir(package_dir):
-            print 'Ladybug Tools .gha Grasshopper components successfully installed!\n '
+            print ('Ladybug Tools .gha Grasshopper components successfully installed!\n ')
             remove_dist_info_files(GHA_FOLDER)  # remove the dist-info files
         else:
             give_warning(ghenv.Component, stderr)
-            print stderr
+            print (stderr)
 
     # install the honeybee_radiance_recipe package to recipe resources
-    print 'Installing Honeybee recipes.'
+    print ('Installing Honeybee recipes.')
     recipe_dir = get_recipe_directory()
     rec_ver = ver_dict['honeybee-radiance-recipe']
     if os.path.isdir(os.path.join(recipe_dir, 'honeybee_radiance_recipe')):
         nukedir(os.path.join(recipe_dir, 'honeybee_radiance_recipe'), True)
     stderr = update_libraries_pip(py_exe, 'honeybee-radiance-recipe', rec_ver, recipe_dir)
     if os.path.isdir(os.path.join(recipe_dir, 'honeybee_radiance_recipe-{}.dist-info'.format(rec_ver))):
-        print 'Honeybee recipes successfully installed!\n '
+        print ('Honeybee recipes successfully installed!\n ')
         remove_dist_info_files(recipe_dir)  # remove the dist-info files
     else:
         give_warning(ghenv.Component, stderr)
-        print stderr
+        print (stderr)
 
     # install the honeybee-openstudio ruby gem
     gem_ver = ver_dict['honeybee-openstudio-gem']
-    print 'Installing Honeybee-OpenStudio gem version {}.'.format(gem_ver)
+    print ('Installing Honeybee-OpenStudio gem version {}.'.format(gem_ver))
     gem_dir = get_gem_directory()
     base_folder = download_repo_github('honeybee-openstudio-gem', gem_dir, gem_ver)
     source_folder = os.path.join(base_folder, 'lib')
     lib_folder = os.path.join(gem_dir, 'honeybee_openstudio_gem', 'lib')
-    print 'Copying "honeybee_openstudio_gem" source code to {}\n '.format(lib_folder)
+    print ('Copying "honeybee_openstudio_gem" source code to {}\n '.format(lib_folder))
     copy_file_tree(source_folder, lib_folder)
     nukedir(base_folder, True)
 
     # always update the honeybee-energy-standards package
-    print 'Installing Honeybee energy standards.'
+    print ('Installing Honeybee energy standards.')
     stand_dir = get_standards_directory()
     hes_ver = ver_dict['honeybee-energy-standards']
     if os.path.isdir(os.path.join(stand_dir, 'honeybee_energy_standards')):
         nukedir(os.path.join(stand_dir, 'honeybee_energy_standards'), True)
     stderr = update_libraries_pip(py_exe, 'honeybee-energy-standards', hes_ver, stand_dir)
     if os.path.isdir(os.path.join(stand_dir, 'honeybee_energy_standards-{}.dist-info'.format(hes_ver))):
-        print 'Honeybee energy standards successfully installed!\n '
+        print ('Honeybee energy standards successfully installed!\n ')
         remove_dist_info_files(stand_dir)  # remove the dist-info files
     else:
         give_warning(ghenv.Component, stderr)
-        print stderr
+        print (stderr)
 
     # install the standards libraries if requested or they don't exist
     if clean_standards_ or not os.path.isdir(os.path.join(stand_dir, 'honeybee_standards')):
-        print 'Installing Ladybug Tools standards libraries (constructions, schedules, etc.).'
+        print ('Installing Ladybug Tools standards libraries (constructions, schedules, etc.).')
         hs_ver = ver_dict['honeybee-standards']
         if os.path.isdir(os.path.join(stand_dir, 'honeybee_standards')):
             nukedir(os.path.join(stand_dir, 'honeybee_standards'), True)
         stderr = update_libraries_pip(py_exe, 'honeybee-standards', hs_ver, stand_dir)
         if os.path.isdir(os.path.join(stand_dir, 'honeybee_standards-{}.dist-info'.format(hs_ver))):
-            print 'Honeybee standards successfully installed!\n '
+            print ('Honeybee standards successfully installed!\n ')
             remove_dist_info_files(stand_dir)  # remove the dist-info files
         else:
             give_warning(ghenv.Component, stderr)
-            print stderr
+            print (stderr)
 
     # delete the temp folder and give a completion message
     nukedir(temp_folder, True)
-    print 'Update successful!'
-    print 'Restart Grasshopper and Rhino to load the new components + library.'
+    print ('Update successful!')
+    print ('Restart Grasshopper and Rhino to load the new components + library.')
+    
+    # do a check to see if the versioner has, itself, been updated
+    new_version = current_userobject_version(ghenv.Component)
+    current_version = ghenv.Component.Message
+    if new_version != current_version:
+        msg = 'The Versioner component has, itself, been changed between the\n' \
+            'current version ({}) and the version you are changing to ({}).\n' \
+            'It is recommended that you Resart Rhino and run the new Versioner\n' \
+            'coponent to ensure that everything is consistent.'.format(
+                current_version, new_version)
+        print (msg)
+        give_warning(ghenv.Component, msg)
 else:  # give a message to the user about what to do
-    print 'Make sure you are connected to the internet and set _update to True!'
+    print ('Make sure you are connected to the internet and set _update to True!')
