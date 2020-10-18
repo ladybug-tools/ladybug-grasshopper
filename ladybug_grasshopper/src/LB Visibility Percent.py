@@ -46,6 +46,10 @@ point of interest.
             of the input _geometry.  Typically, this should be a small positive
             number to ensure points are not blocked by the mesh. (Default: 10 cm
             in the equivalent Rhino Model units).
+        max_dist_: An optional number to set the maximum distance beyond which the
+            end_points are no longer considered visible by the start_points.
+            If None, points with an unobstructed view to one another will be
+            considered visible no matter how far they are from one another.
         _geo_block_: Set to "True" to count the input _geometry as opaque and
             set to "False" to discount the _geometry from the calculation and
             only look at context_ that blocks the visibility. (Default: True)
@@ -81,7 +85,7 @@ point of interest.
 
 ghenv.Component.Name = "LB Visibility Percent"
 ghenv.Component.NickName = 'VisibilityPercent'
-ghenv.Component.Message = '1.0.0'
+ghenv.Component.Message = '1.1.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -125,7 +129,7 @@ if all_required_inputs(ghenv.Component) and _run:
 
         # intersect the lines with the mesh
         int_matrix = intersect_mesh_lines(
-            shade_mesh, points, _view_points, parallel=parallel_)
+            shade_mesh, points, _view_points, max_dist_, parallel=parallel_)
 
         # compute the results
         int_mtx = objectify_output('Visibility Intersection Matrix', int_matrix)
