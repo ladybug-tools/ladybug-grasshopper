@@ -1,0 +1,78 @@
+{
+  "version": "1.0.0", 
+  "nickname": "CaptureView", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "Output", 
+        "description": "The file path of the image taken with this component.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_file_name", 
+      "description": "The file name, which the image will be saved as. Note that, for\nanimations, each saved image should have a different name. Otherwise,\nthe previous image will be overwritten by each successive image.\nUnique names for each animation frame can be achieved by using the\nanimating slider to generate the file name.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_folder_", 
+      "description": "The folder into which the image file will be written. This should\nbe a complete path to the folder. If None, the images will be written\nto one of the following default locations:\n-\nWindows - C:/Users/[USERNAME]/ladybug_tools/resources/captured_views/\nMac - /Users/[USERNAME]/ladybug_tools/resources/captured_views/", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "viewport_", 
+      "description": "Text for the Rhino viewport name which will be captured. This can\nalso be a list of viewports in which case multiple views will be\ncaptured. If None, the default will be the active viewport (the\nlast viewport in which you navigated). Acceptable inputs include:\n-\nPerspective\nTop\nBottom\nLeft\nRight\nFront\nBack\nany view name that has been saved within the Rhino file", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "width_", 
+      "description": "Integer for the width of the image to be captured in pixels. If None,\nthe default is the width of the Rhino viewport currently on the screen.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "height_", 
+      "description": "Integer for the height of the image to be captured in pixels. If None,\nthe default is the height of the Rhino viewport currently on the screen.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "mode_", 
+      "description": "Text for the display mode of the viewport to be captured.If None, the default\nwill be the display mode of the active viewport (the last viewport in\nwhich you navigated). Acceptable inputs include:\n-\nWireframe\nShaded\nRendered\nGhosted\nX-Ray\nTechnical\nArtistic\nPen", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "transparent_", 
+      "description": "Boolean to note whether the captured .png file should have a\ntransparent background. If None or False, the image will have the\nRhino viewport background color.", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_capture", 
+      "description": "Set to \"True\" to capture the image of the Rhino viewport.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\nimport os\n\ntry:\n    from ladybug.futil import preparedir\n    from ladybug.config import folders\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, bring_to_front\n    from ladybug_{{cad}}.viewport import viewport_by_name, capture_view\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _capture:\n    # ensure the component runs last on the canvas\n    bring_to_front(ghenv.Component)\n\n    # prepare the folder\n    folder = _folder_ if _folder_ is not None else \\\n        os.path.join(folders.ladybug_tools_folder, 'resources', 'captured_views')\n    preparedir(folder, remove_content=False)\n\n    # get the viewport objects\n    vp_names = viewport_ if len(viewport_) != 0 else [None]\n    viewports = [viewport_by_name(vp) for vp in vp_names]\n\n    # save the viewports to images\n    for i, view_p in enumerate(viewports):\n        f_name = _file_name if len(viewports) == 1 else \\\n            '{}_{}'.format(_file_name, vp_names[i])\n        file_p = os.path.join(folder, f_name)\n        fp = capture_view(view_p, file_p, width_, height_, mode_, transparent_)\n        print(fp)\n", 
+  "category": "Ladybug", 
+  "name": "LB Capture View", 
+  "description": "Capture views of the Rhino scene and save them to your hard drive as as a .png files.\n_\nThis is particularly useful when creating animations and one needs to automate\nthe capturing of views. Note that images will likely have a Rhino world axes icon\nin the lower left of the image unless you go to Options > Grid > and uncheck\n\"Show world axes icon\".\n-"
+}
