@@ -12,9 +12,11 @@ Construct a Ladybug Header to be used to create a ladybug DataCollection.
 -
 
     Args:
-        _data_type: Text representing the type of data (e.g. Temperature).
-            This can also be a DataType object that has been created with
-            the "LB Construct Data Type" component.
+        _data_type: Text representing the type of data (e.g. Temperature). A full list
+            of acceptable inputs can be seen by checking the all_u output of
+            the "LB Unit Converter" component. This input can also be a custom
+            DataType object that has been created with the "LB Construct Data
+            Type" component.
         _unit_: Units of the data_type (e.g. C). Default is to use the
             base unit of the connected_data_type.
         _a_period: A Ladybug AnalysisPeriod object. (Default
@@ -29,7 +31,7 @@ Construct a Ladybug Header to be used to create a ladybug DataCollection.
 
 ghenv.Component.Name = "LB Construct Header"
 ghenv.Component.NickName = 'ConstrHeader'
-ghenv.Component.Message = '1.0.0'
+ghenv.Component.Message = '1.0.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -57,10 +59,17 @@ if all_required_inputs(ghenv.Component):
     if isinstance(_data_type, DataTypeBase):
         pass
     elif isinstance(_data_type, str):
-        _data_type = _data_type.title().replace(' ', '')
-        if _data_type not in ladybug.datatype.TYPES:
-            raise TypeError(msg)
-        _data_type = ladybug.datatype.TYPESDICT[_data_type]()
+        _data_type = _data_type.replace(' ', '')
+        try:
+            _data_type = ladybug.datatype.TYPESDICT[_data_type]()
+        except KeyError:  # check to see if it's a captilaization issue
+            _data_type = _data_type.lower()
+            for key in ladybug.datatype.TYPESDICT:
+                if key.lower() == _data_type:
+                    _data_type = ladybug.datatype.TYPESDICT[key]()
+                    break
+            else:
+                raise TypeError(msg)
     else:
         raise TypeError(msg)
 

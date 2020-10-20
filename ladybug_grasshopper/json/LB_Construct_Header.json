@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0", 
+  "version": "1.0.1", 
   "nickname": "ConstrHeader", 
   "outputs": [
     [
@@ -16,7 +16,7 @@
     {
       "access": "item", 
       "name": "_data_type", 
-      "description": "Text representing the type of data (e.g. Temperature).\nThis can also be a DataType object that has been created with\nthe \"LB Construct Data Type\" component.", 
+      "description": "Text representing the type of data (e.g. Temperature). A full list\nof acceptable inputs can be seen by checking the all_u output of\nthe \"LB Unit Converter\" component. This input can also be a custom\nDataType object that has been created with the \"LB Construct Data\nType\" component.", 
       "type": "System.Object", 
       "default": null
     }, 
@@ -43,7 +43,7 @@
     }
   ], 
   "subcategory": "1 :: Analyze Data", 
-  "code": "\ntry:\n    import ladybug.datatype\n    from ladybug.datatype.base import DataTypeBase\n    from ladybug.header import Header\n    from ladybug.analysisperiod import AnalysisPeriod\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n# error message if the data type is not recognized\nmsg = 'The connected _data_type is not recognized.\\nMake your own with ' \\\n    'the \"LB Construct Data Type\" component or choose from the following:' \\\n    '\\n{}'.format('\\n'.join(ladybug.datatype.BASETYPES))\n\n\nif all_required_inputs(ghenv.Component):\n    if isinstance(_data_type, DataTypeBase):\n        pass\n    elif isinstance(_data_type, str):\n        _data_type = _data_type.title().replace(' ', '')\n        if _data_type not in ladybug.datatype.TYPES:\n            raise TypeError(msg)\n        _data_type = ladybug.datatype.TYPESDICT[_data_type]()\n    else:\n        raise TypeError(msg)\n\n    if _unit_ is None:\n        _unit_ = _data_type.units[0]\n\n    if _a_period_ is None:\n        _a_period_ = AnalysisPeriod()\n\n    metadata_dict = {}\n    if metadata_ != []:\n        for prop in metadata_:\n            key, value = prop.split(':')\n            metadata_dict[key] = value.strip()\n\n    header = Header(_data_type, _unit_, _a_period_, metadata_dict)", 
+  "code": "\ntry:\n    import ladybug.datatype\n    from ladybug.datatype.base import DataTypeBase\n    from ladybug.header import Header\n    from ladybug.analysisperiod import AnalysisPeriod\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n# error message if the data type is not recognized\nmsg = 'The connected _data_type is not recognized.\\nMake your own with ' \\\n    'the \"LB Construct Data Type\" component or choose from the following:' \\\n    '\\n{}'.format('\\n'.join(ladybug.datatype.BASETYPES))\n\n\nif all_required_inputs(ghenv.Component):\n    if isinstance(_data_type, DataTypeBase):\n        pass\n    elif isinstance(_data_type, str):\n        _data_type = _data_type.replace(' ', '')\n        try:\n            _data_type = ladybug.datatype.TYPESDICT[_data_type]()\n        except KeyError:  # check to see if it's a captilaization issue\n            _data_type = _data_type.lower()\n            for key in ladybug.datatype.TYPESDICT:\n                if key.lower() == _data_type:\n                    _data_type = ladybug.datatype.TYPESDICT[key]()\n                    break\n            else:\n                raise TypeError(msg)\n    else:\n        raise TypeError(msg)\n\n    if _unit_ is None:\n        _unit_ = _data_type.units[0]\n\n    if _a_period_ is None:\n        _a_period_ = AnalysisPeriod()\n\n    metadata_dict = {}\n    if metadata_ != []:\n        for prop in metadata_:\n            key, value = prop.split(':')\n            metadata_dict[key] = value.strip()\n\n    header = Header(_data_type, _unit_, _a_period_, metadata_dict)", 
   "category": "Ladybug", 
   "name": "LB Construct Header", 
   "description": "Construct a Ladybug Header to be used to create a ladybug DataCollection.\n-"
