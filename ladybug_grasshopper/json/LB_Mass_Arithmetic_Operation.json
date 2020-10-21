@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0", 
+  "version": "1.0.1", 
   "nickname": "MassArithOp", 
   "outputs": [
     [
@@ -31,7 +31,7 @@
       "access": "item", 
       "name": "type_", 
       "description": "Optional text for a new \"type\" key in the Data Collection's metadata.\nThis will usually show up in most Ladybug visualiztions and it should\nusually change for most types of operations.", 
-      "type": "System.Object", 
+      "type": "string", 
       "default": null
     }
   ], 
