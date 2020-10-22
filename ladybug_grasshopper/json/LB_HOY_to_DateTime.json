@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0", 
+  "version": "1.0.1", 
   "nickname": "DateTime", 
   "outputs": [
     [
@@ -45,7 +45,7 @@
       "access": "list", 
       "name": "_hoy", 
       "description": "A number between 0 and 8759 for an hour of the year.", 
-      "type": "int", 
+      "type": "double", 
       "default": null
     }
   ], 
