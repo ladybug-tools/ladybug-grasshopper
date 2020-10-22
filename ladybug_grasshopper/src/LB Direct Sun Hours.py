@@ -115,7 +115,7 @@ if all_required_inputs(ghenv.Component) and _run:
         hide_output(ghenv.Component, 1)
 
         # mesh the geometry and context
-        shade_mesh = join_geometry_to_mesh(_geometry + context_)
+        shade_mesh = join_geometry_to_mesh(context_)
 
         # get the study points and reverse the sun vectors (for backward ray-tracting)
         rev_vec = [from_vector3d(to_vector3d(vec).reverse()) for vec in _vectors]
