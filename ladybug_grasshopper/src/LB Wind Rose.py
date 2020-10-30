@@ -92,19 +92,22 @@ Create a plot of any hourly data by wind directions.
         title: A text object for the global_title.
         prevailing: The predominant direction of the outpt wind rose in clockwise
             degrees from north. 0 is North, 90 is East, 180 is South, 270 is West.
-        frequency: A list of frequency _data values (bound by max_freq_lines_) for each wind 
-            direction in percentage of hours. This does not include calm hours since they 
-            do not have any direction associated with their values.
-        avg_val: A list of average _data values (bound by max_freq_lines_) with one value 
+        freq_by_dir: A list of frequency _data values (bound by max_freq_lines_) for each wind 
+            direction as number of hours. This does not include calm hours since they 
+            do not have any direction associated with their values. This hourly count can be 
+            divided by the total wind hours to calculating frequency as a percentage.
+        avg_by_dir: A list of average _data values (bound by max_freq_lines_) with one value 
             for each wind direction. This does not include calm hours since they do not have 
             any direction associated with their values. 
+        calm_hours: The number of hours with calm wind speeds. Only returns a value if the input 
+            _data is wind speed. 
         data: The input _data after it has gone through any of the statement or
             period operations input to this component.
 """
 
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '1.0.2'
+ghenv.Component.Message = '1.0.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -159,21 +162,6 @@ if all_required_inputs(ghenv.Component):
         _data = _fdata[:-1]
         _wind_direction = _fdata[-1]
 
-#    # filter zero speed values out of collections if speed is input
-#    pattern = []
-#    filt_wind_dir = _wind_direction
-#    for dat in _data:
-#        if isinstance(dat.header.data_type, Speed):
-#            for val in dat.values:
-#                pat = True if val > 1e-10 else False
-#                pattern.append(pat)
-#            break
-#    if len(pattern) != 0:
-#        for i, dat in enumerate(_data):
-#            if not isinstance(dat.header.data_type, Speed):
-#                _data[i] = dat.filter_by_pattern(pattern)
-#        filt_wind_dir = _wind_direction.filter_by_pattern(pattern)
-
     # set defaults and check errors in dir_count and north input
     if _dir_count_ is None:
         _dir_count_ = 16
@@ -215,6 +203,7 @@ if all_required_inputs(ghenv.Component):
     all_freq_line = []
     all_legends = []
     all_title = []
+    all_calm_hours = []
 
     # Calculate _max_freq_lines_ if it's not already set, to use to
     # determine spacing for multiple plots.
@@ -286,7 +275,7 @@ if all_required_inputs(ghenv.Component):
         windrose_lines = [from_polygon2d(poly) for poly in windrose.windrose_lines]
         fac = (i + 1) * windrose.compass_radius * 3
         center_pt_2d = Point2D(_center_pt_.x + fac, _center_pt_.y)
-
+        
         all_mesh.append(mesh)
         all_compass.append(compass)
         all_orient_line.append(orient_line)
@@ -294,18 +283,19 @@ if all_required_inputs(ghenv.Component):
         all_windrose_lines.append(windrose_lines)
         all_legends.append(legend)
         all_title.append(title)
+        calm = windrose.zero_count if isinstance(speed_data.header.data_type, Speed) else None
+        all_calm_hours.append(calm)
         
         # compute the average values
         wind_avg_val = []
-        total_hours = len(windrose.analysis_values) - windrose.zero_count  # does not include zeros
         for bin in windrose.histogram_data:
             try:
                 wind_avg_val.append(sum(bin) / len(bin))
             except ZeroDivisionError:
                 wind_avg_val.append(0)
         all_wind_avg_val.append(wind_avg_val)
-        all_wind_frequency.append([len(bin) / total_hours * 100.0 for bin in windrose.histogram_data])
-
+        all_wind_frequency.append([len(bin) for bin in windrose.histogram_data])
+        
     # convert nested lists into data trees
     mesh = list_to_data_tree(all_mesh)
     compass = list_to_data_tree(all_compass)
@@ -314,8 +304,9 @@ if all_required_inputs(ghenv.Component):
     windrose_line = list_to_data_tree(all_windrose_lines)
     legend = list_to_data_tree(all_legends)
     title = list_to_data_tree(all_title)
-    avg_val = list_to_data_tree(all_wind_avg_val)
-    frequency = list_to_data_tree(all_wind_frequency)
+    avg_by_dir = list_to_data_tree(all_wind_avg_val)
+    freq_by_dir = list_to_data_tree(all_wind_frequency)
+    calm_hours = list_to_data_tree(all_calm_hours)
     
     # output prevailing direction and processed data
     prevailing = windrose.prevailing_direction
