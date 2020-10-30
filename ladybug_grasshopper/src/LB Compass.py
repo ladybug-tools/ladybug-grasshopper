@@ -29,10 +29,10 @@ Create a compass sign that indicates the direction of North in the Rhino scene.
 
 ghenv.Component.Name = 'LB Compass'
 ghenv.Component.NickName = 'Compass'
-ghenv.Component.Message = '1.0.0'
+ghenv.Component.Message = '1.0.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
-ghenv.Component.AdditionalHelpFromDocStrings = '5'
+ghenv.Component.AdditionalHelpFromDocStrings = '6'
 
 import math
 
