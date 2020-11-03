@@ -92,6 +92,7 @@ Create a plot of any hourly data by wind directions.
         title: A text object for the global_title.
         prevailing: The predominant direction of the outpt wind rose in clockwise
             degrees from north. 0 is North, 90 is East, 180 is South, 270 is West.
+        angles: A list of angles corresponding to each windrose directions.
         freq_by_dir: A list of frequency _data values (bound by max_freq_lines_) for each wind 
             direction as number of hours. This does not include calm hours since they 
             do not have any direction associated with their values. This hourly count can be 
@@ -101,8 +102,8 @@ Create a plot of any hourly data by wind directions.
             any direction associated with their values. 
         calm_hours: The number of hours with calm wind speeds. Only returns a value if the input 
             _data is wind speed. 
-        data: The input _data after it has gone through any of the statement or
-            period operations input to this component.
+        histogram_data: The input _data in a histogram structure after it has gone through any of 
+            the statement or period operations input to this component.
 """
 
 ghenv.Component.Name = 'LB Wind Rose'
@@ -204,7 +205,8 @@ if all_required_inputs(ghenv.Component):
     all_legends = []
     all_title = []
     all_calm_hours = []
-
+    all_histograms = []
+    
     # Calculate _max_freq_lines_ if it's not already set, to use to
     # determine spacing for multiple plots.
     if len(_data) > 1 and _max_freq_lines_ is None:
@@ -296,6 +298,9 @@ if all_required_inputs(ghenv.Component):
         all_wind_avg_val.append(wind_avg_val)
         all_wind_frequency.append([len(bin) for bin in windrose.histogram_data])
         
+        # Add histogram 
+        all_histograms.append(windrose.histogram_data)
+        
     # convert nested lists into data trees
     mesh = list_to_data_tree(all_mesh)
     compass = list_to_data_tree(all_compass)
@@ -307,7 +312,12 @@ if all_required_inputs(ghenv.Component):
     avg_by_dir = list_to_data_tree(all_wind_avg_val)
     freq_by_dir = list_to_data_tree(all_wind_frequency)
     calm_hours = list_to_data_tree(all_calm_hours)
-    
+   
+    # Compute midbin angles 
+    theta = 360.0 / windrose._number_of_directions
+    theta /= 2.0
+    angles = [(angle + theta) % 360.0 for angle in windrose.angles[:-1]]
+
     # output prevailing direction and processed data
     prevailing = windrose.prevailing_direction
-    data = _data
+    histogram_data = list_to_data_tree(all_histograms)
