@@ -93,13 +93,6 @@ Create a plot of any hourly data by wind directions.
         prevailing: The predominant direction of the outpt wind rose in clockwise
             degrees from north. 0 is North, 90 is East, 180 is South, 270 is West.
         angles: A list of angles corresponding to each windrose directions.
-        freq_by_dir: A list of frequency _data values (bound by max_freq_lines_) for each wind 
-            direction as number of hours. This does not include calm hours since they 
-            do not have any direction associated with their values. This hourly count can be 
-            divided by the total wind hours to calculating frequency as a percentage.
-        avg_by_dir: A list of average _data values (bound by max_freq_lines_) with one value 
-            for each wind direction. This does not include calm hours since they do not have 
-            any direction associated with their values. 
         calm_hours: The number of hours with calm wind speeds. Only returns a value if the input 
             _data is wind speed. 
         histogram_data: The input _data in a histogram structure after it has gone through any of 
@@ -136,7 +129,7 @@ try:
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.fromobjects import legend_objects, compass_objects
     from ladybug_rhino.grasshopper import \
-        all_required_inputs, list_to_data_tree, data_tree_to_list
+        all_required_inputs, list_to_data_tree, data_tree_to_list, objectify_output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -278,6 +271,9 @@ if all_required_inputs(ghenv.Component):
         fac = (i + 1) * windrose.compass_radius * 3
         center_pt_2d = Point2D(_center_pt_.x + fac, _center_pt_.y)
         
+        # Add histogram 
+        hist_mtx = objectify_output('WindRose {}'.format(i), windrose.histogram_data)
+        
         all_mesh.append(mesh)
         all_compass.append(compass)
         all_orient_line.append(orient_line)
@@ -287,19 +283,7 @@ if all_required_inputs(ghenv.Component):
         all_title.append(title)
         calm = windrose.zero_count if isinstance(speed_data.header.data_type, Speed) else None
         all_calm_hours.append(calm)
-        
-        # compute the average values
-        wind_avg_val = []
-        for bin in windrose.histogram_data:
-            try:
-                wind_avg_val.append(sum(bin) / len(bin))
-            except ZeroDivisionError:
-                wind_avg_val.append(0)
-        all_wind_avg_val.append(wind_avg_val)
-        all_wind_frequency.append([len(bin) for bin in windrose.histogram_data])
-        
-        # Add histogram 
-        all_histograms.append(windrose.histogram_data)
+        all_histograms.append(hist_mtx)
         
     # convert nested lists into data trees
     mesh = list_to_data_tree(all_mesh)
@@ -309,15 +293,13 @@ if all_required_inputs(ghenv.Component):
     windrose_line = list_to_data_tree(all_windrose_lines)
     legend = list_to_data_tree(all_legends)
     title = list_to_data_tree(all_title)
-    avg_by_dir = list_to_data_tree(all_wind_avg_val)
-    freq_by_dir = list_to_data_tree(all_wind_frequency)
     calm_hours = list_to_data_tree(all_calm_hours)
    
-    # Compute midbin angles 
+    # Compute direction angles 
     theta = 360.0 / windrose._number_of_directions
     theta /= 2.0
     angles = [(angle + theta) % 360.0 for angle in windrose.angles[:-1]]
 
     # output prevailing direction and processed data
     prevailing = windrose.prevailing_direction
-    histogram_data = list_to_data_tree(all_histograms)
+    histogram = list_to_data_tree(all_histograms)
