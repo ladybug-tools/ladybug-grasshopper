@@ -87,7 +87,9 @@ Create a plot of any hourly data by wind directions.
             rose directions.
         freq_line: Polygon geometries representing the frequency intervals of the wind
             rose.
-        windrose_line: Polygon geometries representing the windrose outlines.
+        windrose_line: Polygon geometries representing the windrose outlines. This
+            output is hidden by default and should be connected to a native
+            Grasshopper Geometry component in order to be visualized.
         legend: Geometry representing the legend for the wind rose.
         title: A text object for the global_title.
         prevailing: The predominant direction of the outpt wind rose in clockwise
@@ -101,7 +103,7 @@ Create a plot of any hourly data by wind directions.
 
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '1.0.1'
+ghenv.Component.Message = '1.0.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -128,8 +130,8 @@ try:
         from_polygon2d
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.fromobjects import legend_objects, compass_objects
-    from ladybug_rhino.grasshopper import \
-        all_required_inputs, list_to_data_tree, data_tree_to_list, objectify_output
+    from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree, \
+        objectify_output, hide_output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -149,19 +151,31 @@ if all_required_inputs(ghenv.Component):
     if period_ is not None:
         _data = [dat.filter_by_analysis_period(period_) for dat in _data]
         _wind_direction = _wind_direction.filter_by_analysis_period(period_)
-
     if statement_ is not None and statement_.strip() != "":
         _fdata = HourlyContinuousCollection.filter_collections_by_statement(
             _data + [_wind_direction], statement_)
         _data = _fdata[:-1]
         _wind_direction = _fdata[-1]
 
-    # set defaults and check errors in dir_count and north input
-    if _dir_count_ is None:
-        _dir_count_ = 16
-    assert _dir_count_ > 2, 'The number of directions must be greater then three to ' \
-        'plot the wind rose. Got: {}'.format(_dir_count_)
+    # filter zero speed values out of collections if the speed is input
+    pattern = []
+    filt_wind_dir = _wind_direction
+    for dat in _data:
+        if isinstance(dat.header.data_type, Speed):
+            for val in dat.values:
+                pat = True if val > 1e-10 else False
+                pattern.append(pat)
+            break
+    if len(pattern) != 0:
+        for i, dat in enumerate(_data):
+            if not isinstance(dat.header.data_type, Speed):
+                _data[i] = dat.filter_by_pattern(pattern)
+        filt_wind_dir = _wind_direction.filter_by_pattern(pattern)
 
+    # check errors in dir_count and process the north input
+    _dir_count_ = 16 if _dir_count_ is None else _dir_count_
+    assert _dir_count_ > 2, 'The number of directions must be greater than 3 ' \
+        'to plot the wind rose. Got: {}'.format(_dir_count_)
     if north_ is not None:  # process the north_
         try:
             north_ = math.degrees(to_vector2d(north_).angle_clockwise(Vector2D(0, 1)))
@@ -173,7 +187,7 @@ if all_required_inputs(ghenv.Component):
     else:
         north_ = 0.0
 
-    # set default values for the chart dimensions
+    # set default values for the center point
     _center_pt_ = to_point3d(_center_pt_) if _center_pt_ is not None else Point3D()
     center_pt_2d = Point2D(_center_pt_.x, _center_pt_.y)
 
@@ -188,59 +202,50 @@ if all_required_inputs(ghenv.Component):
     _show_freq_ = True if _show_freq_ is None else _show_freq_
 
     # set up empty lists of objects to be filled
-    all_wind_avg_val = []
-    all_wind_frequency = []
     all_windrose_lines = []
-    all_mesh = []
+    mesh = []
     all_compass = []
     all_orient_line = []
     all_freq_line = []
     all_legends = []
-    all_title = []
-    all_calm_hours = []
-    all_histograms = []
-    
+    title = []
+    calm_hours = []
+    histogram = []
+
     # Calculate _max_freq_lines_ if it's not already set, to use to
     # determine spacing for multiple plots.
     if len(_data) > 1 and _max_freq_lines_ is None:
         max_freqs = []
         for i, _data_item in enumerate(_data):
-            win_dir = _wind_direction
+            win_dir = _wind_direction if isinstance(_data_item.header.data_type, Speed) \
+                else filt_wind_dir
             w = WindRose(win_dir, _data_item, _dir_count_)
-            if _freq_hours_ is not None:
-                w.frequency_hours = _freq_hours_
-            if _freq_dist_ is not None:
-                w.frequency_spacing_distance = _freq_dist_
+            w.frequency_hours = _freq_hours_
+            w.frequency_spacing_distance = _freq_dist_
             max_freqs.append(w.frequency_intervals_compass)
         _max_freq_lines_ = max(max_freqs)
-    
-    # Plot the windroses
-    for i, speed_data in enumerate(_data):
 
-        # Make the windrose
-        win_dir = _wind_direction
+    # plot the windroses
+    for i, speed_data in enumerate(_data):
+        # make the windrose
+        win_dir = _wind_direction if isinstance(speed_data.header.data_type, Speed) \
+            else filt_wind_dir
         windrose = WindRose(win_dir, speed_data, _dir_count_)
 
+        # set the wind rose properties
         if len(legend_par_) > 0:
             try:  # sense when several legend parameters are connected
                 lpar = legend_par_[i]
             except IndexError:
                 lpar = legend_par_[-1]
             windrose.legend_parameters = lpar
-
-        if _freq_hours_ is not None:
-            windrose.frequency_hours = _freq_hours_
-
-        # Add and check optional visualization parameters
+        windrose.frequency_hours = _freq_hours_
         if _max_freq_lines_ is not None:
             windrose.frequency_intervals_compass = _max_freq_lines_
-
-        if _freq_dist_ is not None:
-            windrose.frequency_spacing_distance = _freq_dist_
-
+        windrose.frequency_spacing_distance = _freq_dist_
         windrose.north = north_
         windrose.show_freq = _show_freq_
-        
+
         calm_text = ''
         if isinstance(speed_data.header.data_type, Speed):
             windrose.show_zeros = _show_calmrose_
@@ -249,20 +254,20 @@ if all_required_inputs(ghenv.Component):
                 len(windrose.analysis_values) * 100.0, 2),
                 windrose._zero_count)
         windrose.base_point = Point2D(center_pt_2d.x, center_pt_2d.y)
-        
+
         # Make the mesh
-        mesh = from_mesh2d(windrose.colored_mesh, _center_pt_.z)
-        
-        # Make the graphic outputs
+        msh = from_mesh2d(windrose.colored_mesh, _center_pt_.z)
+
+        # Make the other graphic outputs
         legend = legend_objects(windrose.legend)
         freq_per = windrose._frequency_hours / \
             len([b for a in windrose.histogram_data for b in a])
         freq_text = '\nEach closed polyline shows frequency of {}% = {} hours.'.format(
                 round(freq_per * 100, 1), windrose._frequency_hours)
-        title = text_objects(title_text(speed_data) + calm_text + freq_text,
-                             windrose.container.lower_title_location,
-                             windrose.legend_parameters.text_height,
-                             windrose.legend_parameters.font)
+        titl = text_objects(title_text(speed_data) + calm_text + freq_text,
+                            windrose.container.lower_title_location,
+                            windrose.legend_parameters.text_height,
+                            windrose.legend_parameters.font)
         compass = compass_objects(windrose.compass, _center_pt_.z, None)
         orient_line = [from_linesegment2d(seg, _center_pt_.z)
                             for seg in windrose.orientation_lines]
@@ -270,36 +275,28 @@ if all_required_inputs(ghenv.Component):
         windrose_lines = [from_polygon2d(poly) for poly in windrose.windrose_lines]
         fac = (i + 1) * windrose.compass_radius * 3
         center_pt_2d = Point2D(_center_pt_.x + fac, _center_pt_.y)
-        
-        # Add histogram 
-        hist_mtx = objectify_output('WindRose {}'.format(i), windrose.histogram_data)
-        
-        all_mesh.append(mesh)
+
+        # collect everything to be output
+        mesh.append(msh)
         all_compass.append(compass)
         all_orient_line.append(orient_line)
         all_freq_line.append(freq_line)
         all_windrose_lines.append(windrose_lines)
         all_legends.append(legend)
-        all_title.append(title)
+        title.append(titl)
         calm = windrose.zero_count if isinstance(speed_data.header.data_type, Speed) else None
-        all_calm_hours.append(calm)
-        all_histograms.append(hist_mtx)
-        
+        calm_hours.append(calm)
+        histogram.append(objectify_output('WindRose {}'.format(i), windrose.histogram_data))
+
     # convert nested lists into data trees
-    mesh = list_to_data_tree(all_mesh)
     compass = list_to_data_tree(all_compass)
     orient_line = list_to_data_tree(all_orient_line)
     freq_line = list_to_data_tree(all_freq_line)
     windrose_line = list_to_data_tree(all_windrose_lines)
     legend = list_to_data_tree(all_legends)
-    title = list_to_data_tree(all_title)
-    calm_hours = list_to_data_tree(all_calm_hours)
-   
-    # Compute direction angles 
-    theta = 360.0 / windrose._number_of_directions
-    theta /= 2.0
-    angles = [(angle + theta) % 360.0 for angle in windrose.angles[:-1]]
+    hide_output(ghenv.Component, 5)  # keep the devault visual simple
 
-    # output prevailing direction and processed data
+    # compute direction angles and prevailing direction
+    theta = 180.0 / windrose._number_of_directions
+    angles = [(angle + theta) % 360.0 for angle in windrose.angles[:-1]]
     prevailing = windrose.prevailing_direction
-    histogram = list_to_data_tree(all_histograms)
