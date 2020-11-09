@@ -19,7 +19,7 @@ Open EPWmap in a web browser.
 
 ghenv.Component.Name = 'LB EPWmap'
 ghenv.Component.NickName = 'EPWMap'
-ghenv.Component.Message = '1.0.0'
+ghenv.Component.Message = '1.1.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

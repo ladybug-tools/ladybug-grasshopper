@@ -41,7 +41,7 @@ the intersection matrix.
 
 ghenv.Component.Name = 'LB Real Time Incident Radiation'
 ghenv.Component.NickName = 'RTrad'
-ghenv.Component.Message = '1.0.0'
+ghenv.Component.Message = '1.1.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

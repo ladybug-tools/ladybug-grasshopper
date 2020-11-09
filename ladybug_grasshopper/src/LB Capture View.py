@@ -68,7 +68,7 @@ in the lower left of the image unless you go to Options > Grid > and uncheck
 """
 ghenv.Component.Name = 'LB Capture View'
 ghenv.Component.NickName = 'CaptureView'
-ghenv.Component.Message = '1.0.0'
+ghenv.Component.Message = '1.1.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
