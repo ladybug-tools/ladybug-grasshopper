@@ -34,7 +34,7 @@ particular hour of the day.
 
 ghenv.Component.Name = 'LB View From Sun'
 ghenv.Component.NickName = 'ViewFromSun'
-ghenv.Component.Message = '1.0.0'
+ghenv.Component.Message = '1.1.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
