@@ -85,7 +85,7 @@ point of interest.
 
 ghenv.Component.Name = "LB Visibility Percent"
 ghenv.Component.NickName = 'VisibilityPercent'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -119,8 +119,9 @@ if all_required_inputs(ghenv.Component) and _run:
                 '({}).'.format(len(pt_weights_), len(_view_points))
 
         # create the gridded mesh from the geometry
-        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
-        points = [from_point3d(pt) for pt in study_mesh.face_centroids]
+        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size)
+        points = [from_point3d(pt.move(vec * _offset_dist_)) for pt, vec in
+                  zip(study_mesh.face_centroids, study_mesh.face_normals)]
         hide_output(ghenv.Component, 1)
 
         # mesh the geometry and context
