@@ -15,16 +15,16 @@ with the legends automatically output from different studies.
 -
 
     Args:
-        _values: A list of numerical data that the legend refers to (or just the
-            minimum and maximum numerical values of this data).  If the original
-            numerical data is hooked up, the legend's maximum and minimum values
-            will be set by the max and min of the data set.
+        _values: A list of numerical values or data collections that the legend refers
+            to. This can also be the minimum and maximum numerical values of the
+            data. The legend's maximum and minimum values will be set by the max
+            and min of the data set.
         _base_plane_: An optional plane or point to set the location of the
             legend. (Default: Rhino origin - (0, 0, 0))
         title_: A text string representing a legend title. Legends are usually
             titled with the units of the data.
         legend_par_: Optional legend parameters from the  Legend Parameters component.
-    
+
     Returns:
         mesh: A colored mesh for the legend colors.
         title_obj: A text object for the  legend title.
@@ -36,13 +36,13 @@ with the legends automatically output from different studies.
 
 ghenv.Component.Name = "LB Create Legend"
 ghenv.Component.NickName = 'CreateLegend'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
-
 try:
+    from ladybug.datacollection import BaseCollection
     from ladybug.legend import Legend, LegendParameters
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
@@ -65,7 +65,13 @@ if all_required_inputs(ghenv.Component):
     legend_par_.title = title_
 
     # create the legend
-    legend = Legend(_values, legend_par_)
+    values = []
+    for val in _values:
+        try:
+            values.append(float(val))
+        except AttributeError:  # assume it's a data collection
+            values.extend(val.values)
+    legend = Legend(values, legend_par_)
 
     # separate all of the outputs from this component
     rhino_objs = legend_objects(legend)

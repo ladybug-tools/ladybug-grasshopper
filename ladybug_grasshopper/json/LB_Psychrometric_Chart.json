@@ -1,0 +1,162 @@
+{
+  "version": "1.1.0", 
+  "nickname": "PsychrometricChart", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "title", 
+        "description": "Text objects for the chart title and axes titles as well as a polyline for\nthe outer border of the chart. Note that the polyline for the border\nexcludes the saturation line.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "temp_lines", 
+        "description": "A list of line segments and text objects for the temperature labels\non the chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "rh_lines", 
+        "description": "A list of curves and text objects for the relative humidity labels\non the chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "hr_lines", 
+        "description": "A list of line segments and text objects for the humidty ratio labels\non the chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "enth_wb_lines", 
+        "description": "A list of line segments and text objects for the enthalpy or\nwet bulb temperature labels on the chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "mesh", 
+        "description": "A colored mesh showing the number of input hours that happen in each part\nof the psychrometric chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "legend", 
+        "description": "A colored legend showing the number of hours that correspond to\neach color.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "points", 
+        "description": "Points representing each of the input temperature and humidity values.\nBy default, this ouput is hidden and it should be connected it to a\nnative Grasshopper preview component to view it.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "The input data_ with the input statements or the periods applied to it.\nThese can be deconstructed with the \"LB Deconstruct Data\" component\nand the resulting values can be plugged into the \"LB Create Legend\"\ncomponent to generate colors that can be used to color the points\nabove using the native Grasshopper \"Custom Preview\" component.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "psych_chart", 
+        "description": "A Psychrometric Chart object, which can be connected to any\nof the \"Comfort Polygon\" components in order to plot polygons on\nthe chart and perform thermal comfort analyses on the data.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_temperature", 
+      "description": "A hourly, daily, or sub-hourly data collection of temperature values\nor a single temperature value in Celcius to be used for the whole\nanalysis. If this input data collection is in in Farenheit, the\nentire chart will be drawn using IP units. Operative temperature\nshould be used if it is available. Otherwise, air temperature\n(aka. dry bulb temperature) is suitable.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_rel_humidity", 
+      "description": "A hourly, daily, or sub-hourly data collection of relative humidity\nvalues in % or a single relative humidity value to be used for the\nwhole analysis. Note that the input data collection here must align\nwith the _temperature input.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_pressure_", 
+      "description": "A data collection of atmospheric pressure in Pascals or a single\nnumber for the average air pressure across the data plotted on the\nchart. It is recommended that the barometric pressure from the\n\"Import EPW\" component be used here as the default is not sutiable\nfor higher elevations. (Default: 101325 Pa; pressure at sea level).", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_base_pt_", 
+      "description": "A point to be used as the bottom-left-most point from which all\ngeometry of the plot will be generated. (Default: (0, 0, 0)).", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_scale_", 
+      "description": "A number to set the dimensions of the chart. (Default: 1).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_temp_range_", 
+      "description": "An optional domain (or number for the upper temperature), which\nwill be used to set the lower and upper boundaries of temperature\non the psychrometric chart. (Default: -20 to 55 when the chart is\nin SI; -5 to 115 when the chart is in IP).", 
+      "type": "Interval", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "plot_wet_bulb_", 
+      "description": "Boolean to note whether the psychrometric chart should be ploted\nwith lines of constant enthalpy (False) or lines of constant wet bulb\ntemperature (True).  (Default: False).", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "legend_par_", 
+      "description": "An optional LegendParameter object from the \"LB Legend Parameters\"\ncomponent to change the display of the Pyschrometric Chart.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "data_", 
+      "description": "Optional data collections, which are aligned with the input _temperature\nand _rel_humidity, which will be output from the data of this\ncomponent and can be used to color points with data. This data\ncan also be used along with the statement_ below to select out\ndata that meets certain conditions.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "statement_", 
+      "description": "A conditional statement as a string (e.g. a > 25).\n.\nThe variable of the first data collection should always be named 'a'\n(without quotations), the variable of the second list should be\nnamed 'b', and so on.\n.\nFor example, if three data collections are connected to _data\nand the following statement is applied:\n'18 < a < 26 and b < 80 and c > 2'\nThe resulting collections will only include values where the first\ndata collection is between 18 and 26, the second collection is less\nthan 80 and the third collection is greater than 2.\n.\nFor this component, temperature will always be the second-to-last\nletter and relative humidity will be the last letter.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "period_", 
+      "description": "A Ladybug analysis period to be applied to the _temperature and\n_rel_humidity of the input data_.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "2 :: Visualize Data", 
+  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\n    from ladybug.psychchart import PsychrometricChart\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D\n    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D\n    from ladybug_geometry.geometry3d.plane import Plane\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.togeometry import to_point2d, to_point3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh2d, from_polyline2d, \\\n        from_linesegment2d, from_point2d\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.fromobjects import legend_objects\n    from ladybug_{{cad}}.color import color_to_color\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, list_to_data_tree, \\\n        hide_output, show_output\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef leg_par_by_index(i):\n    \"\"\"Get legend parameters associated with a given index of the chart.\"\"\"\n    try:\n        return legend_par_[i]\n    except IndexError:\n        return None\n\n\ndef small_labels(psy_chart, labels, points, x_align, y_align, factor=1.0):\n    \"\"\"Translate a list of psych chart text labels into the {{Cad}} scene.\"\"\"\n    return [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z)),\n                         psy_chart.legend_parameters.text_height * factor,\n                         psy_chart.legend_parameters.font, x_align, y_align)\n            for txt, pt in zip(labels, points)]\n\n\ndef plane_from_point(point_2d, align_vec=Vector3D(1, 0, 0)):\n    \"\"\"Get a Plane from a Point2D.\n\n    Args:\n        point_2d: A Point2D to serve as the origin of the plane.\n        align_vec: A Vector3D to serve as the X-Axis of the plane.\n    \"\"\"\n    return Plane(o=Point3D(point_2d.x, point_2d.y, z), x=align_vec)\n\n\ndef draw_psych_chart(psy_chart):\n    \"\"\"Draw a given psychrometric chart object into {{Cad}} geometry.\n\n    This will NOT translate any colored meshes or data points.\n    \"\"\"\n    # output all of the lines/polylines for the various axes\n    title_i = [from_polyline2d(psy_chart.chart_border, z)]\n    temp_lines_i = [from_linesegment2d(tl, z) for tl in psy_chart.temperature_lines]\n    rh_lines_i = [from_polyline2d(rhl, z) for rhl in psy_chart.rh_lines]\n    hr_lines_i = [from_linesegment2d(hrl, z) for hrl in psy_chart.hr_lines]\n\n    # add the text to the various lines\n    title_i.append(text_objects(\n        psy_chart.x_axis_text, plane_from_point(psy_chart.x_axis_location),\n        psy_chart.legend_parameters.text_height * 1.5,\n        psy_chart.legend_parameters.font, 0, 0))\n    title_i.append(text_objects(\n        psy_chart.y_axis_text, plane_from_point(psy_chart.y_axis_location, Vector3D(0, 1)),\n        psy_chart.legend_parameters.text_height * 1.5,\n        psy_chart.legend_parameters.font, 2, 0))\n    temp_lines_i = temp_lines_i + small_labels(\n        psy_chart, psy_chart.temperature_labels, psy_chart.temperature_label_points, 1, 0)\n    rh_lines_i = rh_lines_i + small_labels(\n        psy_chart, psy_chart.rh_labels[:-1], psy_chart.rh_label_points[:-1], 2, 3, 0.8)\n    hr_lines_i = hr_lines_i + small_labels(\n        psy_chart, psy_chart.hr_labels, psy_chart.hr_label_points, 0, 3)\n\n    # add enthalpy or wet bulb lines\n    if plot_wet_bulb_:\n        enth_wb_lines_i = [from_linesegment2d(el, z) for el in psy_chart.wb_lines]\n        enth_wb_lines_i = enth_wb_lines_i + small_labels(\n            psy_chart, psy_chart.wb_labels, psy_chart.wb_label_points, 2, 3)\n    else:\n        enth_wb_lines_i = [from_linesegment2d(el, z) for el in psy_chart.enthalpy_lines]\n        enth_wb_lines_i = enth_wb_lines_i + small_labels(\n            psy_chart, psy_chart.enthalpy_labels, psy_chart.enthalpy_label_points, 2, 3)\n\n    # add all of the objects to the bse list\n    title.append(title_i)\n    temp_lines.append(temp_lines_i)\n    rh_lines.append(rh_lines_i)\n    hr_lines.append(hr_lines_i)\n    enth_wb_lines.append(enth_wb_lines_i)\n\n\nif all_required_inputs(ghenv.Component):\n    # sense if the input temperature is in Farenheit\n    use_ip = False\n    if isinstance(_temperature, BaseCollection):\n        if _temperature.header.unit == 'F':  # convert to C and set chart to use_ip\n            _temperature = _temperature.to_si()\n            use_ip = True\n\n    # apply any analysis periods and conditional statements to the input collections\n    all_data = data_ + [_temperature, _rel_humidity]\n    if period_ is not None:\n        all_data = [coll.filter_by_analysis_period(period_) for coll in all_data]\n    if statement_ is not None:\n        all_data = BaseCollection.filter_collections_by_statement(all_data, statement_)\n\n    # set default values for the chart dimensions\n    base_pt = to_point2d(_base_pt_) if _base_pt_ is not None else Point2D()\n    z = to_point3d(_base_pt_).z if _base_pt_ is not None else 0\n    _scale_ = 1.0 if _scale_ is None else _scale_\n    x_dim = _scale_ / conversion_to_meters()\n    y_dim = (_scale_ * 1500) / conversion_to_meters()\n    y_dim = y_dim * (9 / 5) if use_ip else y_dim\n    t_min, t_max = (-5, 115) if use_ip else (-20, 50)\n    if _temp_range_ is not None:\n        t_min, t_max = _temp_range_\n\n    # process the pressure input\n    pressure = 101325\n    if _pressure_ is not None:\n        try:\n            pressure = float(_pressure_)\n        except Exception:  # assume that it's a data collection\n            pressure = _pressure_.average\n\n    # create lists to be filled with objects\n    title = []\n    temp_lines = []\n    rh_lines = []\n    hr_lines = []\n    enth_wb_lines = []\n    mesh = []\n    legend = []\n    points = []\n    psych_chart = []\n\n    # create the psychrometric chart object and draw it in the {{Cad}} scene\n    psy_chart = PsychrometricChart(\n        all_data[-2], all_data[-1], pressure, leg_par_by_index(0), base_pt, x_dim, y_dim,\n        t_min, t_max, use_ip=use_ip)\n    draw_psych_chart(psy_chart)\n    title_items = ['Time [hr]'] + \\\n        ['{}: {}'.format(key, val) for key, val in all_data[-2].header.metadata.items()]\n    title[0].append(text_objects(\n        '\\n'.join(title_items), psy_chart.container.upper_title_location,\n        psy_chart.legend_parameters.text_height * 1.5,\n        psy_chart.legend_parameters.font, 0, 0))\n    psych_chart.append(psy_chart)\n\n    # plot the data on the chart\n    lb_points = psy_chart.data_points\n    points.append([from_point2d(pt) for pt in lb_points])\n    if len(lb_points) != 1:  # hide the points and just display the mesh\n        hide_output(ghenv.Component, 8)\n        mesh.append(from_mesh2d(psy_chart.colored_mesh, z))\n        legend.append(legend_objects(psy_chart.legend))\n    else:  # show the single point on the chart\n        show_output(ghenv.Component, 8)\n\n    # process any of the connected data into a legend and colors\n    if len(data_) != 0:\n        data = all_data[:-2]\n        move_dist = x_dim * (psy_chart.max_temperature - psy_chart.min_temperature + 20)\n        for i, d in enumerate(data):\n            # create a new psychrometric chart offset from the original\n            new_pt = Point2D(base_pt.x + move_dist * (i + 1), base_pt.y)\n            psy_chart = PsychrometricChart(\n                all_data[-2], all_data[-1], pressure, leg_par_by_index(0),\n                new_pt, x_dim, y_dim, t_min, t_max, use_ip=use_ip)\n            draw_psych_chart(psy_chart)\n            psych_chart.append(psy_chart)\n            lb_mesh, container = psy_chart.data_mesh(d, leg_par_by_index(i + 1))\n            mesh.append(from_mesh2d(lb_mesh, z))\n            legend.append(legend_objects(container.legend))\n            move_vec = Vector2D(base_pt.x + move_dist * (i + 1), 0)\n            points.append([from_point2d(pt.move(move_vec)) for pt in lb_points])\n\n            # add a title for the new chart\n            title_items = ['{} [{}]'.format(d.header.data_type, d.header.unit)] + \\\n                ['{}: {}'.format(key, val) for key, val in d.header.metadata.items()]\n            title[i + 1].append(text_objects(\n                '\\n'.join(title_items), psy_chart.container.upper_title_location,\n                psy_chart.legend_parameters.text_height * 1.5,\n                psy_chart.legend_parameters.font, 0, 0))\n\n    # upack all of the python matrices into data trees\n    title = list_to_data_tree(title)\n    temp_lines = list_to_data_tree(temp_lines)\n    rh_lines = list_to_data_tree(rh_lines)\n    hr_lines = list_to_data_tree(hr_lines)\n    enth_wb_lines = list_to_data_tree(enth_wb_lines)\n    legend = list_to_data_tree(legend)\n    points = list_to_data_tree(points)\n", 
+  "category": "Ladybug", 
+  "name": "LB Psychrometric Chart", 
+  "description": "Draw a psychrometric chart in the Rhino scene and plot a set of temperatures and\nhumidity values on it.\n_\nConnected data can be either outdoor temperature and humidty from imported EPW\nweather data or indoor temperature and humidity ratios from an energy simulation.\n-"
+}

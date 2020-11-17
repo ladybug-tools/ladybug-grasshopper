@@ -43,7 +43,7 @@ this component using the "LB Generate Point Grid" component.
 
 ghenv.Component.Name = 'LB Spatial Heatmap'
 ghenv.Component.NickName = 'Heatmap'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -68,8 +68,8 @@ if all_required_inputs(ghenv.Component):
     # generate Ladybug objects
     lb_mesh = to_mesh3d(_mesh)
     if offset_dom_:
-        lb_mesh = lb_mesh.height_field_mesh(
-            _values, (offset_dom_.T0, offset_dom_.T1))
+        dom_st, dom_end = offset_dom_
+        lb_mesh = lb_mesh.height_field_mesh(_values, (dom_st, dom_end))
     graphic = GraphicContainer(_values, lb_mesh.min, lb_mesh.max, legend_par_)
 
     # generate titles
