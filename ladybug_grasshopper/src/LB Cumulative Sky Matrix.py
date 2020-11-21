@@ -59,7 +59,7 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
 ghenv.Component.Name = 'LB Cumulative Sky Matrix'
 ghenv.Component.NickName = 'SkyMatrix'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -191,9 +191,9 @@ if all_required_inputs(ghenv.Component):
     wea_folder = _folder_ if _folder_ is not None else \
         os.path.join(lb_folders.default_epw_folder, 'sky_matrices')
     metd = _direct_rad.header.metadata
-    wea_basename = os.path.join(wea_folder, metd['city'].replace(' ', '_')) \
-        if 'city' in metd else 'unnamed'
-    wea_file =wea.write(wea_basename)
+    wea_basename = metd['city'].replace(' ', '_') if 'city' in metd else 'unnamed'
+    wea_path = os.path.join(wea_folder, wea_basename)
+    wea_file = wea.write(wea_path)
 
     # execute the Radiance gendaymtx command
     use_shell = True if os.name == 'nt' else False
