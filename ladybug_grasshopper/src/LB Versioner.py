@@ -41,7 +41,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -68,14 +68,6 @@ except ImportError as e:
 
 import os
 import subprocess
-
-
-def get_recipe_directory():
-    """Get the directory where Honeybee recipes are installed."""
-    re_folder = os.path.join(folders.ladybug_tools_folder, 'resources', 'recipes')
-    if not os.path.isdir(re_folder):
-        os.makedirs(re_folder)
-    return re_folder
 
 
 def get_gem_directory():
@@ -192,7 +184,6 @@ def parse_lbt_gh_versions(lbt_gh_folder):
     # set the names of the libraries to collect and the version dict
     version_dict = {
         'lbt-dragonfly': None,
-        'queenbee-luigi': None,
         'ladybug-rhino': None,
         'honeybee-radiance-recipe': None,
         'honeybee-standards': None,
@@ -252,16 +243,6 @@ if all_required_inputs(ghenv.Component) and _update is True:
         give_warning(ghenv.Component, stderr)
         print (stderr)
 
-    # install the queenbee core libraries
-    print ('Installing Queenbee core Python libraries.')
-    qb_ver = ver_dict['queenbee-luigi']
-    stderr = update_libraries_pip(py_exe, 'queenbee-luigi[cli]', qb_ver)
-    if os.path.isdir(os.path.join(py_lib, 'queenbee_luigi-{}.dist-info'.format(qb_ver))):
-        print ('Queenbee core Python libraries successfully installed!\n ')
-    else:
-        give_warning(ghenv.Component, stderr)
-        print (stderr)
-
     # install the library needed for interaction with Rhino
     print ('Installing ladybug-rhino Python library.')
     rh_ver = ver_dict['ladybug-rhino']
@@ -310,14 +291,10 @@ if all_required_inputs(ghenv.Component) and _update is True:
 
     # install the honeybee_radiance_recipe package to recipe resources
     print ('Installing Honeybee recipes.')
-    recipe_dir = get_recipe_directory()
     rec_ver = ver_dict['honeybee-radiance-recipe']
-    if os.path.isdir(os.path.join(recipe_dir, 'honeybee_radiance_recipe')):
-        nukedir(os.path.join(recipe_dir, 'honeybee_radiance_recipe'), True)
-    stderr = update_libraries_pip(py_exe, 'honeybee-radiance-recipe', rec_ver, recipe_dir)
-    if os.path.isdir(os.path.join(recipe_dir, 'honeybee_radiance_recipe-{}.dist-info'.format(rec_ver))):
+    stderr = update_libraries_pip(py_exe, 'honeybee-radiance-recipe', rec_ver)
+    if os.path.isdir(os.path.join(py_lib, 'honeybee_radiance_recipe-{}.dist-info'.format(rec_ver))):
         print ('Honeybee recipes successfully installed!\n ')
-        remove_dist_info_files(recipe_dir)  # remove the dist-info files
     else:
         give_warning(ghenv.Component, stderr)
         print (stderr)
