@@ -1,0 +1,92 @@
+{
+  "version": "1.1.0", 
+  "nickname": "DirSolar", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "total_rad", 
+        "description": "A data collection of total solar irradiance in the direction of\nthe _srf_azimuth_ and _srf_altitude_.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "direct_rad", 
+        "description": "A data collection of direct solar irradiance in the direction of\nthe _srf_azimuth_ and _srf_altitude_.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "diff_rad", 
+        "description": "A data collection of diffuse sky solar irradiance in the direction\nof the _srf_azimuth_ and _srf_altitude_.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "reflect_rad", 
+        "description": "A data collection of ground reflected solar irradiance in the direction\nof the _srf_azimuth_ and _srf_altitude_.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_location", 
+      "description": "A Ladybug Location object, used to determine the altitude and\nazimuth of the sun at each hour.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_dir_norm_rad", 
+      "description": "Hourly Data Collection with the direct normal solar\nirradiance in W/m2.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_diff_horiz_rad", 
+      "description": "Hourly Data Collection with diffuse horizontal solar\nirradiance in W/m2.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_srf_azimuth_", 
+      "description": "A number between 0 and 360 that represents the azimuth at which\nirradiance is being evaluated in degrees.  0 = North, 90 = East,\n180 = South, and 270 = West.  (Default: 180).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_srf_altitude_", 
+      "description": "A number between -90 and 90 that represents the altitude at which\nirradiance is being evaluated in degrees. A value of 0 means the\nsurface is facing the horizon and a value of 90 means a surface is\nfacing straight up. (Default: 0).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_ground_ref_", 
+      "description": "A number between 0 and 1 that represents the reflectance of the\nground. (Default: 0.2). Some common ground reflectances are:\n*   urban: 0.18\n*   grass: 0.20\n*   fresh grass: 0.26\n*   soil: 0.17\n*   sand: 0.40\n*   snow: 0.65\n*   fresh_snow: 0.75\n*   asphalt: 0.12\n*   concrete: 0.30\n*   sea: 0.06", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "anisotrophic_", 
+      "description": "A boolean value that sets whether an anisotropic sky is used\n(as opposed to an isotropic sky). An isotrophic sky assumes an\neven distribution of diffuse irradiance across the sky while an\nanisotropic sky places more diffuse irradiance near the solar\ndisc. (Default: False).", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\n\ntry:\n    from ladybug.wea import Wea\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # set default values\n    az = _srf_azimuth_ if _srf_azimuth_ is not None else 180\n    alt = _srf_altitude_ if _srf_altitude_ is not None else 0\n    gref = _ground_ref_ if _ground_ref_ is not None else 0.2\n    isot = not anisotrophic_\n\n    # create the Wea and output irradaince\n    wea = Wea(_location, _dir_norm_rad, _diff_horiz_rad)\n    total_rad, direct_rad, diff_rad, reflect_rad = \\\n        wea.directional_irradiance(alt, az, gref, isot)\n", 
+  "category": "Ladybug", 
+  "name": "LB Directional Solar Irradiance", 
+  "description": "Compute the hourly solar irradiance falling on an unobstructed surface that faces\nany direction.\n_\nThe calculation method of this component is faster than running \"LB Incident\nRadiation\" studies on an hour-by-hour basis and it is slighty more acurate as\nit accounts for ground reflection. However, this comes at the cost of not being\nable to account for any obstructions that block the sun.\n-"
+}

@@ -1,0 +1,64 @@
+{
+  "version": "1.1.0", 
+  "nickname": "StrategyPar", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "strategy_par", 
+        "description": "Passive strategy parameters that can be plugged into the \"LB\nPMV Polygon\" to adjust the assumptions of the passive strategy\npolygons.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_day_above_comf_", 
+      "description": "A number in degrees Celsius representing the maximum daily\ntemperature above the comfort range which can still be counted in\nthe \"Mass + Night Vent\" polygon. (Default: 12 C).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_night_below_comf_", 
+      "description": "A number in degrees Celsius representing the minimum temperature\nbelow the maximum comfort polygon temperature that the outdoor\ntemperature must drop at night in order to count towards the \"Mass\n+ Night Vent\" polygon. (Default: 3C).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_fan_air_speed_", 
+      "description": "The air speed around the occupants that the fans create in m/s.\nThis is used to create the \"Occupant Use of Fans\" polygon. Note that\nvalues above 1 m/s tend to blow papers off desks. (Default: 1.0 m/3)", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_balance_temp_", 
+      "description": "The balance temperature of the building in Celsius when accounting\nfor all internal heat. This is used to create the \"Capture Internal\nHeat\" polygon. This value must be greater or equal to 5 C (balance\ntemperatures below 10 C are exceedingly rare) and it should be less\nthan the coldest temperature of the merged comfort polygon in order\nto be meaningful. (Default: 12.8 C)", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_solar_heat_cap_", 
+      "description": "A number representing the amount of outdoor solar flux (W/m2)\nthat is needed to raise the temperature of the theoretical building by\n1 degree Celsius. The lower this number, the more efficiently the\nspace is able to absorb passive solar heat. The default assumes a\nrelatively small passively solar heated zone without much mass. A\nhigher number will be required the larger the space is and the more\nmass that it has. (Default: 50 W/m2)", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_time_constant_", 
+      "description": "A number that represents the amount of time in hours that a\ntherortical building can passively maintain its temperature. This\nis used to determine how many hours a space can maintain a cool\ntemperature after night flushing for the \"Mass + Night Vent\" polygon.\nIt is also used to determine how many hours a space can store solar\nradiation for the \"Passive Solar Heating\" polygon. The default\nassumes a relatively well-isulated building with a thermal mass\ntypical of most contemporary buildings. Higher mass buildings will\nbe able to support a longer time constant. (Default: 8 hours).", 
+      "type": "int", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import give_warning, objectify_output\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef check_strategy(value, name, default, max, min):\n    \"\"\"Check a strategy parameter to ensure it is correct.\"\"\"\n    if value is None:\n        strategy_par.append(default)\n    elif value <= max and value >= min:\n        strategy_par.append(value)\n    else:\n        strategy_par.append(default)\n        msg = '\"{}\" must be between {} and {}. Got {}.\\nReverting to default ' \\\n            'value of {}'.format(name, min, max, value, default)\n        print(msg)\n        give_warning(ghenv.Component, msg)\n\n\n#check and add each of the strategies\nstrategy_par = []\ncheck_strategy(_day_above_comf_, '_day_above_comf_', 12.0, 30.0, 0.0)\ncheck_strategy(_night_below_comf_, '_night_below_comf_', 3.0, 15.0, 0.0)\ncheck_strategy(_fan_air_speed_, '_fan_air_speed_', 1.0, 10.0, 0.1)\ncheck_strategy(_balance_temp_, '_balance_temp_', 12.8, 20.0, 5.0)\ncheck_strategy(_solar_heat_cap_, '_solar_heat_cap_', 50.0, 1000.0, 1.0)\ncheck_strategy(_time_constant_, '_time_constant_', 8, 48, 1)\nstrategy_par = objectify_output('Passive Strategy Parameters', strategy_par)\n", 
+  "category": "Ladybug", 
+  "name": "LB Passive Strategy Parameters", 
+  "description": "Adjust the assumptions of the passive strategies that can be overalid on the\nPsychrometric Chart using the \"LB PMV Polygon\" component. The default assumptions\nof each of the strategies are as follows: \n_\nThermal Mass + Night Vent - The polygon represents the conditions under which\nshaded, night-flushed thermal mass can keep occupants cool. By default, this\npolygon assumes that temperatures can get as high as 12 C above the max temperature\nof the comfort polygon as long temperatures 8 hours before the hot hour are\n3.0 C lower than the max temperture of the comfort polygon. This parameter\ncomponent can be used to adjust these two temperature values and the number of\nhours that the building keeps its \"coolth\".\n_\nOccupant Use of Fans - This polygon is made by assuming that an air speed of 1.0 m/s\nis the maximum speed tolerable before papers start blowing around and conditions\nbecome annoying to occupants. The polygon is determined by running a PMV model\nwith this fan air speed and the PMV inputs of the warmest comfort conditions.\nThis parameter component can be used to adjust this maximum acceptable air speed.\n_\nCapture Internal Heat - The polygon is made by assuming a minimum building balance\npoint of 12.8 C and any conditions that are warmer than that will keep occupants\ncomfortable (up to the comfort polygon). It is assumed that, above this building\nbalance temperature, the building is free-running and occupants are able to open\nwindows as they wish to keep conditions from overshooting the comfort polygon.\nNote that the default balance temperature of 12.8 C is fairly low and assumes a\nsignificant amount of internal heat from people, equipment. etc. Or the building \nas a well-insulated envelope to ensure what internal heat there is can leave the\nbuilding slowly. This parameter component can be used to adjust the balance\ntemperature.\n_\nPassive Solar Heating - The polygon represents the conditions under which\nsun-exposed thermal mass can keep occupants warm in winter. By default, this\npolygon assumes that temperatures can get as high as 12 C above the max temperature\nof the comfort polygon as long temperatures 8 hours before the hot hour are\n3.0 C lower than the max temperture of the comfort polygon. This parameter\ncomponent can be used to adjust these two temperature values and the number of\nhours that the building keeps its \"coolth\".\n-"
+}

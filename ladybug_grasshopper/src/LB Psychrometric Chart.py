@@ -98,7 +98,7 @@ weather data or indoor temperature and humidity ratios from an energy simulation
 
 ghenv.Component.Name = 'LB Psychrometric Chart'
 ghenv.Component.NickName = 'PsychrometricChart'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -125,7 +125,7 @@ try:
     from ladybug_rhino.fromobjects import legend_objects
     from ladybug_rhino.color import color_to_color
     from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree, \
-        hide_output, show_output
+        hide_output, show_output, longest_list
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -202,38 +202,9 @@ def draw_psych_chart(psy_chart):
 
 
 if all_required_inputs(ghenv.Component):
-    # sense if the input temperature is in Farenheit
-    use_ip = False
-    if isinstance(_temperature, BaseCollection):
-        if _temperature.header.unit == 'F':  # convert to C and set chart to use_ip
-            _temperature = _temperature.to_si()
-            use_ip = True
-
-    # apply any analysis periods and conditional statements to the input collections
-    all_data = data_ + [_temperature, _rel_humidity]
-    if period_ is not None:
-        all_data = [coll.filter_by_analysis_period(period_) for coll in all_data]
-    if statement_ is not None:
-        all_data = BaseCollection.filter_collections_by_statement(all_data, statement_)
-
-    # set default values for the chart dimensions
-    base_pt = to_point2d(_base_pt_) if _base_pt_ is not None else Point2D()
+    # process the base point
+    bp = to_point2d(_base_pt_) if _base_pt_ is not None else Point2D()
     z = to_point3d(_base_pt_).z if _base_pt_ is not None else 0
-    _scale_ = 1.0 if _scale_ is None else _scale_
-    x_dim = _scale_ / conversion_to_meters()
-    y_dim = (_scale_ * 1500) / conversion_to_meters()
-    y_dim = y_dim * (9 / 5) if use_ip else y_dim
-    t_min, t_max = (-5, 115) if use_ip else (-20, 50)
-    if _temp_range_ is not None:
-        t_min, t_max = _temp_range_
-
-    # process the pressure input
-    pressure = 101325
-    if _pressure_ is not None:
-        try:
-            pressure = float(_pressure_)
-        except Exception:  # assume that it's a data collection
-            pressure = _pressure_.average
 
     # create lists to be filled with objects
     title = []
@@ -244,56 +215,102 @@ if all_required_inputs(ghenv.Component):
     mesh = []
     legend = []
     points = []
+    data_colls = []
     psych_chart = []
 
-    # create the psychrometric chart object and draw it in the Rhino scene
-    psy_chart = PsychrometricChart(
-        all_data[-2], all_data[-1], pressure, leg_par_by_index(0), base_pt, x_dim, y_dim,
-        t_min, t_max, use_ip=use_ip)
-    draw_psych_chart(psy_chart)
-    title_items = ['Time [hr]'] + \
-        ['{}: {}'.format(key, val) for key, val in all_data[-2].header.metadata.items()]
-    title[0].append(text_objects(
-        '\n'.join(title_items), psy_chart.container.upper_title_location,
-        psy_chart.legend_parameters.text_height * 1.5,
-        psy_chart.legend_parameters.font, 0, 0))
-    psych_chart.append(psy_chart)
+    # loop through the input temperatures and humidity and plot psych charts
+    for j, (temperature, rel_humid) in enumerate(zip(_temperature, _rel_humidity)):
+        # process the pressure input
+        pressure = 101325
+        if len(_pressure_) != 0:
+            pr = longest_list(_pressure_, j)
+            try:
+                pressure = float(pr)
+            except Exception:  # assume that it's a data collection
+                assert pr.header.unit == 'Pa', '_pressure_ input must be in Pa.'
+                pressure = pr.average
 
-    # plot the data on the chart
-    lb_points = psy_chart.data_points
-    points.append([from_point2d(pt) for pt in lb_points])
-    if len(lb_points) != 1:  # hide the points and just display the mesh
-        hide_output(ghenv.Component, 8)
-        mesh.append(from_mesh2d(psy_chart.colored_mesh, z))
-        legend.append(legend_objects(psy_chart.legend))
-    else:  # show the single point on the chart
-        show_output(ghenv.Component, 8)
+        # sense if the input temperature is in Farenheit
+        use_ip = False
+        if isinstance(temperature, BaseCollection):
+            if temperature.header.unit != 'C':  # convert to C and set chart to use_ip
+                temperature = temperature.to_si()
+                use_ip = True
 
-    # process any of the connected data into a legend and colors
-    if len(data_) != 0:
-        data = all_data[:-2]
-        move_dist = x_dim * (psy_chart.max_temperature - psy_chart.min_temperature + 20)
-        for i, d in enumerate(data):
-            # create a new psychrometric chart offset from the original
-            new_pt = Point2D(base_pt.x + move_dist * (i + 1), base_pt.y)
-            psy_chart = PsychrometricChart(
-                all_data[-2], all_data[-1], pressure, leg_par_by_index(0),
-                new_pt, x_dim, y_dim, t_min, t_max, use_ip=use_ip)
-            draw_psych_chart(psy_chart)
-            psych_chart.append(psy_chart)
-            lb_mesh, container = psy_chart.data_mesh(d, leg_par_by_index(i + 1))
-            mesh.append(from_mesh2d(lb_mesh, z))
-            legend.append(legend_objects(container.legend))
-            move_vec = Vector2D(base_pt.x + move_dist * (i + 1), 0)
-            points.append([from_point2d(pt.move(move_vec)) for pt in lb_points])
+        # set default values for the chart dimensions
+        _scale_ = 1.0 if _scale_ is None else _scale_
+        x_dim = _scale_ * 2 / conversion_to_meters()
+        y_dim = (_scale_ * 2 * 1500) / conversion_to_meters()
+        y_dim = y_dim * (9 / 5) if use_ip else y_dim
+        t_min, t_max = (-5, 115) if use_ip else (-20, 50)
+        if _temp_range_ is not None:
+            t_min, t_max = _temp_range_
+        y_move_dist = -y_dim * 0.04 * j
+        base_pt = bp.move(Vector2D(0, y_move_dist))
 
-            # add a title for the new chart
-            title_items = ['{} [{}]'.format(d.header.data_type, d.header.unit)] + \
-                ['{}: {}'.format(key, val) for key, val in d.header.metadata.items()]
-            title[i + 1].append(text_objects(
-                '\n'.join(title_items), psy_chart.container.upper_title_location,
-                psy_chart.legend_parameters.text_height * 1.5,
-                psy_chart.legend_parameters.font, 0, 0))
+        # apply any analysis periods and conditional statements to the input collections
+        original_temperature = temperature
+        all_data = data_ + [temperature, rel_humid]
+        if period_ is not None:
+            all_data = [coll.filter_by_analysis_period(period_) for coll in all_data]
+        if statement_ is not None:
+            all_data = BaseCollection.filter_collections_by_statement(all_data, statement_)
+
+        # create the psychrometric chart object and draw it in the Rhino scene
+        psy_chart = PsychrometricChart(
+            all_data[-2], all_data[-1], pressure, leg_par_by_index(0), base_pt, x_dim, y_dim,
+            t_min, t_max, use_ip=use_ip)
+        psy_chart.z = z
+        psy_chart.original_temperature = original_temperature
+        draw_psych_chart(psy_chart)
+        if isinstance(all_data[-2], BaseCollection):
+            meta_i = all_data[-2].header.metadata.items()
+            title_items = ['Time [hr]'] + ['{}: {}'.format(k, v) for k, v in meta_i]
+        else:
+            title_items = ['Psychrometric Chart']
+        title[j + j * len(data_)].append(text_objects(
+            '\n'.join(title_items), psy_chart.container.upper_title_location,
+            psy_chart.legend_parameters.text_height * 1.5,
+            psy_chart.legend_parameters.font, 0, 0))
+        psych_chart.append(psy_chart)
+
+        # plot the data on the chart
+        lb_points = psy_chart.data_points
+        points.append([from_point2d(pt) for pt in lb_points])
+        if len(lb_points) != 1:  # hide the points and just display the mesh
+            hide_output(ghenv.Component, 8)
+            mesh.append(from_mesh2d(psy_chart.colored_mesh, z))
+            legend.append(legend_objects(psy_chart.legend))
+        else:  # show the single point on the chart
+            show_output(ghenv.Component, 8)
+
+        # process any of the connected data into a legend and colors
+        if len(data_) != 0:
+            data_colls.append(all_data[:-2])
+            move_dist = x_dim * (psy_chart.max_temperature - psy_chart.min_temperature + 20)
+            for i, d in enumerate(all_data[:-2]):
+                # create a new psychrometric chart offset from the original
+                new_pt = Point2D(base_pt.x + move_dist * (i + 1), base_pt.y)
+                psy_chart = PsychrometricChart(
+                    all_data[-2], all_data[-1], pressure, leg_par_by_index(0),
+                    new_pt, x_dim, y_dim, t_min, t_max, use_ip=use_ip)
+                psy_chart.z = z
+                psy_chart.original_temperature = original_temperature
+                draw_psych_chart(psy_chart)
+                psych_chart.append(psy_chart)
+                lb_mesh, container = psy_chart.data_mesh(d, leg_par_by_index(i + 1))
+                mesh.append(from_mesh2d(lb_mesh, z))
+                legend.append(legend_objects(container.legend))
+                move_vec = Vector2D(base_pt.x + move_dist * (i + 1), 0)
+                points.append([from_point2d(pt.move(move_vec)) for pt in lb_points])
+
+                # add a title for the new chart
+                title_items = ['{} [{}]'.format(d.header.data_type, d.header.unit)] + \
+                    ['{}: {}'.format(key, val) for key, val in d.header.metadata.items()]
+                title[j + j * len(data_) + (i + 1)].append(text_objects(
+                    '\n'.join(title_items), psy_chart.container.upper_title_location,
+                    psy_chart.legend_parameters.text_height * 1.5,
+                    psy_chart.legend_parameters.font, 0, 0))
 
     # upack all of the python matrices into data trees
     title = list_to_data_tree(title)
@@ -303,3 +320,4 @@ if all_required_inputs(ghenv.Component):
     enth_wb_lines = list_to_data_tree(enth_wb_lines)
     legend = list_to_data_tree(legend)
     points = list_to_data_tree(points)
+    data = list_to_data_tree(data_colls)
