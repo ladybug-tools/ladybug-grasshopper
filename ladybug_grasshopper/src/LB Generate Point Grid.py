@@ -8,8 +8,10 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Genrate a mesh with corresponding test points.
-The resulting mesh will be in a format that the 'Color Mesh' component will accept.
+Genrate a mesh with corresponding test points from a Rhino Brep (or Mesh).
+_
+The resulting mesh will be in a format that the "LB Spatial Heatmap" component
+will accept.
 -
 
     Args:
@@ -23,12 +25,12 @@ The resulting mesh will be in a format that the 'Color Mesh' component will acce
         points: Test points at the center of each mesh face.
         vectors: Vectors for the normal direction at each of the points.
         face_areas: Area of each mesh face.
-        mesh: Analysis mesh that can be passed to the 'Color Mesh' component.
+        mesh: Analysis mesh that can be passed to the "LB Spatial Heatmap" component.
 """
 
 ghenv.Component.Name = "LB Generate Point Grid"
 ghenv.Component.NickName = 'GenPts'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
