@@ -1,0 +1,29 @@
+{
+  "version": "1.1.0", 
+  "nickname": "Rate", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data_rate", 
+        "description": "The data collection converted to time rate of changevalues.\n(eg. a data collection of Energy values in kWh).", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data", 
+      "description": "A houry, sub-hourly or daily data collection that can converted to\na time rate of change metric. (eg. a data collection of Energy\nvalues in kWh).", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug.datacollection import HourlyDiscontinuousCollection, DailyCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    accept = (HourlyDiscontinuousCollection, DailyCollection)\n    assert isinstance(_data, accept), '_data must be a an hourly ot daily data ' \\\n        'collection. Got {}.'.format(type(_data))\n    data_rate = _data.to_time_rate_of_change()\n", 
+  "category": "Ladybug", 
+  "name": "LB Time Rate of Change", 
+  "description": "Convert a DataCollection of time-aggregated values to time rate of change units.\n_\nFor example, if the collection has an Energy data type in kWh, this method will\nreturn a collection with an Power data type in W.\n-"
+}

@@ -1,0 +1,29 @@
+{
+  "version": "1.1.0", 
+  "nickname": "Aggr", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data_aggr", 
+        "description": "The data collection aggregated over time. (eg. a data collection\nof Energy values in kWh).", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data", 
+      "description": "A houry, sub-hourly or daily data collection that can be aggregated\nover time to yield data of a different metric. (eg. a data collection\nof Power values in W).", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug.datacollection import HourlyDiscontinuousCollection, DailyCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    accept = (HourlyDiscontinuousCollection, DailyCollection)\n    assert isinstance(_data, accept), '_data must be a an hourly ot daily data ' \\\n        'collection. Got {}.'.format(type(_data))\n    if _data.header.data_type.time_aggregated_type is not None:\n        data_aggr = _data.to_time_aggregated()\n    else:\n        data_aggr = _data", 
+  "category": "Ladybug", 
+  "name": "LB Time Aggregate", 
+  "description": "Convert a DataCollection of point-in-time values to its time-aggregated equivalent.\n_\nFor example, if the collection has a Power data type in W, this method will\nreturn a collection with an Energy data type in kWh.\n-"
+}
