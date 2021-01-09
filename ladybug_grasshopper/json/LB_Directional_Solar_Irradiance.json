@@ -1,33 +1,33 @@
 {
-  "version": "1.1.0", 
+  "version": "1.1.1", 
   "nickname": "DirSolar", 
   "outputs": [
     [
       {
         "access": "None", 
-        "name": "total_rad", 
-        "description": "A data collection of total solar irradiance in the direction of\nthe _srf_azimuth_ and _srf_altitude_.", 
+        "name": "total", 
+        "description": "A data collection of total solar irradiance or illuminance in the\ndirection of the _srf_azimuth_ and _srf_altitude_.", 
         "type": null, 
         "default": null
       }, 
       {
         "access": "None", 
-        "name": "direct_rad", 
-        "description": "A data collection of direct solar irradiance in the direction of\nthe _srf_azimuth_ and _srf_altitude_.", 
+        "name": "direct", 
+        "description": "A data collection of direct solar irradiance or illuminance in the\ndirection of the _srf_azimuth_ and _srf_altitude_.", 
         "type": null, 
         "default": null
       }, 
       {
         "access": "None", 
-        "name": "diff_rad", 
-        "description": "A data collection of diffuse sky solar irradiance in the direction\nof the _srf_azimuth_ and _srf_altitude_.", 
+        "name": "diff", 
+        "description": "A data collection of diffuse sky solar irradiance or illuminance in\nthe direction of the _srf_azimuth_ and _srf_altitude_.", 
         "type": null, 
         "default": null
       }, 
       {
         "access": "None", 
-        "name": "reflect_rad", 
-        "description": "A data collection of ground reflected solar irradiance in the direction\nof the _srf_azimuth_ and _srf_altitude_.", 
+        "name": "reflect", 
+        "description": "A data collection of ground reflected solar irradiance or\nilluminance in the direction of the _srf_azimuth_ and _srf_altitude_.", 
         "type": null, 
         "default": null
       }
@@ -43,15 +43,15 @@
     }, 
     {
       "access": "item", 
-      "name": "_dir_norm_rad", 
-      "description": "Hourly Data Collection with the direct normal solar\nirradiance in W/m2.", 
+      "name": "_direct_norm", 
+      "description": "Hourly Data Collection with the direct normal solar\nirradiance in W/m2 or Illuminance in lux.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
-      "name": "_diff_horiz_rad", 
-      "description": "Hourly Data Collection with diffuse horizontal solar\nirradiance in W/m2.", 
+      "name": "_diffuse_horiz", 
+      "description": "Hourly Data Collection with diffuse horizontal solar\nirradiance in W/m2 or Illuminance in lux.", 
       "type": "System.Object", 
       "default": null
     }, 
@@ -85,8 +85,8 @@
     }
   ], 
   "subcategory": "1 :: Analyze Data", 
-  "code": "\n\ntry:\n    from ladybug.wea import Wea\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # set default values\n    az = _srf_azimuth_ if _srf_azimuth_ is not None else 180\n    alt = _srf_altitude_ if _srf_altitude_ is not None else 0\n    gref = _ground_ref_ if _ground_ref_ is not None else 0.2\n    isot = not anisotrophic_\n\n    # create the Wea and output irradaince\n    wea = Wea(_location, _dir_norm_rad, _diff_horiz_rad)\n    total_rad, direct_rad, diff_rad, reflect_rad = \\\n        wea.directional_irradiance(alt, az, gref, isot)\n", 
+  "code": "\n\ntry:\n    from ladybug.wea import Wea\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.header import Header\n    from ladybug.datatype.illuminance import Illuminance\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\ndef rad_to_ill(data):\n    \"\"\"Change the data type of an input collection from irradiane to illuminance.\"\"\"\n    head = data.header\n    new_header = Header(Illuminance(), 'lux', head.analysis_period, head.metadata)\n    return HourlyContinuousCollection(new_header, data.values) if \\\n        isinstance(data, HourlyContinuousCollection) else \\\n        data.__class__(new_header, data.values, data.datetimes)\n\n\nif all_required_inputs(ghenv.Component):\n    # set default values\n    az = _srf_azimuth_ if _srf_azimuth_ is not None else 180\n    alt = _srf_altitude_ if _srf_altitude_ is not None else 0\n    gref = _ground_ref_ if _ground_ref_ is not None else 0.2\n    isot = not anisotrophic_\n\n    # create the Wea and output irradaince\n    wea = Wea(_location, _direct_norm, _diffuse_horiz)\n    total, direct, diff, reflect = \\\n        wea.directional_irradiance(alt, az, gref, isot)\n    for dat in (total, direct, diff, reflect):\n        dat.header.metadata['altitude'] = alt\n        dat.header.metadata['azimuth'] = az\n\n    # convert to illuminace if input data was illuiminance\n    if isinstance(_direct_norm.header.data_type, Illuminance):\n        total = rad_to_ill(total)\n        direct = rad_to_ill(direct)\n        diff = rad_to_ill(diff)\n        reflect = rad_to_ill(reflect)\n", 
   "category": "Ladybug", 
   "name": "LB Directional Solar Irradiance", 
-  "description": "Compute the hourly solar irradiance falling on an unobstructed surface that faces\nany direction.\n_\nThe calculation method of this component is faster than running \"LB Incident\nRadiation\" studies on an hour-by-hour basis and it is slighty more acurate as\nit accounts for ground reflection. However, this comes at the cost of not being\nable to account for any obstructions that block the sun.\n-"
+  "description": "Compute the hourly solar irradiance or illuminance falling on an unobstructed surface\nthat faces any direction.\n_\nThe calculation method of this component is faster than running \"LB Incident\nRadiation\" studies on an hour-by-hour basis and it is slighty more realistic since\nit accounts for ground reflection. However, this comes at the cost of not being\nable to account for any obstructions that block the sun.\n-"
 }
