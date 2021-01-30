@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0", 
+  "version": "1.1.1", 
   "nickname": "ConstrHeader", 
   "outputs": [
     [
@@ -37,7 +37,7 @@
     {
       "access": "list", 
       "name": "metadata_", 
-      "description": "Optional metadata to be associated with the Header.\nInput should be a list of text strings with a property name\nand value for the property separated by a colon.\n(eg. ['source: TMY3', 'city: New York'])", 
+      "description": "Optional metadata to be associated with the Header. The input should\nbe a list of text strings with a property name and value for the\nproperty separated by a colon. For example:\n_\n.    source: TMY\n.    city: New York\n.    country: USA", 
       "type": "string", 
       "default": null
     }

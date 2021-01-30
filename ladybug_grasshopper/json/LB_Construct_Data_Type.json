@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0", 
+  "version": "1.1.1", 
   "nickname": "ConstrType", 
   "outputs": [
     [
@@ -30,7 +30,7 @@
     {
       "access": "list", 
       "name": "categories_", 
-      "description": "An optional list of text for categories to be associated with\nthe data type. These categories will show up in the legend whenever\ndata with this data type is visualized. Input should be text strings\nwith a category number (integer) and name separated by a colon.\n(eg. ['-1: Cold', '0: Neutral', '1: Hot'])", 
+      "description": "An optional list of text for categories to be associated with\nthe data type. These categories will show up in the legend whenever\ndata with this data type is visualized. The input should be\ntext strings with a category number (integer) and name separated\nby a colon. For example:\n_\n.    -1: Cold\n.     0: Neutral\n.     1: Hot", 
       "type": "string", 
       "default": null
     }

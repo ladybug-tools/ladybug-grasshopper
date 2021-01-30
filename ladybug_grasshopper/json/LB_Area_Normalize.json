@@ -1,0 +1,43 @@
+{
+  "version": "1.1.0", 
+  "nickname": "Normalize", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "A Ladybug data collection object derived from the operation between\nthe two data inputs.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data", 
+      "description": "A Data Collection to be normalized by the input _area.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_area", 
+      "description": "Script variable Python", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_unit_", 
+      "description": "Text for the units that the area value is in. Acceptable inputs include\n'm2', 'ft2' and any other unit that is supported. (Default: m2).", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    unit = _unit_ if _unit_ is not None else 'm2'\n    data = _data.normalize_by_area(_area, unit)\n", 
+  "category": "Ladybug", 
+  "name": "LB Area Normalize", 
+  "description": "Get a Data Collection that is normalized by an area value.\n_\nNote that this component will raise a ValueError if the data type in the header\nof the data collection is not normalizable to yeild a useful type. Also note\nthat a ZeroDivisionError will be raised if the input area is equal to 0.\n-"
+}
