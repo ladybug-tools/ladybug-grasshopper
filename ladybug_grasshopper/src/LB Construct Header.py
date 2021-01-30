@@ -20,18 +20,21 @@ Construct a Ladybug Header to be used to create a ladybug DataCollection.
         _unit_: Units of the data_type (e.g. C). Default is to use the
             base unit of the connected_data_type.
         _a_period: A Ladybug AnalysisPeriod object. (Default
-        metadata_: Optional metadata to be associated with the Header.
-            Input should be a list of text strings with a property name
-            and value for the property separated by a colon.
-            (eg. ['source: TMY3', 'city: New York'])
-    
+        metadata_: Optional metadata to be associated with the Header. The input should
+            be a list of text strings with a property name and value for the
+            property separated by a colon. For example:
+            _
+            .    source: TMY
+            .    city: New York
+            .    country: USA
+
     Returns:
         header: A Ladybug Header object.
 """
 
 ghenv.Component.Name = "LB Construct Header"
 ghenv.Component.NickName = 'ConstrHeader'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

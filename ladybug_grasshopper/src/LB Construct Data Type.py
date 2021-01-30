@@ -16,9 +16,13 @@ Construct a Ladybug DataType to be used in the header of a ladybug DataCollectio
         _unit: A unit for the data type as a string.
         categories_: An optional list of text for categories to be associated with
             the data type. These categories will show up in the legend whenever
-            data with this data type is visualized. Input should be text strings
-            with a category number (integer) and name separated by a colon.
-            (eg. ['-1: Cold', '0: Neutral', '1: Hot'])
+            data with this data type is visualized. The input should be
+            text strings with a category number (integer) and name separated
+            by a colon. For example:
+            _
+            .    -1: Cold
+            .     0: Neutral
+            .     1: Hot
     
     Returns:
         type: A Ladybug DataType object that can be assigned to the header
@@ -27,7 +31,7 @@ Construct a Ladybug DataType to be used in the header of a ladybug DataCollectio
 
 ghenv.Component.Name = "LB Construct Data Type"
 ghenv.Component.NickName = 'ConstrType'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
