@@ -71,10 +71,12 @@ human subject in these MRT calculations.
 
 ghenv.Component.Name = "LB Human to Sky Relation"
 ghenv.Component.NickName = 'HumanToSky'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
+
+import math
 
 try:
     from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
