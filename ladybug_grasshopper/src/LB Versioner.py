@@ -41,7 +41,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.1.1'
+ghenv.Component.Message = '1.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -122,7 +122,10 @@ def update_libraries_pip(python_exe, package_name, version=None, target=None):
         cmds, shell=use_shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output = process.communicate()
     stdout, stderr = output
-    return stderr
+    error_msg = 'Package "{}" may not have been updated correctly\n' \
+        'or its usage in the plugin may have changed. See pip stderr below:\n' \
+        '{}'.format(package_name, stderr)
+    return error_msg
 
 
 def download_repo_github(repo, target_directory, version=None):
@@ -162,14 +165,15 @@ def parse_lbt_gh_versions(lbt_gh_folder):
     """Parse versions of compatible libs from a clone of the lbt-grasshopper repo.
     Args:
         lbt_gh_folder: Path to the clone of the lbt-grasshopper repo
- 
+
     Returns:
         A dictionary of library versions formatted like so (but with actual version
-        numbers in place of '0.0.0':
+        numbers in place of '0.0.0').
+
         {
             'lbt-dragonfly' = '0.0.0',
             'ladybug-rhino' = '0.0.0',
-            'lbt-grasshopper' = '0.0.0',
+            'lbt-recipes' = '0.0.0',
             'honeybee-openstudio-gem' = '0.0.0',
             'honeybee-standards' = '0.0.0',
             'honeybee-energy-standards' = '0.0.0',
@@ -185,7 +189,7 @@ def parse_lbt_gh_versions(lbt_gh_folder):
     version_dict = {
         'lbt-dragonfly': None,
         'ladybug-rhino': None,
-        'honeybee-radiance-recipe': None,
+        'lbt-recipes': None,
         'honeybee-standards': None,
         'honeybee-energy-standards': None,
         'honeybee-openstudio-gem': None,
@@ -289,12 +293,12 @@ if all_required_inputs(ghenv.Component) and _update is True:
             give_warning(ghenv.Component, stderr)
             print (stderr)
 
-    # install the honeybee_radiance_recipe package to recipe resources
-    print ('Installing Honeybee recipes.')
-    rec_ver = ver_dict['honeybee-radiance-recipe']
-    stderr = update_libraries_pip(py_exe, 'honeybee-radiance-recipe', rec_ver)
-    if os.path.isdir(os.path.join(py_lib, 'honeybee_radiance_recipe-{}.dist-info'.format(rec_ver))):
-        print ('Honeybee recipes successfully installed!\n ')
+    # install the lbt_recipes package
+    print ('Installing Ladyubug Tools Recipes.')
+    rec_ver = ver_dict['lbt-recipes']
+    stderr = update_libraries_pip(py_exe, 'lbt-recipes', rec_ver)
+    if os.path.isdir(os.path.join(py_lib, 'lbt_recipes-{}.dist-info'.format(rec_ver))):
+        print ('Ladyubug Tools Recipes successfully installed!\n ')
     else:
         give_warning(ghenv.Component, stderr)
         print (stderr)
@@ -324,7 +328,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
         give_warning(ghenv.Component, stderr)
         print (stderr)
 
-    # install the standards libraries if requested or they don't exist
+    # install the standards libraries if requested or if they don't exist
     if clean_standards_ or not os.path.isdir(os.path.join(stand_dir, 'honeybee_standards')):
         print ('Installing Ladybug Tools standards libraries (constructions, schedules, etc.).')
         hs_ver = ver_dict['honeybee-standards']
@@ -349,7 +353,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
     if new_version != current_version:
         msg = 'The Versioner component has, itself, been changed between the\n' \
             'current version ({}) and the version you are changing to ({}).\n' \
-            'It is recommended that you Resart Rhino and run the new Versioner\n' \
+            'It is recommended that you resart Rhino and run the new Versioner\n' \
             'coponent to ensure that everything is consistent.'.format(
                 current_version, new_version)
         print (msg)
