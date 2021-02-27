@@ -22,7 +22,7 @@ an OSM file in the OpenStudio Application).
 
 ghenv.Component.Name = 'LB Open File'
 ghenv.Component.NickName = 'OpenFile'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
@@ -40,4 +40,5 @@ if all_required_inputs(ghenv.Component):
     # check that the file exists
     assert os.path.exists(_file_path), \
         'No file was found at: {}'.format(_file_path)
+    _file_path = _file_path.replace('/', '\\') if os.name == 'nt' else _file_path
     os.startfile(_file_path)
