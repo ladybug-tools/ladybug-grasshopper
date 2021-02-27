@@ -51,8 +51,11 @@ radiant exchange.
                 SHGC. Values might be as low as 0.2 and could be as high as 0.85
                 for a single pane of glass. Default is 0.4 assuming a double pane
                 window with a relatively mild low-e coating.
-        _solar_body_par_: Optional Solar Body Parameter object to account for
-            properties of the human geometry.
+        _solar_body_par_: Optional solar body parameters from the "LB Solar Body Parameters"
+            object to specify the properties of the human geometry assumed in the
+            shortwave MRT calculation. The default assumes average skin/clothing
+            absorptivity and a human subject always has their back to the sun
+            at a 45-degree angle (SHARP = 135).
         _run: Set to True to run the component.
 
     Returns:
@@ -64,7 +67,7 @@ radiant exchange.
 
 ghenv.Component.Name = 'LB Indoor Solar MRT'
 ghenv.Component.NickName = 'IndoorSolarMRT'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '6'

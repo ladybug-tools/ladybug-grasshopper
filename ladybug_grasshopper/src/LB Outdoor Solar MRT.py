@@ -46,8 +46,11 @@ radiant exchange.
         _ground_ref_: A single number between 0 and 1 or a data collection
             that represents the reflectance of the floor. Default is for 0.25
             which is characteristic of outdoor grass or dry bare soil.
-        _solar_body_par_: Optional Solar Body Parameter object to account for
-            properties of the human geometry.
+        _solar_body_par_: Optional solar body parameters from the "LB Solar Body Parameters"
+            object to specify the properties of the human geometry assumed in the
+            shortwave MRT calculation. The default assumes average skin/clothing
+            absorptivity and a human subject always has their back to the sun
+            at a 45-degree angle (SHARP = 135).
         _run: Set to True to run the component.
 
     Returns:
@@ -63,7 +66,7 @@ radiant exchange.
 
 ghenv.Component.Name = 'LB Outdoor Solar MRT'
 ghenv.Component.NickName = 'OutdoorSolarMRT'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '6'

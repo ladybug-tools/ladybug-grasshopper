@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0", 
+  "version": "1.1.1", 
   "nickname": "IndoorSolarMRT", 
   "outputs": [
     [
@@ -86,7 +86,7 @@
     {
       "access": "item", 
       "name": "_solar_body_par_", 
-      "description": "Optional Solar Body Parameter object to account for\nproperties of the human geometry.", 
+      "description": "Optional solar body parameters from the \"LB Solar Body Parameters\"\nobject to specify the properties of the human geometry assumed in the\nshortwave MRT calculation. The default assumes average skin/clothing\nabsorptivity and a human subject always has their back to the sun\nat a 45-degree angle (SHARP = 135).", 
       "type": "System.Object", 
       "default": null
     }, 

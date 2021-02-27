@@ -37,9 +37,10 @@ comfort model should be used.
             (MRT) in C. Default is the same as the air_temp.
         _air_speed_: Data Collection or individual of air speed value in m/s.
             Default is a very low speed of 0.1 m/s.
-        adapt_par_: Optional Adaptive Parameter object to specify parameters 
-            under which conditions are considered acceptable. If None, default
-            will assume ASHRAE-55 criteria.
+        adapt_par_: Optional comfort parameters from the "LB Adaptive Comfort Parameters"
+            component to specify the criteria under which conditions are
+            considered acceptable/comfortable. The default will use ASHRAE-55
+            adaptive comfort criteria.
         _run: Set to True to run the component.
 
     Returns:
@@ -70,7 +71,7 @@ comfort model should be used.
 
 ghenv.Component.Name = 'LB Adaptive Comfort'
 ghenv.Component.NickName = 'Adaptive'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
