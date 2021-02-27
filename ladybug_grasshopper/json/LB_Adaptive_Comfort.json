@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0", 
+  "version": "1.1.1", 
   "nickname": "Adaptive", 
   "outputs": [
     [
@@ -79,7 +79,7 @@
     {
       "access": "item", 
       "name": "adapt_par_", 
-      "description": "Optional Adaptive Parameter object to specify parameters \nunder which conditions are considered acceptable. If None, default\nwill assume ASHRAE-55 criteria.", 
+      "description": "Optional comfort parameters from the \"LB Adaptive Comfort Parameters\"\ncomponent to specify the criteria under which conditions are\nconsidered acceptable/comfortable. The default will use ASHRAE-55\nadaptive comfort criteria.", 
       "type": "System.Object", 
       "default": null
     }, 

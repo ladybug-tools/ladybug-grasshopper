@@ -35,10 +35,10 @@ comfort model should be used.
             0.5 clo = Shorts + T-shirt
             0 clo = No clothing
             Default is set to 0.7 clo for long sleeve shirt and pants.
-        pmv_par_: Optional PMV Parameter object to specify parameters 
-            under which conditions are considered acceptable. If None, default
-            will assume a PPD threshold of 10%, no absolute humidity constraints
-            and a still air threshold of 0.1 m/s.
+        pmv_par_: Optional comfort parameters from the "LB PMV Comfort Parameters"
+            component to specify the criteria under which conditions are
+            considered acceptable/comfortable. The default will assume a
+            PPD threshold of 10% and no absolute humidity constraints.
         _run: Set to True to run the component.
 
     Returns:
@@ -106,7 +106,7 @@ comfort model should be used.
 
 ghenv.Component.Name = 'LB PMV Comfort'
 ghenv.Component.NickName = 'PMV'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

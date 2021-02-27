@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0", 
+  "version": "1.1.1", 
   "nickname": "PMV", 
   "outputs": [
     [
@@ -100,7 +100,7 @@
     {
       "access": "item", 
       "name": "pmv_par_", 
-      "description": "Optional PMV Parameter object to specify parameters \nunder which conditions are considered acceptable. If None, default\nwill assume a PPD threshold of 10%, no absolute humidity constraints\nand a still air threshold of 0.1 m/s.", 
+      "description": "Optional comfort parameters from the \"LB PMV Comfort Parameters\"\ncomponent to specify the criteria under which conditions are\nconsidered acceptable/comfortable. The default will assume a\nPPD threshold of 10% and no absolute humidity constraints.", 
       "type": "System.Object", 
       "default": null
     }, 
