@@ -21,7 +21,7 @@ This is useful for understanding weather data or simulation files.
 
 ghenv.Component.Name = 'LB Open Directory'
 ghenv.Component.NickName = 'OpenDir'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
@@ -43,6 +43,7 @@ if all_required_inputs(ghenv.Component):
 
     # open the file in explorer or finder
     if os.name == 'nt':  # we are on Windows
+        folder = folder.replace('/', '\\')
         subprocess.Popen('explorer.exe ' + folder)
     else:  # assume we are on Mac
         subprocess.call(['open', '-R', _file_path])

@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0", 
+  "version": "1.1.1", 
   "nickname": "OpenDir", 
   "outputs": [
     []
@@ -14,7 +14,7 @@
     }
   ], 
   "subcategory": "4 :: Extra", 
-  "code": "\nimport os\nimport subprocess\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # check that the file exists\n    assert os.path.exists(_file_path), \\\n        'No file or directory was found at: {}'.format(_file_path)\n    folder = _file_path if os.path.isdir(_file_path) else os.path.dirname(_file_path)\n\n    # open the file in explorer or finder\n    if os.name == 'nt':  # we are on Windows\n        subprocess.Popen('explorer.exe ' + folder)\n    else:  # assume we are on Mac\n        subprocess.call(['open', '-R', _file_path])\n", 
+  "code": "\nimport os\nimport subprocess\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # check that the file exists\n    assert os.path.exists(_file_path), \\\n        'No file or directory was found at: {}'.format(_file_path)\n    folder = _file_path if os.path.isdir(_file_path) else os.path.dirname(_file_path)\n\n    # open the file in explorer or finder\n    if os.name == 'nt':  # we are on Windows\n        folder = folder.replace('/', '\\\\')\n        subprocess.Popen('explorer.exe ' + folder)\n    else:  # assume we are on Mac\n        subprocess.call(['open', '-R', _file_path])\n", 
   "category": "Ladybug", 
   "name": "LB Open Directory", 
   "description": "Open a file's directory in Windows Explorer or Mac Finder.\nThis is useful for understanding weather data or simulation files.\n-"
