@@ -19,7 +19,7 @@ this component using the "LB Generate Point Grid" component.
             The number of values must match the number of faces or vertices
             in the mesh.
         _mesh: A Mesh object, with a number of faces or vertices that match
-            the number of input values and will be colored with restults.
+            the number of input values and will be colored with results.
         offset_dom_: Optional domain (or number for distance), which will
             be used to offset the mesh faces or verticesto according to the
             values. Higher values will be offset further.
@@ -43,7 +43,7 @@ this component using the "LB Generate Point Grid" component.
 
 ghenv.Component.Name = 'LB Spatial Heatmap'
 ghenv.Component.NickName = 'Heatmap'
-ghenv.Component.Message = '1.1.1'
+ghenv.Component.Message = '1.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
