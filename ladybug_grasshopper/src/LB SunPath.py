@@ -93,7 +93,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -219,7 +219,8 @@ if all_required_inputs(ghenv.Component):
         z = 0
     _scale_ = 1 if _scale_ is None else _scale_ # process the scale into a radius
     radius = (100 * _scale_) / conversion_to_meters()
-    solar_time_ = False if solar_time_ is None else solar_time_  # process solat time
+    solar_time_ = False if solar_time_ is None else solar_time_  # process solar time
+    projection_ = projection_.title() if projection_ is not None else None
 
     # create a intersection of the input hoys_ and the data hoys
     if len(data_) > 0 and len(hoys_) > 0:
