@@ -8,30 +8,30 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Deconstruct a Ladybug Matrix object into a Grasshopper Data Tree of values.
+Construct a Ladybug Matrix object from a Grasshopper Data Tree of values.
 -
 
     Args:
-        _matrix: A Ladybug Matrix object such as the intersection matrices output
-            from any of the ray-tracing components (eg. "LB Direct Sun Hours").
+        _values: A Grasshopper Data Tree of values to be merged into a matrix object.
 
     Returns:
-        values: The numerical values of the matrix as a Grasshopper Data Tree.
+        matrix: A Ladybug Matrix object encapsulating all of the input values.
 """
 
-ghenv.Component.Name = "LB Deconstruct Matrix"
-ghenv.Component.NickName = 'XMatrix'
-ghenv.Component.Message = '1.1.1'
+ghenv.Component.Name = "LB Construct Matrix"
+ghenv.Component.NickName = '+Matrix'
+ghenv.Component.Message = '1.1.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:
-    from ladybug_rhino.grasshopper import all_required_inputs, de_objectify_output, \
-        list_to_data_tree
+    from ladybug_rhino.grasshopper import all_required_inputs, objectify_output, \
+        data_tree_to_list
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
 if all_required_inputs(ghenv.Component):
-    values = list_to_data_tree(de_objectify_output(_matrix))
+    python_mtx = [row[1] for row in data_tree_to_list(_values)]
+    matrix = objectify_output('Matrix', python_mtx)

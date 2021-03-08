@@ -1,0 +1,29 @@
+{
+  "version": "1.1.0", 
+  "nickname": "+Matrix", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "matrix", 
+        "description": "A Ladybug Matrix object encapsulating all of the input values.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "tree", 
+      "name": "_values", 
+      "description": "A Grasshopper Data Tree of values to be merged into a matrix object.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, objectify_output, \\\n        data_tree_to_list\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    python_mtx = [row[1] for row in data_tree_to_list(_values)]\n    matrix = objectify_output('Matrix', python_mtx)", 
+  "category": "Ladybug", 
+  "name": "LB Construct Matrix", 
+  "description": "Construct a Ladybug Matrix object from a Grasshopper Data Tree of values.\n-"
+}

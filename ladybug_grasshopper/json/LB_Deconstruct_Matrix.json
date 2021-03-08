@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0", 
+  "version": "1.1.1", 
   "nickname": "XMatrix", 
   "outputs": [
     [
@@ -21,7 +21,7 @@
       "default": null
     }
   ], 
-  "subcategory": "3 :: Analyze Geometry", 
+  "subcategory": "4 :: Extra", 
   "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, de_objectify_output, \\\n        list_to_data_tree\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    values = list_to_data_tree(de_objectify_output(_matrix))", 
   "category": "Ladybug", 
   "name": "LB Deconstruct Matrix", 

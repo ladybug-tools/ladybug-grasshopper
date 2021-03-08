@@ -60,7 +60,7 @@ dome, subdivided into patches with a radiation value for each patch.
 
 ghenv.Component.Name = 'LB Sky Dome'
 ghenv.Component.NickName = 'SkyDome'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.1.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -135,9 +135,9 @@ def draw_dome(dome_data, center, dome_name, legend_par):
 
     # project the mesh if requested
     if projection_ is not None:
-        if projection_ == 'Orthographic':
+        if projection_.title() == 'Orthographic':
             pts = (Compass.point3d_to_orthographic(pt) for pt in lb_mesh.vertices)
-        elif projection_ == 'Stereographic':
+        elif projection_.title() == 'Stereographic':
             pts = (Compass.point3d_to_stereographic(pt, radius, center)
                    for pt in lb_mesh.vertices)
         else:
