@@ -1,5 +1,5 @@
 {
-  "version": "1.1.1", 
+  "version": "1.1.2", 
   "nickname": "GenPts", 
   "outputs": [
     [
@@ -51,13 +51,20 @@
     {
       "access": "item", 
       "name": "_offset_dist_", 
-      "description": "Number for the distance to move points from the surfaces\nof the input _geometry.  Typically, this should be a small positive\nnumber to ensure points are not blocked by the mesh. Default is 0.", 
+      "description": "Number for the distance to move points from the surfaces\nof the input _geometry.  Typically, this should be a small positive\nnumber to ensure points are not blocked by the mesh. (Default: 0).", 
       "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "x", 
+      "description": "Boolean to note whether meshing should be done using Rhino's\ndefaults, which fill the entire _geometry or a mesh with only\nquad faces should be generated. (Default: False).", 
+      "type": "bool", 
       "default": null
     }
   ], 
   "subcategory": "4 :: Extra", 
-  "code": "\ntry:\n    from ladybug_{{cad}}.togeometry import to_gridded_mesh3d, to_mesh3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_point3d, from_vector3d\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # check the input and generate the mesh.\n    _offset_dist_ = _offset_dist_ or 0\n    try:  # assume it's a {{Cad}} Brep\n        lb_mesh = to_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)\n    except TypeError:  # assume it's a {{Cad}} Mesh\n        try:\n            lb_mesh = to_mesh3d(_geometry)\n        except TypeError:  # unidientified geometry type\n            raise TypeError(\n                '_geometry must be a Brep or a Mesh. Got {}.'.format(type(_geometry)))\n    \n    # generate the test points, vectors, and areas.\n    points = [from_point3d(pt) for pt in lb_mesh.face_centroids]\n    vectors = [from_vector3d(vec) for vec in lb_mesh.face_normals]\n    face_areas = lb_mesh.face_areas\n    mesh = from_mesh3d(lb_mesh)", 
+  "code": "\ntry:\n    from ladybug_geometry.geometry3d.mesh import Mesh3D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_gridded_mesh3d, to_mesh3d, to_face3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_point3d, from_vector3d\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # check the input and generate the mesh.\n    _offset_dist_ = _offset_dist_ or 0\n    if quad_only_:  # use Ladybug's built-in meshing methods\n        lb_faces = to_face3d(_geometry)\n        lb_meshes = [geo.mesh_grid(_grid_size, offset=_offset_dist_) for geo in lb_faces]\n        if len(lb_meshes) == 1:\n            lb_mesh = lb_meshes[0]\n        elif len(lb_meshes) > 1:\n            lb_mesh = Mesh3D.join_meshes(lb_meshes)\n    else:  # use {{Cad}}'s default meshing\n        try:  # assume it's a {{Cad}} Brep\n            lb_mesh = to_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)\n        except TypeError:  # assume it's a {{Cad}} Mesh\n            try:\n                lb_mesh = to_mesh3d(_geometry)\n            except TypeError:  # unidientified geometry type\n                raise TypeError(\n                    '_geometry must be a Brep or a Mesh. Got {}.'.format(type(_geometry)))\n\n    # generate the test points, vectors, and areas.\n    points = [from_point3d(pt) for pt in lb_mesh.face_centroids]\n    vectors = [from_vector3d(vec) for vec in lb_mesh.face_normals]\n    face_areas = lb_mesh.face_areas\n    mesh = from_mesh3d(lb_mesh)", 
   "category": "Ladybug", 
   "name": "LB Generate Point Grid", 
   "description": "Genrate a mesh with corresponding test points from a Rhino Brep (or Mesh).\n_\nThe resulting mesh will be in a format that the \"LB Spatial Heatmap\" component\nwill accept.\n-"

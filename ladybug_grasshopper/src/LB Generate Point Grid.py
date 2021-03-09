@@ -19,8 +19,11 @@ will accept.
         _grid_size: Number for the size of the test grid.
         _offset_dist_: Number for the distance to move points from the surfaces
             of the input _geometry.  Typically, this should be a small positive
-            number to ensure points are not blocked by the mesh. Default is 0.
-    
+            number to ensure points are not blocked by the mesh. (Default: 0).
+        quad_only_: Boolean to note whether meshing should be done using Rhino's
+            defaults, which fill the entire _geometry or a mesh with only
+            quad faces should be generated. (Default: False).
+
     Returns:
         points: Test points at the center of each mesh face.
         vectors: Vectors for the normal direction at each of the points.
@@ -30,13 +33,18 @@ will accept.
 
 ghenv.Component.Name = "LB Generate Point Grid"
 ghenv.Component.NickName = 'GenPts'
-ghenv.Component.Message = '1.1.1'
+ghenv.Component.Message = '1.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
-    from ladybug_rhino.togeometry import to_gridded_mesh3d, to_mesh3d
+    from ladybug_geometry.geometry3d.mesh import Mesh3D
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
+
+try:
+    from ladybug_rhino.togeometry import to_gridded_mesh3d, to_mesh3d, to_face3d
     from ladybug_rhino.fromgeometry import from_mesh3d, from_point3d, from_vector3d
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
@@ -46,15 +54,23 @@ except ImportError as e:
 if all_required_inputs(ghenv.Component):
     # check the input and generate the mesh.
     _offset_dist_ = _offset_dist_ or 0
-    try:  # assume it's a Rhino Brep
-        lb_mesh = to_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
-    except TypeError:  # assume it's a Rhino Mesh
-        try:
-            lb_mesh = to_mesh3d(_geometry)
-        except TypeError:  # unidientified geometry type
-            raise TypeError(
-                '_geometry must be a Brep or a Mesh. Got {}.'.format(type(_geometry)))
-    
+    if quad_only_:  # use Ladybug's built-in meshing methods
+        lb_faces = to_face3d(_geometry)
+        lb_meshes = [geo.mesh_grid(_grid_size, offset=_offset_dist_) for geo in lb_faces]
+        if len(lb_meshes) == 1:
+            lb_mesh = lb_meshes[0]
+        elif len(lb_meshes) > 1:
+            lb_mesh = Mesh3D.join_meshes(lb_meshes)
+    else:  # use Rhino's default meshing
+        try:  # assume it's a Rhino Brep
+            lb_mesh = to_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
+        except TypeError:  # assume it's a Rhino Mesh
+            try:
+                lb_mesh = to_mesh3d(_geometry)
+            except TypeError:  # unidientified geometry type
+                raise TypeError(
+                    '_geometry must be a Brep or a Mesh. Got {}.'.format(type(_geometry)))
+
     # generate the test points, vectors, and areas.
     points = [from_point3d(pt) for pt in lb_mesh.face_centroids]
     vectors = [from_vector3d(vec) for vec in lb_mesh.face_normals]
