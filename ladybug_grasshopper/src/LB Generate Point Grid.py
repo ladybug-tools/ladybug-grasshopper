@@ -21,8 +21,14 @@ will accept.
             of the input _geometry.  Typically, this should be a small positive
             number to ensure points are not blocked by the mesh. (Default: 0).
         quad_only_: Boolean to note whether meshing should be done using Rhino's
-            defaults, which fill the entire _geometry or a mesh with only
-            quad faces should be generated. (Default: False).
+            defaults (False), which fills the entire _geometry to the edges
+            with both quad and tringulated faces, or a mesh with only quad
+            faces should be generated.
+            _
+            FOR ADVANCED USERS: This input can also be a vector object that will
+            be used to set the orientation of the quad-only grid. Note that,
+            if a vector is input here that is not aligned with the plane of
+            the input _geometry, an error will be raised.
 
     Returns:
         points: Test points at the center of each mesh face.
@@ -33,18 +39,21 @@ will accept.
 
 ghenv.Component.Name = "LB Generate Point Grid"
 ghenv.Component.NickName = 'GenPts'
-ghenv.Component.Message = '1.1.2'
+ghenv.Component.Message = '1.1.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
+    from ladybug_geometry.geometry3d.plane import Plane
+    from ladybug_geometry.geometry3d.face import Face3D
     from ladybug_geometry.geometry3d.mesh import Mesh3D
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.togeometry import to_gridded_mesh3d, to_mesh3d, to_face3d
+    from ladybug_rhino.togeometry import to_gridded_mesh3d, to_mesh3d, \
+        to_face3d, to_vector3d
     from ladybug_rhino.fromgeometry import from_mesh3d, from_point3d, from_vector3d
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
@@ -56,6 +65,12 @@ if all_required_inputs(ghenv.Component):
     _offset_dist_ = _offset_dist_ or 0
     if quad_only_:  # use Ladybug's built-in meshing methods
         lb_faces = to_face3d(_geometry)
+        try:
+            x_axis = to_vector3d(quad_only_)
+            lb_faces = [Face3D(f.boundary, Plane(f.normal, f[0], x_axis), f.holes)
+                        for f in lb_faces]
+        except AttributeError:
+            pass  # no plane connected; juse use default orientation
         lb_meshes = [geo.mesh_grid(_grid_size, offset=_offset_dist_) for geo in lb_faces]
         if len(lb_meshes) == 1:
             lb_mesh = lb_meshes[0]
