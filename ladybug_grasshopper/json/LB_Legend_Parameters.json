@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0", 
+  "version": "1.2.0", 
   "nickname": "LegendPar", 
   "outputs": [
     [
@@ -38,7 +38,7 @@
       "access": "list", 
       "name": "colors_", 
       "description": "An list of color objects. Default is Ladybug's original colorset.", 
-      "type": "Color", 
+      "type": "System.Drawing.Color", 
       "default": null
     }, 
     {
