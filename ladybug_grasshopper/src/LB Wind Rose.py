@@ -1,7 +1,7 @@
 # Ladybug: A Plugin for Environmental Analysis (GPL)
 # This file is part of Ladybug.
 #
-# Copyright (c) 2020, Ladybug Tools.
+# Copyright (c) 2021, Ladybug Tools.
 # You should have received a copy of the GNU General Public License
 # along with Ladybug; If not, see <http://www.gnu.org/licenses/>.
 #
@@ -26,7 +26,7 @@ Create a plot of any hourly data by wind directions.
             windrose.
         _dir_count_: Number that determines the number of directions to the wind rose
             will display. The number of directions must be greater then three to plot
-            the wind rose (Default: 16).
+            the wind rose (Default: 36).
         _center_pt_: Point3D to be used as a starting point to generate the geometry of
             the plot (Default: (0, 0, 0)).
         _show_calmrose_: A boolean to indicate if the wind rose displays a calm rose. The
@@ -103,7 +103,7 @@ Create a plot of any hourly data by wind directions.
 
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '1.1.0'
+ghenv.Component.Message = '1.2.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -173,7 +173,7 @@ if all_required_inputs(ghenv.Component):
         filt_wind_dir = _wind_direction.filter_by_pattern(pattern)
 
     # check errors in dir_count and process the north input
-    _dir_count_ = 16 if _dir_count_ is None else _dir_count_
+    _dir_count_ = 36 if _dir_count_ is None else _dir_count_
     assert _dir_count_ > 2, 'The number of directions must be greater than 3 ' \
         'to plot the wind rose. Got: {}'.format(_dir_count_)
     if north_ is not None:  # process the north_
