@@ -80,7 +80,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB Direct Sun Hours"
 ghenv.Component.NickName = 'DirectSunHours'
-ghenv.Component.Message = '1.1.1'
+ghenv.Component.Message = '1.1.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -105,44 +105,44 @@ except ImportError as e:
 
 
 if all_required_inputs(ghenv.Component) and _run:
-        # set the default offset distance
-        _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
-            else 0.1 / conversion_to_meters()
+    # set the default offset distance
+    _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
+        else 0.1 / conversion_to_meters()
 
-        # create the gridded mesh from the geometry
-        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size)
-        points = [from_point3d(pt.move(vec * _offset_dist_)) for pt, vec in
-                  zip(study_mesh.face_centroids, study_mesh.face_normals)]
-        hide_output(ghenv.Component, 1)
+    # create the gridded mesh from the geometry
+    study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size)
+    points = [from_point3d(pt.move(vec * _offset_dist_)) for pt, vec in
+              zip(study_mesh.face_centroids, study_mesh.face_normals)]
+    hide_output(ghenv.Component, 1)
 
-        # mesh the geometry and context
-        shade_mesh = join_geometry_to_mesh(_geometry + context_)
+    # mesh the geometry and context
+    shade_mesh = join_geometry_to_mesh(_geometry + context_)
 
-        # get the study points and reverse the sun vectors (for backward ray-tracting)
-        rev_vec = [from_vector3d(to_vector3d(vec).reverse()) for vec in _vectors]
-        normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
+    # get the study points and reverse the sun vectors (for backward ray-tracting)
+    rev_vec = [from_vector3d(to_vector3d(vec).reverse()) for vec in _vectors]
+    normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
 
-        # intersect the rays with the mesh
-        int_matrix, angles = intersect_mesh_rays(
-            shade_mesh, points, rev_vec, normals, parallel=parallel_)
+    # intersect the rays with the mesh
+    int_matrix, angles = intersect_mesh_rays(
+        shade_mesh, points, rev_vec, normals, parallel=parallel_)
 
-        # compute the results
-        int_mtx = objectify_output('Sun Intersection Matrix', int_matrix)
-        if _timestep_ and _timestep_ != 1:  # divide by the timestep before output
-            results = [sum(int_list) / _timestep_ for int_list in int_matrix]
-        else:  # no division required
-            results = [sum(int_list) for int_list in int_matrix]
+    # compute the results
+    int_mtx = objectify_output('Sun Intersection Matrix', int_matrix)
+    if _timestep_ and _timestep_ != 1:  # divide by the timestep before output
+        results = [sum(int_list) / _timestep_ for int_list in int_matrix]
+    else:  # no division required
+        results = [sum(int_list) for int_list in int_matrix]
 
-        # create the mesh and legend outputs
-        graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)
-        graphic.legend_parameters.title = 'hours'
-        if legend_par_ is None or legend_par_.are_colors_default:
-            graphic.legend_parameters.colors = Colorset.ecotect()
-        title = text_objects('Direct Sun Hours', graphic.lower_title_location,
-                             graphic.legend_parameters.text_height * 1.5,
-                             graphic.legend_parameters.font)
+    # create the mesh and legend outputs
+    graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)
+    graphic.legend_parameters.title = 'hours'
+    if legend_par_ is None or legend_par_.are_colors_default:
+        graphic.legend_parameters.colors = Colorset.ecotect()
+    title = text_objects('Direct Sun Hours', graphic.lower_title_location,
+                         graphic.legend_parameters.text_height * 1.5,
+                         graphic.legend_parameters.font)
 
-        # create all of the visual outputs
-        study_mesh.colors = graphic.value_colors
-        mesh = from_mesh3d(study_mesh)
-        legend = legend_objects(graphic.legend)
+    # create all of the visual outputs
+    study_mesh.colors = graphic.value_colors
+    mesh = from_mesh3d(study_mesh)
+    legend = legend_objects(graphic.legend)
