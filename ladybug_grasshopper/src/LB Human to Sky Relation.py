@@ -71,7 +71,7 @@ human subject in these MRT calculations.
 
 ghenv.Component.Name = "LB Human to Sky Relation"
 ghenv.Component.NickName = 'HumanToSky'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -79,6 +79,7 @@ ghenv.Component.AdditionalHelpFromDocStrings = '3'
 import math
 
 try:
+    from ladybug_geometry.geometry2d.pointvector import Vector2D
     from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
     from ladybug_geometry.geometry3d.line import LineSegment3D
 except ImportError as e:
@@ -96,7 +97,7 @@ except ImportError as e:
 
 try:
     from ladybug_rhino.config import conversion_to_meters
-    from ladybug_rhino.togeometry import to_point3d, to_vector3d
+    from ladybug_rhino.togeometry import to_point3d, to_vector2d
     from ladybug_rhino.fromgeometry import from_point3d, from_vector3d, \
         from_linesegment3d
     from ladybug_rhino.intersect import join_geometry_to_mesh, intersect_mesh_rays
