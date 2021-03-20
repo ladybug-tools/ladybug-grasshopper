@@ -52,10 +52,11 @@ mesh that shows the range of the data within specific percentiles.
             daily data and will resemble a band between two ranges for hourly
             and sub-hourly data. Multiple lists of meshes will be output for
             several input data streams.
-        data_lines: A list of polylines that represent the different input data.
-            These will represent the average at each hour for hourly input data.
-            Multiple lists of polylines will be output for several input
-            data streams.
+        data_lines: A list of polylines that represent the input data. These will
+            represent the average or total at each hour whenever the input data
+            is hourly or monthly-per-hour data.
+        col_lines: A list of colored polylines that represent the input data. These
+            will only be output when the input data are monthly per hour.
         legend: Geometry representing the legend for the chart, noting which
             colors correspond to which input data.
         borders: A list of lines and polylines representing the axes and intervals
@@ -68,7 +69,7 @@ mesh that shows the range of the data within specific percentiles.
 
 ghenv.Component.Name = 'LB Monthly Chart'
 ghenv.Component.NickName = 'MonthlyChart'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -86,14 +87,15 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.config import conversion_to_meters
-    from ladybug_rhino.config import tolerance
+    from ladybug_rhino.config import conversion_to_meters, tolerance
+    from ladybug_rhino.color import color_to_color
     from ladybug_rhino.togeometry import to_point2d
     from ladybug_rhino.fromgeometry import from_mesh3d, from_mesh2d, \
         from_polyline2d, from_linesegment2d
     from ladybug_rhino.text import text_objects
+    from ladybug_rhino.colorize import ColoredPolyline
     from ladybug_rhino.fromobjects import legend_objects
-    from ladybug_rhino.grasshopper import all_required_inputs
+    from ladybug_rhino.grasshopper import all_required_inputs, schedule_solution
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -153,3 +155,16 @@ if all_required_inputs(ghenv.Component):
         label3 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_hgt, font, 0, 3)
                  for txt, pt in zip(month_chart.y_axis_labels2, month_chart.y_axis_label_points2)]
         labels = labels + label3
+
+    # if there are colored lines, then process them to be output from the component
+    if month_chart.time_interval == 'MonthlyPerHour':
+        cols = [color_to_color(col) for col in month_chart.colors]
+        col_lines, month_count = [], len(data_lines) / len(_data)
+        for i, pline in enumerate(data_lines):
+            col_line = ColoredPolyline(pline)
+            col_line.color = cols[int(i / month_count)]
+            col_line.thickness = 3
+            col_lines.append(col_line)
+        # CWM: I don't know why we have to re-schedule the solution but this is the
+        # only way I found to get the colored polylines to appear (redraw did not work).
+        schedule_solution(ghenv.Component, 2)
