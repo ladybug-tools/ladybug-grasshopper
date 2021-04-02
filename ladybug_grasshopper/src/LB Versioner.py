@@ -41,7 +41,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -67,6 +67,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 import os
+import json
 import subprocess
 
 
@@ -95,6 +96,26 @@ def remove_dist_info_files(directory):
     for fold in os.listdir(directory):
         if fold.endswith('.dist-info'):
             nukedir(os.path.join(directory, fold), rmdir=True)
+
+
+def get_config_dict():
+    """Get a dictionary of the ladybug configurations.
+
+    This is needed in order to put the configurations back after update.
+    """
+    with open(folders.config_file, 'r') as cfg:
+        config_dict = json.load(cfg)
+    return config_dict
+
+
+def set_config_dict(config_dict):
+    """Set the configurations using a dictionary.
+
+    Args:
+        config_dict: A dictionary of configuration paths.
+    """
+    with open(folders.config_file, 'w') as fp:
+        json.dump(config_dict, fp, indent=4)
 
 
 def update_libraries_pip(python_exe, package_name, version=None, target=None):
@@ -239,6 +260,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
 
     # install the core libraries
     print ('Installing Ladybug Tools core Python libraries.')
+    config_dict = get_config_dict() # load configurations so they can be put back after update
     df_ver = ver_dict['lbt-dragonfly']
     stderr = update_libraries_pip(py_exe, 'lbt-dragonfly[cli]', df_ver)
     if os.path.isdir(os.path.join(py_lib, 'lbt_dragonfly-{}.dist-info'.format(df_ver))):
@@ -246,6 +268,7 @@ if all_required_inputs(ghenv.Component) and _update is True:
     else:
         give_warning(ghenv.Component, stderr)
         print (stderr)
+    set_config_dict(config_dict)  # restore the previous configurations
 
     # install the library needed for interaction with Rhino
     print ('Installing ladybug-rhino Python library.')
