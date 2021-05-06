@@ -68,7 +68,7 @@ in the lower left of the image unless you go to Options > Grid > and uncheck
 """
 ghenv.Component.Name = 'LB Capture View'
 ghenv.Component.NickName = 'CaptureView'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -82,6 +82,13 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
+    from honeybee.config import folders
+    default_folder = os.path.join(folders.default_simulation_folder, 'captured_views')
+except:
+    home_folder = os.getenv('HOME') or os.path.expanduser('~')
+    default_folder = os.path.join(home_folder, 'captured_views')
+
+try:
     from ladybug_rhino.grasshopper import all_required_inputs, bring_to_front
     from ladybug_rhino.viewport import viewport_by_name, capture_view
 except ImportError as e:
@@ -93,8 +100,7 @@ if all_required_inputs(ghenv.Component) and _capture:
     bring_to_front(ghenv.Component)
 
     # prepare the folder
-    folder = _folder_ if _folder_ is not None else \
-        os.path.join(folders.ladybug_tools_folder, 'resources', 'captured_views')
+    folder = _folder_ if _folder_ is not None else default_folder
     preparedir(folder, remove_content=False)
 
     # get the viewport objects
