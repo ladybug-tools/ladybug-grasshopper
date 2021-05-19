@@ -8,12 +8,14 @@
 # @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
 
 """
-Calculate Predicted Mean Vote (PMV).
+Calculate Adaptive thermal comfort.
 -
-PMV is a thermal comfort model for use on the interior of buildings
-where a heating or cooling system is operational.
-Note that, for naturally ventilated buildings, the Adaptive thermal
-comfort model should be used.
+The Adaptive thermal comfort model is for use on the interior of buildings where
+a heating or cooling system is not operational and occupants have the option to
+open windows for natural ventilation.
+-
+Note that, for fully conditioned buildings, the PMV thermal comfort model should
+be used.
 -
 
     Args:
@@ -71,7 +73,7 @@ comfort model should be used.
 
 ghenv.Component.Name = 'LB Adaptive Comfort'
 ghenv.Component.NickName = 'Adaptive'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
