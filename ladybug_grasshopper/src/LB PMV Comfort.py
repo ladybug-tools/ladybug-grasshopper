@@ -26,14 +26,12 @@ comfort model should be used.
         _met_rate_: Data Collection or individual value of metabolic rate in met.
             Default is set to 1.1 met for seated, typing. Typical values include
             the following.
-            _
             * 1 met = Metabolic rate of a resting seated person
             * 1.2 met = Metabolic rate of a standing person
             * 2.4 met = Metabolic rate of a person walking at ~1 m/s (2 mph)
         _clothing_: Data Collection or individual value of clothing insulation in clo.
             Default is set to 0.7 clo for long sleeve shirt and pants. Typical values
             include the following.
-            _
             * 1 clo = Three-piece suit
             * 0.5 clo = Shorts + T-shirt
             * 0 clo = No clothing
@@ -83,13 +81,10 @@ comfort model should be used.
             the assigned comfort_parameter.
             _
             Values are one of the following:
+                * -2 = too dry (but thermally neutral)
                 * -1 = cold
                 *  0 = netural
                 * +1 = hot
-            _
-            Additionally, if pmv_par_ are connected with humidity ratio lmits,
-            the following values may also be included:
-                * -2 = too dry (but thermally neutral)
                 * +2 = too humid (but thermally neutral)
         heat_loss: A list of 6 terms for heat loss from the human energy
             balance calculation that underlies PMV. Valeus are in W.

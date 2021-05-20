@@ -20,7 +20,6 @@ be used.
 
     Args:
         _out_temp: Outdoor temperatures in one of the following formats:
-            _
             * A Data Collection of prevailing outdoor temperature values in C.
                 This Data Collection must align with the _air_temp or _mrt_
                 inputs and bear the PrevailingOutdoorTemperature data type in
