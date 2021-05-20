@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0", 
+  "version": "1.2.1", 
   "nickname": "Sunpath", 
   "outputs": [
     [
@@ -100,7 +100,7 @@
     {
       "access": "list", 
       "name": "hoys_", 
-      "description": "A number or list of numbers between 0 and 8760 that respresent the\nhour of the year at which to evaluate the sun position. The\n\"LB Calculate HOY\" component can output this number given a month,\nday and hour. The \"LB Analysis Period\" component can output a\nlist of HOYs within a certain hour or date range.", 
+      "description": "A number or list of numbers between 0 and 8760 that represent the\nhour of the year at which to evaluate the sun position. The\n\"LB Calculate HOY\" component can output this number given a month,\nday and hour. The \"LB Analysis Period\" component can output a\nlist of HOYs within a certain hour or date range.", 
       "type": "double", 
       "default": null
     }, 
@@ -142,7 +142,7 @@
     {
       "access": "item", 
       "name": "daily_", 
-      "description": "Boolean to note whether the sunpath should display only one daily\narc for each unique day in the input hoys_ (True) or whther the\noutput sun path geometry should be for the entire year, complete\nwith analemmas for all sun-up hours and a daily arc for each\nmonth (False). (Default: False)", 
+      "description": "Boolean to note whether the sunpath should display only one daily\narc for each unique day in the input hoys_ (True) or whether the\noutput sun path geometry should be for the entire year, complete\nwith analemmas for all sun-up hours and a daily arc for each\nmonth (False). (Default: False)", 
       "type": "bool", 
       "default": null
     }, 
