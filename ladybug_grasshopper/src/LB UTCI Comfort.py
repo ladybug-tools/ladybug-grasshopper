@@ -40,29 +40,29 @@ Equivalent Temperature (PET) model should be used.
             thermal stress.
             .
             Values are one of the following:
-                0 = thermal stress
-                1 = no thremal stress
+                * 0 = thermal stress
+                * 1 = no thremal stress
         condition: Integers noting the thermal status of a subject.
             .
             Values are one of the following:
-                -1 = cold
-                 0 = netural
-                +1 = hot
+                * -1 = cold
+                *  0 = netural
+                * +1 = hot
         category: Integers noting the category that the UTCI conditions fall
             under on an 11-point scale.
             .
             Values are one of the following:
-                -5 = Extreme Cold Stress       (UTCI < -40)
-                -4 = Very Strong Cold Stress   (-40 <= UTCI < -27)
-                -3 = Strong Cold Stress        (-27 <= UTCI < -13)
-                -2 = Moderate Cold Stress      (-12 <= UTCI < 0)
-                -1 = Slight Cold Stress        (0 <= UTCI < 9)
-                 0 = No Thermal Stress         (9 <= UTCI < 26)
-                +1 = Slight Heat Stress        (26 <= UTCI < 28)
-                +2 = Moderate Heat Stress      (28 <= UTCI < 32)
-                +3 = Strong Heat Stress        (32 <= UTCI < 38)
-                +4 = Very Strong Heat Stress   (38 <= UTCI < 46)
-                +5 = Extreme Heat Stress       (46 < UTCI)
+                * -5 = Extreme Cold Stress       (UTCI < -40)
+                * -4 = Very Strong Cold Stress   (-40 <= UTCI < -27)
+                * -3 = Strong Cold Stress        (-27 <= UTCI < -13)
+                * -2 = Moderate Cold Stress      (-12 <= UTCI < 0)
+                * -1 = Slight Cold Stress        (0 <= UTCI < 9)
+                *  0 = No Thermal Stress         (9 <= UTCI < 26)
+                * +1 = Slight Heat Stress        (26 <= UTCI < 28)
+                * +2 = Moderate Heat Stress      (28 <= UTCI < 32)
+                * +3 = Strong Heat Stress        (32 <= UTCI < 38)
+                * +4 = Very Strong Heat Stress   (38 <= UTCI < 46)
+                * +5 = Extreme Heat Stress       (46 < UTCI)
         comf_obj: A Python object containing all inputs and results of the
             analysis.  This can be plugged into components like the "Comfort
             Statistics" component to get further information.
@@ -70,7 +70,7 @@ Equivalent Temperature (PET) model should be used.
 
 ghenv.Component.Name = 'LB UTCI Comfort'
 ghenv.Component.NickName = 'UTCI'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

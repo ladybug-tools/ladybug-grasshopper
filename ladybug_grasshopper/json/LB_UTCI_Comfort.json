@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0", 
+  "version": "1.2.1", 
   "nickname": "UTCI", 
   "outputs": [
     [
@@ -13,21 +13,21 @@
       {
         "access": "None", 
         "name": "comfort", 
-        "description": "Integers noting whether the input conditions result in no\nthermal stress.\n.\nValues are one of the following:\n0 = thermal stress\n1 = no thremal stress", 
+        "description": "Integers noting whether the input conditions result in no\nthermal stress.\n.\nValues are one of the following:\n* 0 = thermal stress\n* 1 = no thremal stress", 
         "type": null, 
         "default": null
       }, 
       {
         "access": "None", 
         "name": "condition", 
-        "description": "Integers noting the thermal status of a subject.\n.\nValues are one of the following:\n-1 = cold\n0 = netural\n+1 = hot", 
+        "description": "Integers noting the thermal status of a subject.\n.\nValues are one of the following:\n* -1 = cold\n*  0 = netural\n* +1 = hot", 
         "type": null, 
         "default": null
       }, 
       {
         "access": "None", 
         "name": "category", 
-        "description": "Integers noting the category that the UTCI conditions fall\nunder on an 11-point scale.\n.\nValues are one of the following:\n-5 = Extreme Cold Stress       (UTCI < -40)\n-4 = Very Strong Cold Stress   (-40 <= UTCI < -27)\n-3 = Strong Cold Stress        (-27 <= UTCI < -13)\n-2 = Moderate Cold Stress      (-12 <= UTCI < 0)\n-1 = Slight Cold Stress        (0 <= UTCI < 9)\n0 = No Thermal Stress         (9 <= UTCI < 26)\n+1 = Slight Heat Stress        (26 <= UTCI < 28)\n+2 = Moderate Heat Stress      (28 <= UTCI < 32)\n+3 = Strong Heat Stress        (32 <= UTCI < 38)\n+4 = Very Strong Heat Stress   (38 <= UTCI < 46)\n+5 = Extreme Heat Stress       (46 < UTCI)", 
+        "description": "Integers noting the category that the UTCI conditions fall\nunder on an 11-point scale.\n.\nValues are one of the following:\n* -5 = Extreme Cold Stress       (UTCI < -40)\n* -4 = Very Strong Cold Stress   (-40 <= UTCI < -27)\n* -3 = Strong Cold Stress        (-27 <= UTCI < -13)\n* -2 = Moderate Cold Stress      (-12 <= UTCI < 0)\n* -1 = Slight Cold Stress        (0 <= UTCI < 9)\n*  0 = No Thermal Stress         (9 <= UTCI < 26)\n* +1 = Slight Heat Stress        (26 <= UTCI < 28)\n* +2 = Moderate Heat Stress      (28 <= UTCI < 32)\n* +3 = Strong Heat Stress        (32 <= UTCI < 38)\n* +4 = Very Strong Heat Stress   (38 <= UTCI < 46)\n* +5 = Extreme Heat Stress       (46 < UTCI)", 
         "type": null, 
         "default": null
       }, 
