@@ -21,7 +21,7 @@ analysis and shading design.
             direction to North. (Default: 0)
         _location: A ladybug Location that has been output from the "LB Import EPW"
             component or the "LB Construct Location" component.
-        hoys_: A number or list of numbers between 0 and 8760 that respresent the
+        hoys_: A number or list of numbers between 0 and 8760 that represent the
             hour of the year at which to evaluate the sun position. The
             "LB Calculate HOY" component can output this number given a month,
             day and hour. The "LB Analysis Period" component can output a
@@ -40,7 +40,7 @@ analysis and shading design.
                 * Orthographic
                 * Stereographic
         daily_: Boolean to note whether the sunpath should display only one daily
-            arc for each unique day in the input hoys_ (True) or whther the
+            arc for each unique day in the input hoys_ (True) or whether the
             output sun path geometry should be for the entire year, complete
             with analemmas for all sun-up hours and a daily arc for each
             month (False). (Default: False)
@@ -93,7 +93,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
