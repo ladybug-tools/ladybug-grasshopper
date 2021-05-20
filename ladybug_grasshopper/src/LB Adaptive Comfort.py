@@ -21,13 +21,13 @@ be used.
     Args:
         _out_temp: Outdoor temperatures in one of the following formats:
             _
-            1 - A Data Collection of prevailing outdoor temperature values in C.
+            * A Data Collection of prevailing outdoor temperature values in C.
                 This Data Collection must align with the _air_temp or _mrt_
                 inputs and bear the PrevailingOutdoorTemperature data type in
                 its header.
-            2 - A single prevailing outdoor temperature value in C to be used
+            * A single prevailing outdoor temperature value in C to be used
                 for all of the _air_temp or _mrt_ inputs.
-            3 - A Data Collection of outdoor dry bulb temperatures recorded over
+            * A Data Collection of outdoor dry bulb temperatures recorded over
                 the entire year. This Data Collection must be continouous and
                 must either be an Hourly Collection or Daily Collection. In the event
                 that the input adapt_par_ has a _avgm_or_runmean_ set to True,
@@ -57,15 +57,15 @@ be used.
             according to the assigned comfort_parameter.
             _
             Values are one of the following:
-                0 = uncomfortable
-                1 = comfortable
+                * 0 = uncomfortable
+                * 1 = comfortable
         condition: Integers noting the thermal status of a subject according to
             the assigned comfort_parameter.
             _
             Values are one of the following:
-                -1 = cold
-                 0 = netural
-                +1 = hot
+                * -1 = cold
+                *  0 = netural
+                * +1 = hot
         comf_obj: A Python object containing all inputs and results of the
             analysis.  This can be plugged into components like the "Comfort
             Statistics" component to get further information.
@@ -73,7 +73,7 @@ be used.
 
 ghenv.Component.Name = 'LB Adaptive Comfort'
 ghenv.Component.NickName = 'Adaptive'
-ghenv.Component.Message = '1.2.1'
+ghenv.Component.Message = '1.2.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

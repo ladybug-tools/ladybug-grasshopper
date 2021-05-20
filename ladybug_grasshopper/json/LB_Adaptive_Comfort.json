@@ -1,5 +1,5 @@
 {
-  "version": "1.2.1", 
+  "version": "1.2.2", 
   "nickname": "Adaptive", 
   "outputs": [
     [
@@ -27,14 +27,14 @@
       {
         "access": "None", 
         "name": "comfort", 
-        "description": "Integers noting whether the input conditions are acceptable\naccording to the assigned comfort_parameter.\n_\nValues are one of the following:\n0 = uncomfortable\n1 = comfortable", 
+        "description": "Integers noting whether the input conditions are acceptable\naccording to the assigned comfort_parameter.\n_\nValues are one of the following:\n* 0 = uncomfortable\n* 1 = comfortable", 
         "type": null, 
         "default": null
       }, 
       {
         "access": "None", 
         "name": "condition", 
-        "description": "Integers noting the thermal status of a subject according to\nthe assigned comfort_parameter.\n_\nValues are one of the following:\n-1 = cold\n0 = netural\n+1 = hot", 
+        "description": "Integers noting the thermal status of a subject according to\nthe assigned comfort_parameter.\n_\nValues are one of the following:\n* -1 = cold\n*  0 = netural\n* +1 = hot", 
         "type": null, 
         "default": null
       }, 
@@ -51,7 +51,7 @@
     {
       "access": "item", 
       "name": "_out_temp", 
-      "description": "Outdoor temperatures in one of the following formats:\n_\n1 - A Data Collection of prevailing outdoor temperature values in C.\nThis Data Collection must align with the _air_temp or _mrt_\ninputs and bear the PrevailingOutdoorTemperature data type in\nits header.\n2 - A single prevailing outdoor temperature value in C to be used\nfor all of the _air_temp or _mrt_ inputs.\n3 - A Data Collection of outdoor dry bulb temperatures recorded over\nthe entire year. This Data Collection must be continouous and\nmust either be an Hourly Collection or Daily Collection. In the event\nthat the input adapt_par_ has a _avgm_or_runmean_ set to True,\nMonthly collections are also acceptable here. Note that, because\nan annual input is required, this input collection does not have\nto align with the _air_temp or _mrt_ inputs.", 
+      "description": "Outdoor temperatures in one of the following formats:\n_\n* A Data Collection of prevailing outdoor temperature values in C.\nThis Data Collection must align with the _air_temp or _mrt_\ninputs and bear the PrevailingOutdoorTemperature data type in\nits header.\n* A single prevailing outdoor temperature value in C to be used\nfor all of the _air_temp or _mrt_ inputs.\n* A Data Collection of outdoor dry bulb temperatures recorded over\nthe entire year. This Data Collection must be continouous and\nmust either be an Hourly Collection or Daily Collection. In the event\nthat the input adapt_par_ has a _avgm_or_runmean_ set to True,\nMonthly collections are also acceptable here. Note that, because\nan annual input is required, this input collection does not have\nto align with the _air_temp or _mrt_ inputs.", 
       "type": "System.Object", 
       "default": null
     }, 

@@ -1,12 +1,12 @@
 {
-  "version": "1.2.0", 
+  "version": "1.2.1", 
   "nickname": "PMV", 
   "outputs": [
     [
       {
         "access": "None", 
         "name": "pmv", 
-        "description": "Predicted Mean Vote (PMV).\n_\nPMV is a seven-point scale from cold (-3) to hot (+3) that was used\nin comfort surveys of P.O. Fanger.\n_\nEach interger value of the scale indicates the following:\n-3 = Cold\n-2 = Cool\n-1 = Slightly Cool\n0 = Neutral\n+1 = Slightly Warm\n+2 = Warm\n+3 = Hot", 
+        "description": "Predicted Mean Vote (PMV).\n_\nPMV is a seven-point scale from cold (-3) to hot (+3) that was used\nin comfort surveys of P.O. Fanger.\n_\nEach interger value of the scale indicates the following:\n* -3 = Cold\n* -2 = Cool\n* -1 = Slightly Cool\n*  0 = Neutral\n* +1 = Slightly Warm\n* +2 = Warm\n* +3 = Hot", 
         "type": null, 
         "default": null
       }, 
@@ -27,14 +27,14 @@
       {
         "access": "None", 
         "name": "comfort", 
-        "description": "Integers noting whether the input conditions are acceptable\naccording to the assigned comfort_parameter.\n_\nValues are one of the following:\n0 = uncomfortable\n1 = comfortable", 
+        "description": "Integers noting whether the input conditions are acceptable\naccording to the assigned comfort_parameter.\n_\nValues are one of the following:\n* 0 = uncomfortable\n* 1 = comfortable", 
         "type": null, 
         "default": null
       }, 
       {
         "access": "None", 
         "name": "condition", 
-        "description": "Integers noting the thermal status of a subject according to\nthe assigned comfort_parameter.\n_\nValues are one of the following:\n-1 = cold\n0 = netural\n+1 = hot\n_\nAdditionally, if pmv_par_ are connected with humidity ratio lmits,\nthe following values may also be included:\n-2 = too dry (but thermally neutral)\n+2 = too humid (but thermally neutral)", 
+        "description": "Integers noting the thermal status of a subject according to\nthe assigned comfort_parameter.\n_\nValues are one of the following:\n* -1 = cold\n*  0 = netural\n* +1 = hot\n_\nAdditionally, if pmv_par_ are connected with humidity ratio lmits,\nthe following values may also be included:\n* -2 = too dry (but thermally neutral)\n* +2 = too humid (but thermally neutral)", 
         "type": null, 
         "default": null
       }, 
@@ -86,14 +86,14 @@
     {
       "access": "item", 
       "name": "_met_rate_", 
-      "description": "Data Collection or individual value of metabolic rate in met.\n_\n1 met = Metabolic rate of a resting seated person\n1.2 met = Metabolic rate of a standing person\n2.4 met = Metabolic rate of a person walking at ~1 m/s (2 mph)\nDefault is set to 1.1 met for seated, typing.", 
+      "description": "Data Collection or individual value of metabolic rate in met.\nDefault is set to 1.1 met for seated, typing. Typical values include\nthe following.\n_\n* 1 met = Metabolic rate of a resting seated person\n* 1.2 met = Metabolic rate of a standing person\n* 2.4 met = Metabolic rate of a person walking at ~1 m/s (2 mph)", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_clothing_", 
-      "description": "Data Collection or individual value of clothing insulation in clo.\n_\n1 clo = Three-piece suit\n0.5 clo = Shorts + T-shirt\n0 clo = No clothing\nDefault is set to 0.7 clo for long sleeve shirt and pants.", 
+      "description": "Data Collection or individual value of clothing insulation in clo.\nDefault is set to 0.7 clo for long sleeve shirt and pants. Typical values\ninclude the following.\n_\n* 1 clo = Three-piece suit\n* 0.5 clo = Shorts + T-shirt\n* 0 clo = No clothing", 
       "type": "System.Object", 
       "default": null
     }, 
