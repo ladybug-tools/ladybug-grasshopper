@@ -59,7 +59,7 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
 ghenv.Component.Name = 'LB Cumulative Sky Matrix'
 ghenv.Component.NickName = 'SkyMatrix'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -91,20 +91,14 @@ except ImportError as e:
 # TODO: Remove dependency on honeybee + Radiance after genskymtx is in its own LB extension
 try:
     from honeybee_radiance.config import folders as hb_folders
-    compatible_rad_date = (2020, 9, 3)
-    hb_url = 'https://github.com/ladybug-tools/lbt-grasshopper/wiki/1.4-Compatibility-Matrix'
-    rad_msg = 'Download and install the version of Radiance listed in the Ladybug ' \
-        'Tools compatibility matrix\n{}'.format(hb_url)
-    assert hb_folders.radiance_path is not None, \
-        'No Radiance installation was found on this machine.\n{}'.format(rad_msg)
-    assert hb_folders.radiance_version_date >= compatible_rad_date, \
-        'The installed Radiance is not from {} or later.' \
-        '\n{}'.format('/'.join(str(v) for v in compatible_rad_date), rad_msg)
-    # get the path to the gemdaymtx executable
-    gendaymtx_exe = os.path.join(hb_folders.radbin_path, 'gendaymtx.exe') if \
-        os.name == 'nt' else os.path.join(hb_folders.radbin_path, 'gendaymtx')
+    from lbt_recipes.version import check_radiance_date
 except ImportError as e:
     raise ImportError('\nFailed to import honeybee_radiance:\n\t{}'.format(e))
+
+# check the istalled Radiance date and get the path to the gemdaymtx executable
+check_radiance_date()
+gendaymtx_exe = os.path.join(hb_folders.radbin_path, 'gendaymtx.exe') if \
+    os.name == 'nt' else os.path.join(hb_folders.radbin_path, 'gendaymtx')
 
 
 # constants for converting RGB values output by gendaymtx to broadband radiation
