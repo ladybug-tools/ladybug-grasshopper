@@ -1,4 +1,4 @@
-lbt-ladybug==0.25.75
+lbt-ladybug==0.25.76
 coverage==5.5
 coveralls==3.1.0
 pytest==6.2.4
