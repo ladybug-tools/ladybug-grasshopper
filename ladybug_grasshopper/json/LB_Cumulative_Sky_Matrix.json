@@ -1,5 +1,5 @@
 {
-  "version": "1.2.1", 
+  "version": "1.2.2", 
   "nickname": "SkyMatrix", 
   "outputs": [
     [
@@ -45,7 +45,7 @@
       "access": "list", 
       "name": "_hoys_", 
       "description": "A number or list of numbers between 0 and 8760 that respresent\nthe hour(s) of the year for which to generate the sky matrix. The\n\"LB Calculate HOY\" component can output this number given a month,\nday and hour. The \"LB Analysis Period\" component can output a\nlist of HOYs within a certain hour or date range. By default,\nthe matrix will be for the entire year.", 
-      "type": "int", 
+      "type": "double", 
       "default": null
     }, 
     {

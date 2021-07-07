@@ -59,7 +59,7 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
 ghenv.Component.Name = 'LB Cumulative Sky Matrix'
 ghenv.Component.NickName = 'SkyMatrix'
-ghenv.Component.Message = '1.2.1'
+ghenv.Component.Message = '1.2.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
