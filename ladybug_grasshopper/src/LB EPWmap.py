@@ -19,7 +19,7 @@ Open EPWmap in a web browser.
 
 ghenv.Component.Name = 'LB EPWmap'
 ghenv.Component.NickName = 'EPWMap'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -60,11 +60,11 @@ if all_required_inputs(ghenv.Component) and _epw_map is True:
             except ValueError:
                 mac_open(url)
     if broswer_found == False:
-       print "An accepable broswer was not found on your machine.\n" \
-       "The default browser will be used but epwmap may not display correctly there."
-       try:
-        wb.open(url, 2, True)
-       except ValueError:
-        mac_open(url)
+        print "An accepable broswer was not found on your machine.\n" \
+        "The default browser will be used but epwmap may not display correctly there."
+        try:
+            wb.open(url, 2, True)
+        except ValueError:
+            mac_open(url)
 else:
     print "Set _epw_map to True."
