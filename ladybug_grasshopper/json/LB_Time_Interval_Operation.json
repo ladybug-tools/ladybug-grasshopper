@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0", 
+  "version": "1.2.1", 
   "nickname": "TimeOp", 
   "outputs": [
     [
@@ -37,7 +37,7 @@
     {
       "access": "item", 
       "name": "_operation_", 
-      "description": "Text indicating the operation that should be performed on\nthe input hourly data.\n_\nSuch text must be one of the following:\n- average\n- total\n- [a number between 0 and 100]\n_\nIn the case of the last option, the number will be interpreted as\na percentile of the data over the time period. For example,\ninputting 75 will return the 75th percentile value of each\nday/month/hour, inputting 0 will give the minimum value of each\nday/month/hour and inputting 100 will give the max value of each\nday/month/hour.\n_\nDefault is 'average' if the input data type is not cumulative and\n'total' if the data type is not cumulative.", 
+      "description": "Text indicating the operation that should be performed on\nthe input hourly data.\n_\nSuch text must be one of the following:\n- average\n- total\n- [a number between 0 and 100]\n_\nIn the case of the last option, the number will be interpreted as\na percentile of the data over the time period. For example,\ninputting 75 will return the 75th percentile value of each\nday/month/hour, inputting 0 will give the minimum value of each\nday/month/hour and inputting 100 will give the max value of each\nday/month/hour.\n_\nDefault is 'average' if the input data type is not cumulative and\n'total' if the data type is cumulative.", 
       "type": "string", 
       "default": null
     }

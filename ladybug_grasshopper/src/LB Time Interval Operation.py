@@ -39,7 +39,7 @@ These actions can be performed over the following time intervals:
             day/month/hour.
             _
             Default is 'average' if the input data type is not cumulative and
-            'total' if the data type is not cumulative.
+            'total' if the data type is cumulative.
 
     Returns:
         daily: Daily data collection derived from the input _data and _operation_.
@@ -50,7 +50,7 @@ These actions can be performed over the following time intervals:
 
 ghenv.Component.Name = 'LB Time Interval Operation'
 ghenv.Component.NickName = 'TimeOp'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
