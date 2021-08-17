@@ -41,7 +41,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.2.1'
+ghenv.Component.Message = '1.2.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -62,7 +62,8 @@ try:
     from ladybug_rhino.download import download_file_by_name
     from ladybug_rhino.versioning.userobject import UO_FOLDER, GHA_FOLDER
     from ladybug_rhino.versioning.diff import current_userobject_version
-    from ladybug_rhino.grasshopper import all_required_inputs, give_warning
+    from ladybug_rhino.grasshopper import all_required_inputs, give_warning, \
+        give_popup_message
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -367,9 +368,15 @@ if all_required_inputs(ghenv.Component) and _update is True:
 
     # delete the temp folder and give a completion message
     nukedir(temp_folder, True)
-    print ('Update successful!')
-    print ('Restart Grasshopper and Rhino to load the new components + library.')
-    
+    version = 'LATEST' if version_ is None else version_
+    success_msg = 'Change to Version {} Successful!'.format(version)
+    restart_msg = 'RESTART RHINO to load the new components + library.'
+    sync_msg = 'The "LB Sync Grasshopper File" component can be used\n' \
+        'to sync Grasshopper definitions with your new installation.'
+    for msg in (success_msg, restart_msg, sync_msg):
+        print (msg)
+    give_popup_message('\n'.join([restart_msg, sync_msg]), success_msg)
+
     # do a check to see if the versioner has, itself, been updated
     new_version = current_userobject_version(ghenv.Component)
     current_version = ghenv.Component.Message
