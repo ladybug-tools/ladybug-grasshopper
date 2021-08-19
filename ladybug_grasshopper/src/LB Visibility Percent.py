@@ -55,10 +55,10 @@ point of interest.
             only look at context_ that blocks the visibility. (Default: True)
         legend_par_: Optional legend parameters from the "LB Legend Parameters"
             that will be used to customize the display of the results.
-        parallel_: Set to "True" to run the study using multiple CPUs. This can
-            dramatically decrease calculation time but can interfere with
-            other computational processes that might be running on your
-            machine. (Default: False).
+        _cpu_count_: An integer to set the number of CPUs used in the execution of the
+            intersection calculation. If unspecified, it will automatically default
+            to one less than the number of CPUs currently available on the
+            machine or 1 if only one processor is available.
         _run: Set to "True" to run the component and perform visibility analysis of
             the input _geometry.
 
@@ -85,7 +85,7 @@ point of interest.
 
 ghenv.Component.Name = "LB Visibility Percent"
 ghenv.Component.NickName = 'VisibilityPercent'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -104,7 +104,7 @@ try:
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.intersect import join_geometry_to_mesh, intersect_mesh_lines
     from ladybug_rhino.grasshopper import all_required_inputs, hide_output, \
-        show_output, objectify_output
+        show_output, objectify_output, recommended_processor_count
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -117,6 +117,7 @@ if all_required_inputs(ghenv.Component) and _run:
             assert len(pt_weights_) == len(_view_points), \
                 'The number of pt_weights_({}) must match the number of _view_points ' \
                 '({}).'.format(len(pt_weights_), len(_view_points))
+        workers = _cpu_count_ if _cpu_count_ is not None else recommended_processor_count()
 
         # create the gridded mesh from the geometry
         study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size)
@@ -130,7 +131,7 @@ if all_required_inputs(ghenv.Component) and _run:
 
         # intersect the lines with the mesh
         int_matrix = intersect_mesh_lines(
-            shade_mesh, points, _view_points, max_dist_, parallel=parallel_)
+            shade_mesh, points, _view_points, max_dist_, cpu_count=workers)
 
         # compute the results
         int_mtx = objectify_output('Visibility Intersection Matrix', int_matrix)

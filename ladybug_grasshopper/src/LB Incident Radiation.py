@@ -13,21 +13,25 @@ Sky Matrix" component.
 _
 Such studies of incident radiation can be used to apprxomiate the energy that can
 be collected from photovoltaic or solar thermal systems. They are also useful
-for evaluating the impact of a building's windows on both energy use and the
-size/cost of cooling systems. For studies of cooling system size/cost, a sky
-matrix derived from the STAT file's clear sky radiation should be used. For
-studies of energy use impact, such as the evaluation of passive solar heating
-or the potential for excessive cooling energy use, a matrix from EPW radiation
-should be used.
+for evaluating the impact of a building's orientation on both energy use and the
+size/cost of cooling systems. For studies of photovoltaic potential or building
+energy use impact, a sky matrix from EPW radiation should be used. For studies
+of cooling system size/cost, a sky matrix derived from the STAT file's clear sky
+radiation should be used.
 _
-Note that NO REFLECTIONS OF SOLAR ENERGY ARE INCLUDED IN THE ANALYSIS
-PERFORMED BY THIS COMPONENT and it is important to bear in mind that vertical
-surfaces typically receive 20% - 30% of their solar energy from reflection off
-of the ground. Also note that this component uses the CAD environment's ray
-intersection methods, which can be fast for geometries with low complexity
-but does not scale well for complex geometries or many test points. For such
-complex cases and situations where relfection of solar energy are important,
-honeybee-radiance should be used.
+NOTE THAT NO REFLECTIONS OF SOLAR ENERGY ARE INCLUDED
+IN THE ANALYSIS PERFORMED BY THIS COMPONENT.
+_
+Ground reflected irradiance is crudely acounted for by means of an emissive
+"ground hemisphere," which is like the sky dome hemisphere and is derived from
+the ground reflectance that is associated with the connected _sky_mtx. This
+means that including geometry that represents the ground surface will effectively
+block such crude ground reflection.
+_
+Also note that this component uses the CAD environment's ray intersection methods,
+which can be fast for geometries with low complexity but does not scale well for
+complex geometries or many test points. For such complex cases and situations
+where relfection of solar energy are important, honeybee-radiance should be used.
 -
 
     Args:
@@ -56,10 +60,10 @@ honeybee-radiance should be used.
             in the equivalent Rhino Model units).
         legend_par_: Optional legend parameters from the "LB Legend Parameters"
             that will be used to customize the display of the results.
-        parallel_: Set to "True" to run the study using multiple CPUs. This can
-            dramatically decrease calculation time but can interfere with
-            other computational processes that might be running on your
-            machine. (Default: False).
+        _cpu_count_: An integer to set the number of CPUs used in the execution of the
+            intersection calculation. If unspecified, it will automatically default
+            to one less than the number of CPUs currently available on the
+            machine or 1 if only one processor is available.
         _run: Set to "True" to run the component and perform incident radiation
             analysis.
 
@@ -94,7 +98,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB Incident Radiation"
 ghenv.Component.NickName = 'IncidentRadiation'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -119,65 +123,69 @@ try:
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.intersect import join_geometry_to_mesh, intersect_mesh_rays
     from ladybug_rhino.grasshopper import all_required_inputs, hide_output, \
-        show_output, objectify_output, de_objectify_output
+        show_output, objectify_output, de_objectify_output, recommended_processor_count
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
 if all_required_inputs(ghenv.Component) and _run:
-        # set the default offset distance
-        _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
-            else 0.1 / conversion_to_meters()
+    # set the default offset distance and _cpu_count
+    _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
+        else 0.1 / conversion_to_meters()
+    workers = _cpu_count_ if _cpu_count_ is not None else recommended_processor_count()
 
-        # create the gridded mesh from the geometry
-        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size)
-        points = [from_point3d(pt.move(vec * _offset_dist_)) for pt, vec in
-                  zip(study_mesh.face_centroids, study_mesh.face_normals)]
-        hide_output(ghenv.Component, 1)
+    # create the gridded mesh from the geometry
+    study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size)
+    points = [from_point3d(pt.move(vec * _offset_dist_)) for pt, vec in
+              zip(study_mesh.face_centroids, study_mesh.face_normals)]
+    hide_output(ghenv.Component, 1)
 
-        # mesh the geometry and context
-        shade_mesh = join_geometry_to_mesh(_geometry + context_)
+    # mesh the geometry and context
+    shade_mesh = join_geometry_to_mesh(_geometry + context_)
 
-        # deconstruct the matrix and get the sky dome vectors
-        mtx = de_objectify_output(_sky_mtx)
-        total_sky_rad = [dir_rad + dif_rad for dir_rad, dif_rad in zip(mtx[1], mtx[2])]
-        lb_vecs = view_sphere.tregenza_dome_vectors if len(total_sky_rad) == 145 \
-            else view_sphere.reinhart_dome_vectors
-        if mtx[0][0] != 0:  # there is a north input for sky; rotate vectors
-            north_angle = math.radians(mtx[0][0])
-            lb_vecs = [vec.rotate_xy(north_angle) for vec in lb_vecs]
-        sky_vecs = [from_vector3d(vec) for vec in lb_vecs]
+    # deconstruct the matrix and get the sky dome vectors
+    mtx = de_objectify_output(_sky_mtx)
+    total_sky_rad = [dir_rad + dif_rad for dir_rad, dif_rad in zip(mtx[1], mtx[2])]
+    ground_rad = [(sum(total_sky_rad) / len(total_sky_rad)) * mtx[0][1]] * len(total_sky_rad)
+    all_rad = total_sky_rad + ground_rad 
+    lb_vecs = view_sphere.tregenza_dome_vectors if len(total_sky_rad) == 145 \
+        else view_sphere.reinhart_dome_vectors
+    if mtx[0][0] != 0:  # there is a north input for sky; rotate vectors
+        north_angle = math.radians(mtx[0][0])
+        lb_vecs = [vec.rotate_xy(north_angle) for vec in lb_vecs]
+    lb_grnd_vecs = [vec.reverse() for vec in lb_vecs]
+    all_vecs = [from_vector3d(vec) for vec in lb_vecs + lb_grnd_vecs]
 
-        # intersect the rays with the mesh
-        normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
-        int_matrix_init, angles = intersect_mesh_rays(
-            shade_mesh, points, sky_vecs, normals, parallel=parallel_)
+    # intersect the rays with the mesh
+    normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
+    int_matrix_init, angles = intersect_mesh_rays(
+        shade_mesh, points, all_vecs, normals, cpu_count=workers)
 
-        # compute the results
-        results = []
-        int_matrix = []
-        for int_vals, angles in zip(int_matrix_init, angles):
-            pt_rel = [ival * math.cos(ang) for ival, ang in zip(int_vals, angles)]
-            int_matrix.append(pt_rel)
-            rad_result = sum(r * w for r, w in zip(pt_rel, total_sky_rad))
-            results.append(rad_result)
+    # compute the results
+    results = []
+    int_matrix = []
+    for int_vals, angles in zip(int_matrix_init, angles):
+        pt_rel = [ival * math.cos(ang) for ival, ang in zip(int_vals, angles)]
+        int_matrix.append(pt_rel)
+        rad_result = sum(r * w for r, w in zip(pt_rel, all_rad))
+        results.append(rad_result)
 
-        # output the intersection matrix and compute total radiation
-        int_mtx = objectify_output('Geometry/Sky Intersection Matrix', int_matrix)
-        unit_conv = conversion_to_meters() ** 2
-        total = 0
-        for rad, area in zip(results, study_mesh.face_areas):
-            total += rad * area * unit_conv
+    # output the intersection matrix and compute total radiation
+    int_mtx = objectify_output('Geometry/Sky Intersection Matrix', int_matrix)
+    unit_conv = conversion_to_meters() ** 2
+    total = 0
+    for rad, area in zip(results, study_mesh.face_areas):
+        total += rad * area * unit_conv
 
-        # create the mesh and legend outputs
-        graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)
-        graphic.legend_parameters.title = 'kWh/m2'
-        title = text_objects(
-            'Incident Radiation', graphic.lower_title_location,
-            graphic.legend_parameters.text_height * 1.5,
-            graphic.legend_parameters.font)
+    # create the mesh and legend outputs
+    graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)
+    graphic.legend_parameters.title = 'kWh/m2'
+    title = text_objects(
+        'Incident Radiation', graphic.lower_title_location,
+        graphic.legend_parameters.text_height * 1.5,
+        graphic.legend_parameters.font)
 
-        # create all of the visual outputs
-        study_mesh.colors = graphic.value_colors
-        mesh = from_mesh3d(study_mesh)
-        legend = legend_objects(graphic.legend)
+    # create all of the visual outputs
+    study_mesh.colors = graphic.value_colors
+    mesh = from_mesh3d(study_mesh)
+    legend = legend_objects(graphic.legend)

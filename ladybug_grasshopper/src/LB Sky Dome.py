@@ -60,7 +60,7 @@ dome, subdivided into patches with a radiation value for each patch.
 
 ghenv.Component.Name = 'LB Sky Dome'
 ghenv.Component.NickName = 'SkyDome'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -160,10 +160,10 @@ def draw_dome(dome_data, center, dome_name, legend_par):
         graphic.legend_parameters.font)
 
     # construct a title from the metadata
-    st, end = metadata[1], metadata[2]
+    st, end = metadata[2], metadata[3]
     time_str = '{} - {}'.format(st, end) if st != end else st
     title_txt = '{} Radiation\n{}\n{}'.format(
-        dome_name, time_str, '\n'.join([dat for dat in metadata[3:]]))
+        dome_name, time_str, '\n'.join([dat for dat in metadata[4:]]))
     dome_title = text_objects(title_txt, graphic.lower_title_location,
                               graphic.legend_parameters.text_height,
                               graphic.legend_parameters.font)

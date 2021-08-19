@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0", 
+  "version": "1.2.1", 
   "nickname": "RTrad", 
   "outputs": [
     [
@@ -29,7 +29,7 @@
     }
   ], 
   "subcategory": "3 :: Analyze Geometry", 
-  "code": "\n\ntry:  # python 2\n    from itertools import izip as zip\nexcept ImportError:  # python 3\n    pass\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, de_objectify_output\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # deconstruct the matrices and get the total radiation from each patch\n    int_mtx = de_objectify_output(_int_mtx)\n    sky_mtx = de_objectify_output(_sky_mtx)\n    total_sky_rad = [dirr + difr for dirr, difr in zip(sky_mtx[1], sky_mtx[2])]\n\n    # compute the results\n    results = []\n    for pt_rel in int_mtx:\n        results.append(sum(r * w for r, w in zip(pt_rel, total_sky_rad)))\n", 
+  "code": "\n\ntry:  # python 2\n    from itertools import izip as zip\nexcept ImportError:  # python 3\n    pass\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, de_objectify_output\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # deconstruct the matrices and get the total radiation from each patch\n    int_mtx = de_objectify_output(_int_mtx)\n    sky_mtx = de_objectify_output(_sky_mtx)\n    total_sky_rad = [dirr + difr for dirr, difr in zip(sky_mtx[1], sky_mtx[2])]\n    ground_rad = [(sum(total_sky_rad) / len(total_sky_rad)) * sky_mtx[0][1]] * len(total_sky_rad)\n    all_rad = total_sky_rad + ground_rad \n\n    # compute the results\n    results = []\n    for pt_rel in int_mtx:\n        results.append(sum(r * w for r, w in zip(pt_rel, all_rad)))\n", 
   "category": "Ladybug", 
   "name": "LB Real Time Incident Radiation", 
   "description": "Compute Incident Radiation values for any sky matrix in real time using the Geometry/Sky\nintersection matrix produced by the \"LB Incident Radiation\" component.\n_\nUsing this component enables one to scroll through radiation on an hour-by-hour\nor month-by-month basis in a manner that is an order of magnitude faster than\nrunning each sky matrix through the \"LB Incident Radiation\" component.\n_\nThe speed of this component is thanks to the fact that the Geometry/Sky intersection\nmatrix contains the relationship between the geometry and each patch of the sky.\nSo computing new radiation values is as simple as multiplying the sky matrix by\nthe intersection matrix.\n-"
