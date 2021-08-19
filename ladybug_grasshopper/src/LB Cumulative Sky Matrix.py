@@ -45,6 +45,8 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
             more accurate, it will result in considerably longer calculation
             time for incident radiation studies. The difference in sky
             resolution can be observed with the (Default: False).
+        _ground_ref_: A number between 0 and 1 to note the average ground reflectance
+            that is associated with the sky matrix. (Default: 0.2).
         _folder_: The folder in which the Radiance commands are executed to
             produce the sky matrix. If None, it will be written to Ladybug's
             default EPW folder.
@@ -59,7 +61,7 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
 ghenv.Component.Name = 'LB Cumulative Sky Matrix'
 ghenv.Component.NickName = 'SkyMatrix'
-ghenv.Component.Message = '1.2.2'
+ghenv.Component.Message = '1.2.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -173,6 +175,7 @@ if all_required_inputs(ghenv.Component):
     else:
         north_ = 0
     density = 2 if high_density_ else 1
+    ground_r = 0.2 if _ground_ref_ is None else _ground_ref_
 
     # filter the radiation by _hoys if they are input
     if len(_hoys_) != 0:
@@ -207,7 +210,7 @@ if all_required_inputs(ghenv.Component):
     diff_vals = parse_mtx_data(diff_data_str, wea_duration, density)
 
     # collect sky metadata like the north, which will be used by other components
-    metadata = [north_]
+    metadata = [north_, ground_r]
     if _hoys_:
         metadata.extend([DateTime.from_hoy(h) for h in (_hoys_[0], _hoys_[-1])])
     else:

@@ -93,10 +93,10 @@ honeybee-radiance should be used.
             * Spherical
         legend_par_: Optional legend parameters from the "LB Legend Parameters"
             that will be used to customize the display of the results.
-        parallel_: Set to "True" to run the study using multiple CPUs. This can
-            dramatically decrease calculation time but can interfere with
-            other computational processes that might be running on your
-            machine. (Default: False).
+        _cpu_count_: An integer to set the number of CPUs used in the execution of the
+            intersection calculation. If unspecified, it will automatically default
+            to one less than the number of CPUs currently available on the
+            machine or 1 if only one processor is available.
         _run: Set to "True" to run the component and perform view analysis of
             the input _geometry.
 
@@ -125,7 +125,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB View Percent"
 ghenv.Component.NickName = 'ViewPercent'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -151,7 +151,7 @@ try:
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.intersect import join_geometry_to_mesh, intersect_mesh_rays
     from ladybug_rhino.grasshopper import all_required_inputs, hide_output, \
-        show_output, objectify_output
+        show_output, objectify_output, recommended_processor_count
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -172,78 +172,79 @@ VIEW_TYPES = {
 
 
 if all_required_inputs(ghenv.Component) and _run:
-        # process the view_type_ and set the default values
-        vt_str = VIEW_TYPES[_view_type]
-        _resolution_ = _resolution_ if _resolution_ is not None else 1
-        _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
-            else 0.1 / conversion_to_meters()
-        if _geo_block_ is None:
-            _geo_block_ = True if vt_str in ('Sky Exposure', 'Sky View') else False
+    # process the view_type_ and set the default values
+    vt_str = VIEW_TYPES[_view_type]
+    _resolution_ = _resolution_ if _resolution_ is not None else 1
+    _offset_dist_ = _offset_dist_ if _offset_dist_ is not None \
+        else 0.1 / conversion_to_meters()
+    if _geo_block_ is None:
+        _geo_block_ = True if vt_str in ('Sky Exposure', 'Sky View') else False
+    workers = _cpu_count_ if _cpu_count_ is not None else recommended_processor_count()
 
-        # create the gridded mesh from the geometry
-        study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size)
-        points = [from_point3d(pt.move(vec * _offset_dist_)) for pt, vec in
-                  zip(study_mesh.face_centroids, study_mesh.face_normals)]
-        hide_output(ghenv.Component, 1)
+    # create the gridded mesh from the geometry
+    study_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size)
+    points = [from_point3d(pt.move(vec * _offset_dist_)) for pt, vec in
+              zip(study_mesh.face_centroids, study_mesh.face_normals)]
+    hide_output(ghenv.Component, 1)
 
-        # get the view vectors based on the view type
-        patch_wghts = None
-        if vt_str == 'Horizontal Radial':
-            lb_vecs = view_sphere.horizontal_radial_vectors(30 * _resolution_)
-        elif vt_str == 'Horizontal 30-Degree Offset':
-            patch_mesh, lb_vecs = view_sphere.horizontal_radial_patches(30, _resolution_)
-            patch_wghts = view_sphere.horizontal_radial_patch_weights(30, _resolution_)
-        elif vt_str == 'Spherical':
-            patch_mesh, lb_vecs = view_sphere.sphere_patches(_resolution_)
-            patch_wghts = view_sphere.sphere_patch_weights(_resolution_)
-        else:
-            patch_mesh, lb_vecs = view_sphere.dome_patches(_resolution_)
-            patch_wghts = view_sphere.dome_patch_weights(_resolution_)
-        view_vecs = [from_vector3d(pt) for pt in lb_vecs]
+    # get the view vectors based on the view type
+    patch_wghts = None
+    if vt_str == 'Horizontal Radial':
+        lb_vecs = view_sphere.horizontal_radial_vectors(30 * _resolution_)
+    elif vt_str == 'Horizontal 30-Degree Offset':
+        patch_mesh, lb_vecs = view_sphere.horizontal_radial_patches(30, _resolution_)
+        patch_wghts = view_sphere.horizontal_radial_patch_weights(30, _resolution_)
+    elif vt_str == 'Spherical':
+        patch_mesh, lb_vecs = view_sphere.sphere_patches(_resolution_)
+        patch_wghts = view_sphere.sphere_patch_weights(_resolution_)
+    else:
+        patch_mesh, lb_vecs = view_sphere.dome_patches(_resolution_)
+        patch_wghts = view_sphere.dome_patch_weights(_resolution_)
+    view_vecs = [from_vector3d(pt) for pt in lb_vecs]
 
-        # mesh the geometry and context
-        shade_mesh = join_geometry_to_mesh(_geometry + context_) if _geo_block_ \
-            else join_geometry_to_mesh(context_)
+    # mesh the geometry and context
+    shade_mesh = join_geometry_to_mesh(_geometry + context_) if _geo_block_ \
+        else join_geometry_to_mesh(context_)
 
-        # intersect the rays with the mesh
-        if vt_str == 'Sky View':  # account for the normals of the surface
-            normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
-            int_matrix, angles = intersect_mesh_rays(
-                shade_mesh, points, view_vecs, normals, parallel=parallel_)
-        else:
-            int_matrix, angles = intersect_mesh_rays(
-                shade_mesh, points, view_vecs, parallel=parallel_)
+    # intersect the rays with the mesh
+    if vt_str == 'Sky View':  # account for the normals of the surface
+        normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
+        int_matrix, angles = intersect_mesh_rays(
+            shade_mesh, points, view_vecs, normals, cpu_count=workers)
+    else:
+        int_matrix, angles = intersect_mesh_rays(
+            shade_mesh, points, view_vecs, cpu_count=workers)
 
-        # compute the results
-        int_mtx = objectify_output('View Intersection Matrix', int_matrix)
-        vec_count = len(view_vecs)
-        results = []
-        if vt_str == 'Sky View':  # weight intersections by angle before output
-            for int_vals, angles in zip(int_matrix, angles):
-                w_res = (ival * 2 * math.cos(ang) for ival, ang in zip(int_vals, angles))
-                weight_result = sum(r * w for r, w in zip(w_res, patch_wghts))
+    # compute the results
+    int_mtx = objectify_output('View Intersection Matrix', int_matrix)
+    vec_count = len(view_vecs)
+    results = []
+    if vt_str == 'Sky View':  # weight intersections by angle before output
+        for int_vals, angles in zip(int_matrix, angles):
+            w_res = (ival * 2 * math.cos(ang) for ival, ang in zip(int_vals, angles))
+            weight_result = sum(r * w for r, w in zip(w_res, patch_wghts))
+            results.append(weight_result * 100 / vec_count)
+    else:
+        if patch_wghts:
+            for int_list in int_matrix:
+                weight_result = sum(r * w for r, w in zip(int_list, patch_wghts))
                 results.append(weight_result * 100 / vec_count)
         else:
-            if patch_wghts:
-                for int_list in int_matrix:
-                    weight_result = sum(r * w for r, w in zip(int_list, patch_wghts))
-                    results.append(weight_result * 100 / vec_count)
-            else:
-                results = [sum(int_list) * 100 / vec_count for int_list in int_matrix]
+            results = [sum(int_list) * 100 / vec_count for int_list in int_matrix]
 
-        # create the mesh and legend outputs
-        graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)
-        graphic.legend_parameters.title = '%'
-        if legend_par_ is None or legend_par_.are_colors_default:
-            graphic.legend_parameters.colors = Colorset.view_study()
-        title_txt = vt_str if vt_str in ('Sky Exposure', 'Sky View') else \
-            '{} View'.format(vt_str)
-        title = text_objects(
-            title_txt, graphic.lower_title_location,
-            graphic.legend_parameters.text_height * 1.5,
-            graphic.legend_parameters.font)
+    # create the mesh and legend outputs
+    graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)
+    graphic.legend_parameters.title = '%'
+    if legend_par_ is None or legend_par_.are_colors_default:
+        graphic.legend_parameters.colors = Colorset.view_study()
+    title_txt = vt_str if vt_str in ('Sky Exposure', 'Sky View') else \
+        '{} View'.format(vt_str)
+    title = text_objects(
+        title_txt, graphic.lower_title_location,
+        graphic.legend_parameters.text_height * 1.5,
+        graphic.legend_parameters.font)
 
-        # create all of the visual outputs
-        study_mesh.colors = graphic.value_colors
-        mesh = from_mesh3d(study_mesh)
-        legend = legend_objects(graphic.legend)
+    # create all of the visual outputs
+    study_mesh.colors = graphic.value_colors
+    mesh = from_mesh3d(study_mesh)
+    legend = legend_objects(graphic.legend)

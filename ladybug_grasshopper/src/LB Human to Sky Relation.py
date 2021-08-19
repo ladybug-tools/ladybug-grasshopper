@@ -44,10 +44,10 @@ human subject in these MRT calculations.
         _height_: A number for the the height of the human subject in the current Rhino
             Model units. (Default: 1.8 m in the equivalent Rhino Model units;
             roughly the average height of a standing adult).
-        parallel_: Set to "True" to run the study using multiple CPUs. This can
-            dramatically decrease calculation time but can interfere with
-            other computational processes that might be running on your
-            machine. (Default: False).
+        _cpu_count_: An integer to set the number of CPUs used in the execution of the
+            intersection calculation. If unspecified, it will automatically default
+            to one less than the number of CPUs currently available on the
+            machine or 1 if only one processor is available.
         _run: Set to "True" to run the component and compute the human/sky relationship.
             If set to "False" but all other required inputs are specified, this
             component will output points showing the human subject.
@@ -71,7 +71,7 @@ human subject in these MRT calculations.
 
 ghenv.Component.Name = "LB Human to Sky Relation"
 ghenv.Component.NickName = 'HumanToSky'
-ghenv.Component.Message = '1.2.1'
+ghenv.Component.Message = '1.2.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -101,7 +101,8 @@ try:
     from ladybug_rhino.fromgeometry import from_point3d, from_vector3d, \
         from_linesegment3d
     from ladybug_rhino.intersect import join_geometry_to_mesh, intersect_mesh_rays
-    from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree
+    from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree, \
+        recommended_processor_count
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -182,9 +183,10 @@ if all_required_inputs(ghenv.Component):
     else:
         north_ = 0
 
-    # set the default point count and height if unspecified
+    # set the default point count, height, and cpu_count if unspecified
     _pt_count_ = _pt_count_ if _pt_count_ is not None else 1
     _height_ = _height_ if _height_ is not None else 1.8 / conversion_to_meters()
+    workers = _cpu_count_ if _cpu_count_ is not None else recommended_processor_count()
 
     # create the points representing the human geometry
     human_points = []
@@ -210,7 +212,7 @@ if all_required_inputs(ghenv.Component):
 
         # intersect the sun vectors with the context and compute fraction exposed
         sun_int_matrix, angles = intersect_mesh_rays(
-            shade_mesh, human_points, sun_vecs, parallel=parallel_)
+            shade_mesh, human_points, sun_vecs, cpu_count=workers)
         fract_body_exp = []
         for i in range(0, len(human_points), _pt_count_):
             fract_body_exp.append(
@@ -222,7 +224,7 @@ if all_required_inputs(ghenv.Component):
 
         # compute the sky exposure
         sky_int_matrix, angles = intersect_mesh_rays(
-            shade_mesh, human_points, sky_vecs, parallel=parallel_)
+            shade_mesh, human_points, sky_vecs, cpu_count=workers)
         sky_exposure = []
         for i in range(0, len(human_points), _pt_count_):
             sky_exposure.append(

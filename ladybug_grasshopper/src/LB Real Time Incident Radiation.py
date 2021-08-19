@@ -41,7 +41,7 @@ the intersection matrix.
 
 ghenv.Component.Name = 'LB Real Time Incident Radiation'
 ghenv.Component.NickName = 'RTrad'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -63,8 +63,10 @@ if all_required_inputs(ghenv.Component):
     int_mtx = de_objectify_output(_int_mtx)
     sky_mtx = de_objectify_output(_sky_mtx)
     total_sky_rad = [dirr + difr for dirr, difr in zip(sky_mtx[1], sky_mtx[2])]
+    ground_rad = [(sum(total_sky_rad) / len(total_sky_rad)) * sky_mtx[0][1]] * len(total_sky_rad)
+    all_rad = total_sky_rad + ground_rad 
 
     # compute the results
     results = []
     for pt_rel in int_mtx:
-        results.append(sum(r * w for r, w in zip(pt_rel, total_sky_rad)))
+        results.append(sum(r * w for r, w in zip(pt_rel, all_rad)))
