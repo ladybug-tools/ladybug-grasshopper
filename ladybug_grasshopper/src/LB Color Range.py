@@ -13,7 +13,7 @@ The output from this component should be plugged into the colors_ input of the
 "Legend Parameters" component.
 -
 For an image of each of the gardients in the library, check here:
-https://github.com/mostaphaRoudsari/ladybug/blob/master/resources/gradients.jpg
+https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
 -
 
     Args:
@@ -52,7 +52,7 @@ https://github.com/mostaphaRoudsari/ladybug/blob/master/resources/gradients.jpg
 
 ghenv.Component.Name = 'LB Color Range'
 ghenv.Component.NickName = 'ColRange'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.2.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
