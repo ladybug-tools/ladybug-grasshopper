@@ -41,7 +41,7 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.2.2'
+ghenv.Component.Message = '1.2.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -197,6 +197,7 @@ def parse_lbt_gh_versions(lbt_gh_folder):
             'ladybug-rhino' = '0.0.0',
             'lbt-recipes' = '0.0.0',
             'honeybee-openstudio-gem' = '0.0.0',
+            'lbt-measures' = '0.0.0',
             'honeybee-standards' = '0.0.0',
             'honeybee-energy-standards' = '0.0.0',
             'ladybug-grasshopper': '0.0.0',
@@ -215,6 +216,7 @@ def parse_lbt_gh_versions(lbt_gh_folder):
         'honeybee-standards': None,
         'honeybee-energy-standards': None,
         'honeybee-openstudio-gem': None,
+        'lbt-measures': None,
         'ladybug-grasshopper': None,
         'honeybee-grasshopper-core': None,
         'honeybee-grasshopper-radiance': None,
@@ -336,6 +338,15 @@ if all_required_inputs(ghenv.Component) and _update is True:
     lib_folder = os.path.join(gem_dir, 'honeybee_openstudio_gem', 'lib')
     print ('Copying "honeybee_openstudio_gem" source code to {}\n '.format(lib_folder))
     copy_file_tree(source_folder, lib_folder)
+    nukedir(base_folder, True)
+
+    # install the lbt-measures ruby gem
+    mea_ver = ver_dict['lbt-measures']
+    print ('Installing Ladybug Tools Measures version {}.'.format(mea_ver))
+    base_folder = download_repo_github('lbt-measures', gem_dir, mea_ver)
+    source_folder = os.path.join(base_folder, 'lib')
+    print ('Copying "lbt_measures" source code to {}\n '.format(gem_dir))
+    copy_file_tree(source_folder, gem_dir)
     nukedir(base_folder, True)
 
     # always update the honeybee-energy-standards package
