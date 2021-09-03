@@ -39,7 +39,7 @@ will accept.
 
 ghenv.Component.Name = "LB Generate Point Grid"
 ghenv.Component.NickName = 'GenPts'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

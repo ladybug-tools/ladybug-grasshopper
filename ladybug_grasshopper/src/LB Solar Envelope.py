@@ -65,7 +65,7 @@ positions.
 
 ghenv.Component.Name = 'LB Solar Envelope'
 ghenv.Component.NickName = 'SolarEnvelope'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

@@ -24,7 +24,7 @@ Deconstruct location into its component properties.
 
 ghenv.Component.Name = 'LB Deconstruct Location'
 ghenv.Component.NickName = 'DecnstrLoc'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

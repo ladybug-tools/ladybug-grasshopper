@@ -42,7 +42,7 @@ Import hourly climate data from a Ladybug DesignDay object.
 
 ghenv.Component.Name = 'LB Import Design Day'
 ghenv.Component.NickName = 'ImportDesignDay'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

@@ -52,7 +52,7 @@ https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
 
 ghenv.Component.Name = 'LB Color Range'
 ghenv.Component.NickName = 'ColRange'
-ghenv.Component.Message = '1.2.1'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

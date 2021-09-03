@@ -103,7 +103,7 @@ comfort model should be used.
 
 ghenv.Component.Name = 'LB PMV Comfort'
 ghenv.Component.NickName = 'PMV'
-ghenv.Component.Message = '1.2.1'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

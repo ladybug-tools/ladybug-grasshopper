@@ -72,7 +72,7 @@ be used.
 
 ghenv.Component.Name = 'LB Adaptive Comfort'
 ghenv.Component.NickName = 'Adaptive'
-ghenv.Component.Message = '1.2.2'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

@@ -98,7 +98,7 @@ where relfection of solar energy are important, honeybee-radiance should be used
 
 ghenv.Component.Name = "LB Incident Radiation"
 ghenv.Component.NickName = 'IncidentRadiation'
-ghenv.Component.Message = '1.2.2'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

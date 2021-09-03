@@ -50,7 +50,7 @@ These actions can be performed over the following time intervals:
 
 ghenv.Component.Name = 'LB Time Interval Operation'
 ghenv.Component.NickName = 'TimeOp'
-ghenv.Component.Message = '1.2.1'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
