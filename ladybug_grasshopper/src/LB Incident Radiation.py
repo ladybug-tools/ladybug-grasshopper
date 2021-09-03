@@ -98,7 +98,7 @@ where relfection of solar energy are important, honeybee-radiance should be used
 
 ghenv.Component.Name = "LB Incident Radiation"
 ghenv.Component.NickName = 'IncidentRadiation'
-ghenv.Component.Message = '1.2.1'
+ghenv.Component.Message = '1.2.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -152,8 +152,8 @@ if all_required_inputs(ghenv.Component) and _run:
         else view_sphere.reinhart_dome_vectors
     if mtx[0][0] != 0:  # there is a north input for sky; rotate vectors
         north_angle = math.radians(mtx[0][0])
-        lb_vecs = [vec.rotate_xy(north_angle) for vec in lb_vecs]
-    lb_grnd_vecs = [vec.reverse() for vec in lb_vecs]
+        lb_vecs = tuple(vec.rotate_xy(north_angle) for vec in lb_vecs)
+    lb_grnd_vecs = tuple(vec.reverse() for vec in lb_vecs)
     all_vecs = [from_vector3d(vec) for vec in lb_vecs + lb_grnd_vecs]
 
     # intersect the rays with the mesh
