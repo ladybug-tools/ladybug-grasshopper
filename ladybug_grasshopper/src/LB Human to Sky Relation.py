@@ -71,7 +71,7 @@ human subject in these MRT calculations.
 
 ghenv.Component.Name = "LB Human to Sky Relation"
 ghenv.Component.NickName = 'HumanToSky'
-ghenv.Component.Message = '1.2.2'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

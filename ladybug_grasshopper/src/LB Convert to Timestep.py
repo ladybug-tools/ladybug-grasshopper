@@ -32,7 +32,7 @@ the data set.
 
 ghenv.Component.Name = 'LB Convert to Timestep'
 ghenv.Component.NickName = 'ToStep'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

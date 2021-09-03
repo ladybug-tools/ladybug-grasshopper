@@ -98,7 +98,7 @@ weather data or indoor temperature and humidity ratios from an energy simulation
 
 ghenv.Component.Name = 'LB Psychrometric Chart'
 ghenv.Component.NickName = 'PsychrometricChart'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

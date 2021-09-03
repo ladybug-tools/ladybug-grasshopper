@@ -125,7 +125,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB View Percent"
 ghenv.Component.NickName = 'ViewPercent'
-ghenv.Component.Message = '1.2.1'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'

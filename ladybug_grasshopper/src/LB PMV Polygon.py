@@ -104,7 +104,7 @@ polygons.
 
 ghenv.Component.Name = 'LB PMV Polygon'
 ghenv.Component.NickName = 'PMV Polygon'
-ghenv.Component.Message = '1.2.0'
+ghenv.Component.Message = '1.3.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
