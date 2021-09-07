@@ -46,10 +46,15 @@ Grasshopper components, and rebuilding the collection.
 
 ghenv.Component.Name = "LB Arithmetic Operation"
 ghenv.Component.NickName = 'ArithOp'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
+
+try:
+    import ladybug.datatype
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
     from ladybug_rhino.grasshopper import all_required_inputs
@@ -77,8 +82,15 @@ if all_required_inputs(ghenv.Component):
             result = result.duplicate()
             if type_:
                 result.header.metadata['type'] = type_
-            elif 'type' in result.header.metadata:
-                del result.header.metadata['type']
+            elif 'type' in result.header.metadata:  # infer data type from units
+                d_unit = result.header.unit
+                for key in ladybug.datatype.UNITS:
+                    if d_unit in ladybug.datatype.UNITS[key]:
+                        base_type = ladybug.datatype.TYPESDICT[key]()
+                        result.header.metadata['type'] = str(base_type)
+                        break
+                else:
+                    result.header.metadata['type'] = 'Unknown Data Type'
         except AttributeError:
             pass  # result was not a data collection; just return it anyway
         data.append(result)

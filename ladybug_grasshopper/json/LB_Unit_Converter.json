@@ -1,5 +1,5 @@
 {
-  "version": "1.3.0", 
+  "version": "1.3.1", 
   "nickname": "Units", 
   "outputs": [
     [
@@ -43,7 +43,7 @@
     }
   ], 
   "subcategory": "4 :: Extra", 
-  "code": "\ntry:\n    import ladybug.datatype\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nall_u = [': '.join([key, ', '.join(val)]) for key, val in ladybug.datatype.UNITS.items()]\n\nif all_required_inputs(ghenv.Component):\n    base_type = None\n    for key in ladybug.datatype.UNITS:\n        if _from_u in ladybug.datatype.UNITS[key]:\n            base_type = ladybug.datatype.TYPESDICT[key]()\n    assert base_type, 'Input _from_u \"{}\" is not recgonized as a valid unit.\\n' \\\n        'Check all_u for acceptable units'.format(_from_u)\n    \n    values = base_type.to_unit(_values, _to_u, _from_u)", 
+  "code": "\ntry:\n    import ladybug.datatype\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nall_u = [': '.join([key, ', '.join(val)]) for key, val in ladybug.datatype.UNITS.items()]\n\nif all_required_inputs(ghenv.Component):\n    base_type = None\n    for key in ladybug.datatype.UNITS:\n        if _from_u in ladybug.datatype.UNITS[key]:\n            base_type = ladybug.datatype.TYPESDICT[key]()\n            break\n    else:\n        msg = 'Input _from_u \"{}\" is not recgonized as a valid unit.\\n Check all_u ' \\\n        '(with nothing connected to the component) to see the acceptable units.'.format(_from_u)\n        raise ValueError(msg)\n\n    values = base_type.to_unit(_values, _to_u, _from_u)", 
   "category": "Ladybug", 
   "name": "LB Unit Converter", 
   "description": "Convert a value or list of values from one unit to another.\n-"

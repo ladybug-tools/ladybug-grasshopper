@@ -26,7 +26,7 @@ Grasshopper components, and rebuilding the collection.
         type_: Optional text for a new "type" key in the Data Collection's metadata.
             This will usually show up in most Ladybug visualiztions and it should
             usually change for most types of operations.
-    
+
     Returns:
         data: A Ladybug data collection object derived from the operation between
             the two data inputs.
@@ -34,10 +34,15 @@ Grasshopper components, and rebuilding the collection.
 
 ghenv.Component.Name = "LB Mass Arithmetic Operation"
 ghenv.Component.NickName = 'MassArithOp'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
+
+try:
+    import ladybug.datatype
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
     from ladybug_rhino.grasshopper import all_required_inputs
@@ -61,10 +66,17 @@ if all_required_inputs(ghenv.Component):
         if type_:
             data.header.metadata['type'] = type_
         elif 'type' in data.header.metadata:
-            del data.header.metadata['type']
+            d_unit = data.header.unit
+            for key in ladybug.datatype.UNITS:
+                if d_unit in ladybug.datatype.UNITS[key]:
+                    base_type = ladybug.datatype.TYPESDICT[key]()
+                    data.header.metadata['type'] = str(base_type)
+                    break
+            else:
+                data.header.metadata['type'] = 'Unknown Data Type'
         if 'System' in data.header.metadata:
-            del data.header.metadata['System']
+            data.header.metadata.pop('System')
         if 'Zone' in data.header.metadata:
-            del data.header.metadata['Zone']
+            data.header.metadata.pop('Zone')
     except AttributeError:
         pass  # data was not a data collection; just return it anyway
