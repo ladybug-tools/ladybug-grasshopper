@@ -15,6 +15,7 @@ Convert a value or list of values from one unit to another.
         _values: Values to be converted from one unit type to another.
         _from_u: Text indicating the units of the input _values (eg. 'C')
         _to_u: Text indicating the units of the output values (eg. 'K')
+
     Returns:
         all_u: A text string indicating all possible units
             that can be plugged into _from_u and _to_u.
@@ -23,7 +24,7 @@ Convert a value or list of values from one unit to another.
 
 ghenv.Component.Name = 'LB Unit Converter'
 ghenv.Component.NickName = 'Units'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -46,7 +47,10 @@ if all_required_inputs(ghenv.Component):
     for key in ladybug.datatype.UNITS:
         if _from_u in ladybug.datatype.UNITS[key]:
             base_type = ladybug.datatype.TYPESDICT[key]()
-    assert base_type, 'Input _from_u "{}" is not recgonized as a valid unit.\n' \
-        'Check all_u for acceptable units'.format(_from_u)
-    
+            break
+    else:
+        msg = 'Input _from_u "{}" is not recgonized as a valid unit.\n Check all_u ' \
+        '(with nothing connected to the component) to see the acceptable units.'.format(_from_u)
+        raise ValueError(msg)
+
     values = base_type.to_unit(_values, _to_u, _from_u)
