@@ -14,8 +14,8 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
     Args:
         _weather_URL: Text representing the URL at which the climate data resides. 
-            To open the a map interface for all publicly availabe climate data (epwmap),
-            use the "EPWmap" component.
+            To open the a map interface for all publicly availabe climate data,
+            use the "LB EPWmap" component.
         _folder_: An optional file path to a directory into which the weather file
             will be downloaded and unziped.  If None, the weather files will be
             downloaded to the ladybug default weather data folder and placed in
@@ -42,7 +42,7 @@ except ImportError as e:
 
 try:
     from ladybug_rhino.download import download_file
-    from ladybug_rhino.grasshopper import all_required_inputs
+    from ladybug_rhino.grasshopper import all_required_inputs, give_warning
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -51,13 +51,24 @@ import os
 
 if all_required_inputs(ghenv.Component):
     # name for the weather files
-    if _weather_URL.lower().endswith('.zip'):
-        # onebuilding URL type
+    if _weather_URL.lower().endswith('.zip'):  # onebuilding URL type
         _folder_name = _weather_URL.split('/')[-1][:-4]
-    else:
-        # dept of energy URL type
+    else: # dept of energy URL type
         _folder_name = _weather_URL.split('/')[-2]
-    
+        if _weather_URL.endswith('/all'):
+            repl_section = '{0}/all'.format(_folder_name)
+            new_section = '{0}/{0}.zip'.format(_folder_name)
+            _weather_URL = _weather_URL.replace(repl_section, new_section)
+            _weather_URL = _weather_URL.replace(
+                'www.energyplus.net/weather-download',
+                'energyplus-weather.s3.amazonaws.com')
+            msg = 'The weather file URL is out of date.\nThis component ' \
+                'is automatically updating it to the newer version:'
+            print(msg)
+            print(_weather_URL)
+            give_warning(ghenv.Component, msg)
+            give_warning(ghenv.Component, _weather_URL)
+
     # create default working_dir
     if _folder_ is None:
         _folder_ = folders.default_epw_folder
@@ -70,18 +81,17 @@ if all_required_inputs(ghenv.Component):
             ' to a valid location.'.format(_folder_))
     else:
         print 'Files will be downloaded to: {}'.format(_folder_)
-    
-    
+
     # default file names
     epw = os.path.join(_folder_, _folder_name, _folder_name + '.epw')
     stat = os.path.join(_folder_, _folder_name, _folder_name + '.stat')
     ddy = os.path.join(_folder_, _folder_name, _folder_name + '.ddy')
-    
+
     # download and unzip the files if they do not exist
     if not os.path.isfile(epw) or not os.path.isfile(stat) or not os.path.isfile(ddy):
         zip_file_path = os.path.join(_folder_, _folder_name, _folder_name + '.zip')
         download_file(_weather_URL, zip_file_path, True)
         unzip_file(zip_file_path)
-    
+
     # set output
     epw_file, stat_file, ddy_file = epw, stat, ddy
