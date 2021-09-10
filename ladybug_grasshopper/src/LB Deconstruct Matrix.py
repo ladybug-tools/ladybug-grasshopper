@@ -34,4 +34,4 @@ except ImportError as e:
 
 
 if all_required_inputs(ghenv.Component):
-    values = list_to_data_tree(de_objectify_output(_matrix))
+    values = list_to_data_tree(de_objectify_output(_matrix),stype=float)
