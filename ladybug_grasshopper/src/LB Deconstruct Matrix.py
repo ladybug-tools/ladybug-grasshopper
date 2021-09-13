@@ -21,17 +21,20 @@ Deconstruct a Ladybug Matrix object into a Grasshopper Data Tree of values.
 
 ghenv.Component.Name = "LB Deconstruct Matrix"
 ghenv.Component.NickName = 'XMatrix'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:
     from ladybug_rhino.grasshopper import all_required_inputs, de_objectify_output, \
-        list_to_data_tree
+        list_to_data_tree, merge_data_tree
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
 if all_required_inputs(ghenv.Component):
-    values = list_to_data_tree(de_objectify_output(_matrix))
+    values = []
+    for i, mtx in enumerate(_matrix):
+        values.append(list_to_data_tree(de_objectify_output(mtx), root_count=i))
+    values = merge_data_tree(values)

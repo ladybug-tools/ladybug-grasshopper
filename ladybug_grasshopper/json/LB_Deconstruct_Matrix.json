@@ -1,5 +1,5 @@
 {
-  "version": "1.3.0", 
+  "version": "1.3.1", 
   "nickname": "XMatrix", 
   "outputs": [
     [
@@ -14,7 +14,7 @@
   ], 
   "inputs": [
     {
-      "access": "item", 
+      "access": "list", 
       "name": "_matrix", 
       "description": "A Ladybug Matrix object such as the intersection matrices output\nfrom any of the ray-tracing components (eg. \"LB Direct Sun Hours\").", 
       "type": "System.Object", 
@@ -22,7 +22,7 @@
     }
   ], 
   "subcategory": "4 :: Extra", 
-  "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, de_objectify_output, \\\n        list_to_data_tree\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    values = list_to_data_tree(de_objectify_output(_matrix))", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, de_objectify_output, \\\n        list_to_data_tree, merge_data_tree\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    values = []\n    for i, mtx in enumerate(_matrix):\n        values.append(list_to_data_tree(de_objectify_output(mtx), root_count=i))\n    values = merge_data_tree(values)\n", 
   "category": "Ladybug", 
   "name": "LB Deconstruct Matrix", 
   "description": "Deconstruct a Ladybug Matrix object into a Grasshopper Data Tree of values.\n-"
