@@ -29,7 +29,7 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
 ghenv.Component.Name = 'LB Download Weather'
 ghenv.Component.NickName = 'DownloadEPW'
-ghenv.Component.Message = '1.3.1'
+ghenv.Component.Message = '1.3.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -50,7 +50,8 @@ import os
 
 
 if all_required_inputs(ghenv.Component):
-    # name for the weather files
+    # process the URL and check if it is outdated
+    _weather_URL = _weather_URL.strip()
     if _weather_URL.lower().endswith('.zip'):  # onebuilding URL type
         _folder_name = _weather_URL.split('/')[-1][:-4]
     else: # dept of energy URL type
@@ -61,6 +62,9 @@ if all_required_inputs(ghenv.Component):
             _weather_URL = _weather_URL.replace(repl_section, new_section)
             _weather_URL = _weather_URL.replace(
                 'www.energyplus.net/weather-download',
+                'energyplus-weather.s3.amazonaws.com')
+            _weather_URL = _weather_URL.replace(
+                'energyplus.net/weather-download',
                 'energyplus-weather.s3.amazonaws.com')
             _weather_URL = _weather_URL[:8] + _weather_URL[8:].replace('//', '/')
             msg = 'The weather file URL is out of date.\nThis component ' \
