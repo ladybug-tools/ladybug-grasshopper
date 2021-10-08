@@ -28,6 +28,10 @@ mesh that shows the range of the data within specific percentiles.
             _data with the same units should be stacked on top of each other.
             Otherwise, all bars for monthly/daily data will be placed next to
             each other.  (Default: False).
+        time_marks_: Boolean to note whether the month labels should be replaced with
+            marks for the time of day in each month. This is useful for
+            displaying hourly data, particularly when the input data is only
+            for a month and not the whole year.
         percentile_: An optional number between 0 and 50 to be used for the percentile
             difference from the mean that hourly data meshes display at. For example,
             using 34 will generate hourly data meshes with a range of one standard
@@ -69,7 +73,7 @@ mesh that shows the range of the data within specific percentiles.
 
 ghenv.Component.Name = 'LB Monthly Chart'
 ghenv.Component.NickName = 'MonthlyChart'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -141,8 +145,14 @@ if all_required_inputs(ghenv.Component):
     # process the first y axis
     y1_txt = month_chart.y_axis_title_text1 if len(y_axis_title_) == 0 else y_axis_title_[0]
     y_title = text_objects(y1_txt, month_chart.y_axis_title_location1, txt_hgt, font)
-    label1 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_hgt, font, 1, 0)
-              for txt, pt in zip(month_chart.month_labels, month_chart.month_label_points)]
+    if time_marks_:
+        txt_h = _x_dim_ / 20 if _x_dim_ / 20 < txt_hgt * 0.75 else txt_hgt * 0.75
+        label1 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_h, font, 1, 0)
+                  for txt, pt in zip(month_chart.time_labels, month_chart.time_label_points)]
+        borders.extend([from_linesegment2d(line, z_val_tol) for line in month_chart.time_ticks])
+    else:
+        label1 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_hgt, font, 1, 0)
+                  for txt, pt in zip(month_chart.month_labels, month_chart.month_label_points)]
     label2 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_hgt, font, 2, 3)
               for txt, pt in zip(month_chart.y_axis_labels1, month_chart.y_axis_label_points1)]
     labels = label1 + label2
