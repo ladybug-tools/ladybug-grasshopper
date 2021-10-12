@@ -7,7 +7,7 @@
 :beetle: :green_book: Ladybug plugin for Grasshopper (aka. ladybug[+])
 
 This repository contains all Grasshopper components for the ladybug plugin.
-The package includes both the userobjects (`.ghuser`) and the Python source (`.py`).
+The package includes both the user objects (`.ghuser`) and the Python source (`.py`).
 Note that this library only possesses the Grasshopper components and, in order to
 run the plugin, the core libraries must be installed in a way that
 they can be found by Rhino (see dependencies).
