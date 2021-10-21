@@ -14,6 +14,18 @@ Construct a Ladybug data collection from header and values.
     Args:
         _header:A Ladybug header object describing the metadata of the data collection.
         _values: A list of numerical values for the data collection.
+        _interval_: Text to indicate the time interval of the data collection, which
+            determines the type of collection that is output. (Default: hourly).
+            _
+            Choose from the following:
+                - hourly
+                - daily
+                - monthly
+                - monthly-per-hour
+            _
+            Note that the "hourly" input is also used to represent sub-hourly
+            intervals (in this case, the timestep of the analysis period
+            must not be 1).
 
     Returns:
         data: A Ladybug data collection object.
@@ -21,13 +33,14 @@ Construct a Ladybug data collection from header and values.
 
 ghenv.Component.Name = "LB Construct Data"
 ghenv.Component.NickName = '+Data'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
-    from ladybug.datacollection import HourlyContinuousCollection
+    from ladybug.datacollection import HourlyContinuousCollection, DailyCollection, \
+        MonthlyCollection, MonthlyPerHourCollection
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
@@ -38,4 +51,17 @@ except ImportError as e:
 
 
 if all_required_inputs(ghenv.Component):
-    data = HourlyContinuousCollection(_header, _values)
+    inter = _interval_.lower() if _interval_ is not None else 'hourly'
+    if inter == 'hourly':
+        data = HourlyContinuousCollection(_header, _values)
+    elif inter == 'monthly':
+        data = MonthlyCollection(
+            _header, _values, _header.analysis_period.months_int)
+    elif inter == 'daily':
+        data = DailyCollection(
+            _header, _values, _header.analysis_period.doys_int)
+    elif inter == 'monthly-per-hour':
+        data = MonthlyPerHourCollection(
+            _header, _values, _header.analysis_period.months_per_hour)
+    else:
+        raise ValueError('{} is not a recongized interval.'.format(_interval_))
