@@ -1,0 +1,35 @@
+{
+  "version": "1.3.0", 
+  "nickname": "Hatch", 
+  "outputs": [
+    []
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_mesh", 
+      "description": "A colored mesh (or list of colored meshes) to be baked into the Rhino\nscene as groups of colored hatches.", 
+      "type": "Mesh", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "layer_", 
+      "description": "Text for the layer name on which the hatch will be added. If unspecified,\nit will be baked onto the currently active layer.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_run", 
+      "description": "Set to 'True' to bake the mesh into the scene as hatches.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_mesh3d\n    from ladybug_{{cad}}.bakegeometry import add_mesh3d_as_hatch_to_scene\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _run:\n    lb_mesh = to_mesh3d(_mesh, color_by_face=False)\n    add_mesh3d_as_hatch_to_scene(lb_mesh, layer_)\n", 
+  "category": "Ladybug", 
+  "name": "LB Mesh to Hatch", 
+  "description": "Bake a clored mesh into the Rhino scene as a group of colored hatches.\n_\nThis is useful when exporting ladybug graphics from Rhino to vector-based programs\nlike Inkscape or Illustrator since hatches are exported from Rhino as colored-filled\npolygons.\n-"
+}
