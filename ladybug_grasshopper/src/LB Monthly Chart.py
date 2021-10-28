@@ -73,7 +73,7 @@ mesh that shows the range of the data within specific percentiles.
 
 ghenv.Component.Name = 'LB Monthly Chart'
 ghenv.Component.NickName = 'MonthlyChart'
-ghenv.Component.Message = '1.3.1'
+ghenv.Component.Message = '1.3.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -94,7 +94,7 @@ try:
     from ladybug_rhino.config import conversion_to_meters, tolerance
     from ladybug_rhino.color import color_to_color
     from ladybug_rhino.togeometry import to_point2d
-    from ladybug_rhino.fromgeometry import from_mesh3d, from_mesh2d, \
+    from ladybug_rhino.fromgeometry import from_mesh2d, from_mesh2d_to_outline, \
         from_polyline2d, from_linesegment2d
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.colorize import ColoredPolyline
@@ -125,12 +125,16 @@ if all_required_inputs(ghenv.Component):
             month_chart.set_maximum_by_index(legend_par_[1].max, 1)
 
     #  get the main pieces of geometry
+    data_lines = []
     d_meshes = month_chart.data_meshes
     if d_meshes is not None:
         data_mesh = [from_mesh2d(msh, z_val_tol) for msh in d_meshes]
+        if month_chart.time_interval == 'Monthly':
+            data_lines += [l for msh in d_meshes for l in
+                           from_mesh2d_to_outline(msh, z_val_tol)]
     d_lines = month_chart.data_polylines
     if d_lines is not None:
-        data_lines = [from_polyline2d(lin, z_val_tol) for lin in d_lines]
+        data_lines += [from_polyline2d(lin, z_val_tol) for lin in d_lines]
     borders = [from_polyline2d(month_chart.chart_border, z_val)] + \
             [from_linesegment2d(line, z_val) for line in month_chart.y_axis_lines] + \
             [from_linesegment2d(line, z_val_tol) for line in month_chart.month_lines]
