@@ -65,6 +65,7 @@ analysis and shading design.
             parameters to be applied to the different connected data_.
 
     Returns:
+        report: Reports, errors, warnings, etc.
         vectors: Vector(s) indicating the direction of sunlight for each sun
             position on the sun path. Note that these vectors point downwards
             towards the ground.
@@ -93,7 +94,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
