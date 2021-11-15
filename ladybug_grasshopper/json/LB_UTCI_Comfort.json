@@ -1,5 +1,5 @@
 {
-  "version": "1.3.0", 
+  "version": "1.3.1", 
   "nickname": "UTCI", 
   "outputs": [
     [
@@ -44,28 +44,28 @@
     {
       "access": "item", 
       "name": "_air_temp", 
-      "description": "Data Collection or individual value of air temperature in C.", 
+      "description": "Data Collection or individual value for air temperature in C.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_mrt_", 
-      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp.", 
+      "description": "Data Collection or individual value for mean radiant temperature\n(MRT) in C. Default is the same as the air_temp.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_rel_humid", 
-      "description": "Data Collection or individual value of relative humidity in %.", 
+      "description": "Data Collection or individual value for relative humidity in %.\nNote that percent values are between 0 and 100.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_wind_vel_", 
-      "description": "Data Collection or individual of air speed values in m/s.\nDefault is a low speed of 0.5 m/s, which is the lowest input\nspeed that is recommended for the UTCI model.", 
+      "description": "Data Collection or individual value for meteoroligical wind velocity\nat 10 m above ground level in m/s. Note that this meteorological\nvelocity at 10 m is simply 1.5 times the speed felt at ground\nlevel in the original Fiala model used to create the UTCI model.\nTherefore, multiplying air speed values at the height of the\nhuman subject by 1.5 will make them a suitable input for this\ncomponent. Default is a low speed of 0.5 m/s, which is the lowest\ninput speed that is recommended for the UTCI model.", 
       "type": "System.Object", 
       "default": null
     }, 

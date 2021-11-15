@@ -24,13 +24,19 @@ Equivalent Temperature (PET) model should be used.
 -
 
     Args:
-        _air_temp: Data Collection or individual value of air temperature in C.
-        _mrt_: Data Collection or individual value of mean radiant temperature
+        _air_temp: Data Collection or individual value for air temperature in C.
+        _mrt_: Data Collection or individual value for mean radiant temperature
             (MRT) in C. Default is the same as the air_temp.
-        _rel_humid: Data Collection or individual value of relative humidity in %.
-        _wind_vel_: Data Collection or individual of air speed values in m/s.
-            Default is a low speed of 0.5 m/s, which is the lowest input
-            speed that is recommended for the UTCI model.
+        _rel_humid: Data Collection or individual value for relative humidity in %.
+            Note that percent values are between 0 and 100.
+        _wind_vel_: Data Collection or individual value for meteoroligical wind velocity
+            at 10 m above ground level in m/s. Note that this meteorological
+            velocity at 10 m is simply 1.5 times the speed felt at ground
+            level in the original Fiala model used to create the UTCI model.
+            Therefore, multiplying air speed values at the height of the
+            human subject by 1.5 will make them a suitable input for this
+            component. Default is a low speed of 0.5 m/s, which is the lowest
+            input speed that is recommended for the UTCI model.
         _run: Set to True to run the component.
 
     Returns:
@@ -70,7 +76,7 @@ Equivalent Temperature (PET) model should be used.
 
 ghenv.Component.Name = 'LB UTCI Comfort'
 ghenv.Component.NickName = 'UTCI'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
