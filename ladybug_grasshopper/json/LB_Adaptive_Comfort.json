@@ -1,5 +1,5 @@
 {
-  "version": "1.3.0", 
+  "version": "1.3.1", 
   "nickname": "Adaptive", 
   "outputs": [
     [
@@ -51,28 +51,28 @@
     {
       "access": "item", 
       "name": "_out_temp", 
-      "description": "Outdoor temperatures in one of the following formats:\n* A Data Collection of prevailing outdoor temperature values in C.\nThis Data Collection must align with the _air_temp or _mrt_\ninputs and bear the PrevailingOutdoorTemperature data type in\nits header.\n* A single prevailing outdoor temperature value in C to be used\nfor all of the _air_temp or _mrt_ inputs.\n* A Data Collection of outdoor dry bulb temperatures recorded over\nthe entire year. This Data Collection must be continouous and\nmust either be an Hourly Collection or Daily Collection. In the event\nthat the input adapt_par_ has a _avgm_or_runmean_ set to True,\nMonthly collections are also acceptable here. Note that, because\nan annual input is required, this input collection does not have\nto align with the _air_temp or _mrt_ inputs.", 
+      "description": "Outdoor temperatures in one of the following formats:\n* A Data Collection of outdoor dry bulb temperatures recorded over\nthe entire year. This Data Collection must be continouous and\nmust either be an Hourly Collection or Daily Collection. In the event\nthat the input adapt_par_ has a _avgm_or_runmean_ set to True,\nMonthly collections are also acceptable here. Note that, because\nan annual input is required, this input collection does not have\nto align with the _air_temp or _mrt_ inputs.\n* A Data Collection of prevailing outdoor temperature values in C.\nThis Data Collection must align with the _air_temp or _mrt_\ninputs and bear the PrevailingOutdoorTemperature data type in\nits header.\n* A single prevailing outdoor temperature value in C to be used\nfor all of the _air_temp or _mrt_ inputs.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_air_temp", 
-      "description": "Data Collection or individual value of air temperature in C.", 
+      "description": "Data Collection or individual value for air temperature in C.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_mrt_", 
-      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp.", 
+      "description": "Data Collection or individual value for mean radiant temperature\n(MRT) in C. Default is the same as the air_temp.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_air_speed_", 
-      "description": "Data Collection or individual of air speed value in m/s.\nDefault is a very low speed of 0.1 m/s.", 
+      "description": "Data Collection or individual value for air speed in m/s.\nNote that higher air speeds in the adaptive model only widen the\nupper boundary of the comfort range at temperatures above 24 C\nand will not affect the lower temperature of the comfort range.\nDefault is a very low speed of 0.1 m/s.", 
       "type": "System.Object", 
       "default": null
     }, 

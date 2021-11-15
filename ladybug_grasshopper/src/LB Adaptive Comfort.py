@@ -20,12 +20,6 @@ be used.
 
     Args:
         _out_temp: Outdoor temperatures in one of the following formats:
-            * A Data Collection of prevailing outdoor temperature values in C.
-                This Data Collection must align with the _air_temp or _mrt_
-                inputs and bear the PrevailingOutdoorTemperature data type in
-                its header.
-            * A single prevailing outdoor temperature value in C to be used
-                for all of the _air_temp or _mrt_ inputs.
             * A Data Collection of outdoor dry bulb temperatures recorded over
                 the entire year. This Data Collection must be continouous and
                 must either be an Hourly Collection or Daily Collection. In the event
@@ -33,10 +27,19 @@ be used.
                 Monthly collections are also acceptable here. Note that, because
                 an annual input is required, this input collection does not have
                 to align with the _air_temp or _mrt_ inputs.
-        _air_temp: Data Collection or individual value of air temperature in C.
-        _mrt_: Data Collection or individual value of mean radiant temperature
+            * A Data Collection of prevailing outdoor temperature values in C.
+                This Data Collection must align with the _air_temp or _mrt_
+                inputs and bear the PrevailingOutdoorTemperature data type in
+                its header.
+            * A single prevailing outdoor temperature value in C to be used
+                for all of the _air_temp or _mrt_ inputs.
+        _air_temp: Data Collection or individual value for air temperature in C.
+        _mrt_: Data Collection or individual value for mean radiant temperature
             (MRT) in C. Default is the same as the air_temp.
-        _air_speed_: Data Collection or individual of air speed value in m/s.
+        _air_speed_: Data Collection or individual value for air speed in m/s.
+            Note that higher air speeds in the adaptive model only widen the
+            upper boundary of the comfort range at temperatures above 24 C
+            and will not affect the lower temperature of the comfort range.
             Default is a very low speed of 0.1 m/s.
         adapt_par_: Optional comfort parameters from the "LB Adaptive Comfort Parameters"
             component to specify the criteria under which conditions are
@@ -72,7 +75,7 @@ be used.
 
 ghenv.Component.Name = 'LB Adaptive Comfort'
 ghenv.Component.NickName = 'Adaptive'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

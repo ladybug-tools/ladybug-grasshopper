@@ -1,5 +1,5 @@
 {
-  "version": "1.3.0", 
+  "version": "1.3.1", 
   "nickname": "PMV", 
   "outputs": [
     [
@@ -58,28 +58,28 @@
     {
       "access": "item", 
       "name": "_air_temp", 
-      "description": "Data Collection or individual value of air temperature in C.", 
+      "description": "Data Collection or individual value for air temperature in C.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_mrt_", 
-      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp..", 
+      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_rel_humid", 
-      "description": "Data Collection or individual value of relative humidity in %.", 
+      "description": "Data Collection or individual value for relative humidity in %.\nNote that percent values are between 0 and 100.", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_air_speed_", 
-      "description": "Data Collection or individual of air speed values in m/s.\nDefault is a very low speed of 0.1 m/s.", 
+      "description": "Data Collection or individual value for air speed in m/s.\nDefault is a very low speed of 0.1 m/s, which is typical of the\nroom air speeds induced by HVAC systems.", 
       "type": "System.Object", 
       "default": null
     }, 
