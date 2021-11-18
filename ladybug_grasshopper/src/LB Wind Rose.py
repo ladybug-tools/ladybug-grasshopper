@@ -29,22 +29,19 @@ Create a plot of any hourly data by wind directions.
             the wind rose (Default: 36).
         _center_pt_: Point3D to be used as a starting point to generate the geometry of
             the plot (Default: (0, 0, 0)).
-        _show_calmrose_: A boolean to indicate if the wind rose displays a calm rose. The
-            calm rose is a radial plot in the center of the wind rose with a radius
-            corresponding to the total zero values divided by the number of
-            directions. This allows the wind rose to represent zero values
-            from _data even though such values don't have any direction
-            associated with them. (Default: False).
-        _show_freq_: A boolean to show the frequency of _data data values in the
-            wind direction bins. The frequency lines represent constant intervals
-            in time while the color illustrates the average _data data values
-            associated with each interval. The number of frequency lines with
-            similar colors therefore indicate a higher frequency of that
-            value. (Default: True)
+        show_calm_: A boolean to indicate if the wind rose should display the fraction of
+            time with zero wind speed using a circle in the center of the plot.
+            The radius of this circle corresponds to the total amount of time
+            with zero values divided by the number of directions. This means that
+            the time period representing zero values is evenly distrobuted
+            across all directions. (Default: False).
+        show_avg_: A boolean to note whether the average value in each wind direction bin
+            should be displayed instead of the complete frequency of _data
+            values. (Default: False).
         _freq_dist_: The distance for the frequency interval in model units. If 
-            _show_calmrose is True, then the initial frequency interval corresponds
+            show_calm_ is True, then the initial frequency interval corresponds
             to the number of calm hours in the data collection, which may not
-            align with this _freq_dist (Default: 5 meters)
+            align with this freq_dist_ (Default: 5 meters)
        _freq_hours_: The number of hours in each frequency interval (Default: 50).
         _max_freq_lines_: A number representing the maximum frequency intervals in
             the rose, which determines the maximum amount of hours represented by the
@@ -103,7 +100,7 @@ Create a plot of any hourly data by wind directions.
 
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -197,9 +194,9 @@ if all_required_inputs(ghenv.Component):
     if _freq_dist_ is None:
         _freq_dist_ = 5.0 / conversion_to_meters()
 
-    # set default show_freq and _show_calmrose_
-    _show_calmrose_ = False if _show_calmrose_ is None else _show_calmrose_
-    _show_freq_ = True if _show_freq_ is None else _show_freq_
+    # set default show_freq and show_calm_
+    show_calm_ = False if show_calm_ is None else show_calm_
+    show_freq_ = True if show_avg_ is None else not show_avg_
 
     # set up empty lists of objects to be filled
     all_windrose_lines = []
@@ -244,11 +241,11 @@ if all_required_inputs(ghenv.Component):
             windrose.frequency_intervals_compass = _max_freq_lines_
         windrose.frequency_spacing_distance = _freq_dist_
         windrose.north = north_
-        windrose.show_freq = _show_freq_
+        windrose.show_freq = show_freq_
 
         calm_text = ''
         if isinstance(speed_data.header.data_type, Speed):
-            windrose.show_zeros = _show_calmrose_
+            windrose.show_zeros = show_calm_
             calm_text = '\nCalm for {}% of the time = {} hours.'.format(
                 round(windrose._zero_count / 
                 len(windrose.analysis_values) * 100.0, 2),
