@@ -1,0 +1,36 @@
+{
+  "version": "1.3.0", 
+  "nickname": "LoadData", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "A list of honeybee objects that have been re-serialized from\nthe input file.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data_file", 
+      "description": "A file path to a CSV, JSON or PKL file from which data collections\nwill be loaded.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_load", 
+      "description": "Set to \"True\" to load the data collections from the _data_file.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug.datautil import collections_from_csv, collections_from_json, \\\n        collections_from_pkl\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:  # import the core ladybug_{{cad}} dependencies\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _load:\n    # load the data from the appropriate format\n    lower_file = _data_file.lower()\n    if lower_file.endswith('.csv'):\n        data = collections_from_csv(_data_file)\n    elif lower_file.endswith('.json'):\n        data = collections_from_json(_data_file)\n    elif lower_file.endswith('.pkl'):\n        data = collections_from_pkl(_data_file)\n    else:\n        raise ValueError(\n            'Could not recognize the file extension of: {}'.format(_data_file))\n", 
+  "category": "Ladybug", 
+  "name": "LB Load Data", 
+  "description": "Load Ladybug data collections from a CSV, JSON, or PKL file.\n-"
+}

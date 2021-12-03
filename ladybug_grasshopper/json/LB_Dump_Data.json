@@ -1,0 +1,57 @@
+{
+  "version": "1.3.0", 
+  "nickname": "DumpData", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data_file", 
+        "description": "The path of the file where the data collections are saved.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_data", 
+      "description": "A list of Ladybug data collections to be written to a file.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_format_", 
+      "description": "Text or an integer to set the format of the output file.\nChoose from the options below. (Default: CSV).\n* 0 = CSV - Compact, human-readable, importable to spreadsheets\n* 1 = JSON - Cross-language and handles any types of collections\n* 2 = PKL - Compressed format only readable with Python", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_name_", 
+      "description": "A name for the file to which the data collections will be\nwritten. (Default: 'data').", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_folder_", 
+      "description": "An optional directory into which the data collections will be\nwritten.  The default is set to the simulation folder.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_dump", 
+      "description": "Set to \"True\" to save the honeybee objects to file.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\nimport os\n\ntry:\n    from ladybug.datautil import collections_to_csv, collections_to_json, \\\n        collections_to_pkl\n    from ladybug.config import folders\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:  # import the core ladybug_{{cad}} dependencies\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\nFORMAT_MAP = {\n    '0': 'csv',\n    '1': 'json',\n    '2': 'pkl',\n    'csv': 'csv',\n    'json': 'json',\n    'pkl': 'pkl'\n}\n\n\nif all_required_inputs(ghenv.Component) and _dump:\n    # set the component defaults\n    name = _name_ if _name_ is not None else 'data'\n    folder = _folder_ if _folder_ is not None else \\\n        os.path.join(os.path.dirname(folders.ladybug_tools_folder), 'simulation')\n    format = 'csv' if _format_ is None else FORMAT_MAP[_format_.lower()]\n\n    # write the data into the appropriate format\n    if format == 'csv':\n        try:\n            data_file = collections_to_csv(_data, folder, name)\n        except AssertionError as e:\n            raise ValueError('{}\\nTry using the JSON or PKL format.'.format(e))\n    elif format == 'json':\n        data_file = collections_to_json(_data, folder, name)\n    elif format == 'pkl':\n        data_file = collections_to_pkl(_data, folder, name)\n", 
+  "category": "Ladybug", 
+  "name": "LB Dump Data", 
+  "description": "Dump any Ladybug data collections into a file. You can use \"LB Load Data\" component\nto load the data collections from the file back into Grasshopper.\n-"
+}
