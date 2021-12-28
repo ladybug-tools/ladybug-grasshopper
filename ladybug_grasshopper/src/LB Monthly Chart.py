@@ -73,7 +73,7 @@ mesh that shows the range of the data within specific percentiles.
 
 ghenv.Component.Name = 'LB Monthly Chart'
 ghenv.Component.NickName = 'MonthlyChart'
-ghenv.Component.Message = '1.3.2'
+ghenv.Component.Message = '1.3.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -104,7 +104,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
-if all_required_inputs(ghenv.Component):
+if all_required_inputs(ghenv.Component) and None not in _data:
     # set default values for the chart dimensions
     z_val = _base_pt_.Z if _base_pt_ is not None else 0
     z_val_tol = z_val + tolerance
