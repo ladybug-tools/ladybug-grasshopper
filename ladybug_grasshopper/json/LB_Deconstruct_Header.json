@@ -1,5 +1,5 @@
 {
-  "version": "1.3.0", 
+  "version": "1.3.1", 
   "nickname": "XHeader", 
   "outputs": [
     [
@@ -43,7 +43,7 @@
     }
   ], 
   "subcategory": "1 :: Analyze Data", 
-  "code": "\ntry:\n    from ladybug.header import Header\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_header, Header), 'Expected Ladybug Header. ' \\\n        'Got {}.'.format(type(_header))\n    data_type = _header.data_type\n    unit = _header.unit\n    a_period = _header.analysis_period\n    metadata = [': '.join([key, val]) for key, val in _header.metadata.items()]", 
+  "code": "\ntry:\n    from ladybug.header import Header\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_header, Header), 'Expected Ladybug Header. ' \\\n        'Got {}.'.format(type(_header))\n    data_type = _header.data_type\n    unit = _header.unit\n    a_period = _header.analysis_period\n    metadata = [': '.join([str(key), str(val)]) for key, val in _header.metadata.items()]", 
   "category": "Ladybug", 
   "name": "LB Deconstruct Header", 
   "description": "Deconstruct a Ladybug Header into its components.\n-"

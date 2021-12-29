@@ -23,7 +23,7 @@ Deconstruct a Ladybug Header into its components.
 
 ghenv.Component.Name = "LB Deconstruct Header"
 ghenv.Component.NickName = 'XHeader'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.3.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -45,4 +45,4 @@ if all_required_inputs(ghenv.Component):
     data_type = _header.data_type
     unit = _header.unit
     a_period = _header.analysis_period
-    metadata = [': '.join([key, val]) for key, val in _header.metadata.items()]
+    metadata = [': '.join([str(key), str(val)]) for key, val in _header.metadata.items()]
