@@ -33,14 +33,14 @@ Construct a Ladybug data collection from header and values.
 
 ghenv.Component.Name = "LB Construct Data"
 ghenv.Component.NickName = '+Data'
-ghenv.Component.Message = '1.3.1'
+ghenv.Component.Message = '1.3.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
     from ladybug.datacollection import HourlyContinuousCollection, DailyCollection, \
-        MonthlyCollection, MonthlyPerHourCollection
+        MonthlyCollection, MonthlyPerHourCollection, HourlyDiscontinuousCollection
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
@@ -53,7 +53,11 @@ except ImportError as e:
 if all_required_inputs(ghenv.Component):
     inter = _interval_.lower() if _interval_ is not None else 'hourly'
     if inter == 'hourly':
-        data = HourlyContinuousCollection(_header, _values)
+        aper = _header.analysis_period
+        if aper.st_hour == 0 and aper.end_hour == 23:
+            data = HourlyContinuousCollection(_header, _values)
+        else:
+            data = HourlyDiscontinuousCollection(_header, _values, aper.datetimes)
     elif inter == 'monthly':
         data = MonthlyCollection(
             _header, _values, _header.analysis_period.months_int)
