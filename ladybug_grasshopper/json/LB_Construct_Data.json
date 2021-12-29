@@ -1,5 +1,5 @@
 {
-  "version": "1.3.1", 
+  "version": "1.3.2", 
   "nickname": "+Data", 
   "outputs": [
     [
@@ -36,7 +36,7 @@
     }
   ], 
   "subcategory": "1 :: Analyze Data", 
-  "code": "\ntry:\n    from ladybug.datacollection import HourlyContinuousCollection, DailyCollection, \\\n        MonthlyCollection, MonthlyPerHourCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    inter = _interval_.lower() if _interval_ is not None else 'hourly'\n    if inter == 'hourly':\n        data = HourlyContinuousCollection(_header, _values)\n    elif inter == 'monthly':\n        data = MonthlyCollection(\n            _header, _values, _header.analysis_period.months_int)\n    elif inter == 'daily':\n        data = DailyCollection(\n            _header, _values, _header.analysis_period.doys_int)\n    elif inter == 'monthly-per-hour':\n        data = MonthlyPerHourCollection(\n            _header, _values, _header.analysis_period.months_per_hour)\n    else:\n        raise ValueError('{} is not a recongized interval.'.format(_interval_))\n", 
+  "code": "\ntry:\n    from ladybug.datacollection import HourlyContinuousCollection, DailyCollection, \\\n        MonthlyCollection, MonthlyPerHourCollection, HourlyDiscontinuousCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    inter = _interval_.lower() if _interval_ is not None else 'hourly'\n    if inter == 'hourly':\n        aper = _header.analysis_period\n        if aper.st_hour == 0 and aper.end_hour == 23:\n            data = HourlyContinuousCollection(_header, _values)\n        else:\n            data = HourlyDiscontinuousCollection(_header, _values, aper.datetimes)\n    elif inter == 'monthly':\n        data = MonthlyCollection(\n            _header, _values, _header.analysis_period.months_int)\n    elif inter == 'daily':\n        data = DailyCollection(\n            _header, _values, _header.analysis_period.doys_int)\n    elif inter == 'monthly-per-hour':\n        data = MonthlyPerHourCollection(\n            _header, _values, _header.analysis_period.months_per_hour)\n    else:\n        raise ValueError('{} is not a recongized interval.'.format(_interval_))\n", 
   "category": "Ladybug", 
   "name": "LB Construct Data", 
   "description": "Construct a Ladybug data collection from header and values.\n-"
