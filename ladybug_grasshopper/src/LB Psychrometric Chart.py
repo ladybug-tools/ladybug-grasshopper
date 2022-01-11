@@ -1,11 +1,11 @@
 # Ladybug: A Plugin for Environmental Analysis (GPL)
 # This file is part of Ladybug.
 #
-# Copyright (c) 2021, Ladybug Tools.
-# You should have received a copy of the GNU General Public License
+# Copyright (c) 2022, Ladybug Tools.
+# You should have received a copy of the GNU Affero General Public License
 # along with Ladybug; If not, see <http://www.gnu.org/licenses/>.
 # 
-# @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+# @license AGPL-3.0-or-later <https://spdx.org/licenses/AGPL-3.0-or-later>
 
 """
 Draw a psychrometric chart in the Rhino scene and plot a set of temperatures and
@@ -98,7 +98,7 @@ weather data or indoor temperature and humidity ratios from an energy simulation
 
 ghenv.Component.Name = 'LB Psychrometric Chart'
 ghenv.Component.NickName = 'PsychrometricChart'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.4.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

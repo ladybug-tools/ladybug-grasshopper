@@ -1,11 +1,11 @@
 # Ladybug: A Plugin for Environmental Analysis (GPL)
 # This file is part of Ladybug.
 #
-# Copyright (c) 2021, Ladybug Tools.
-# You should have received a copy of the GNU General Public License
+# Copyright (c) 2022, Ladybug Tools.
+# You should have received a copy of the GNU Affero General Public License
 # along with Ladybug; If not, see <http://www.gnu.org/licenses/>.
 # 
-# @license GPL-3.0+ <http://spdx.org/licenses/GPL-3.0+>
+# @license AGPL-3.0-or-later <https://spdx.org/licenses/AGPL-3.0-or-later>
 
 """
 Get a Data Collection that is normalized by an area value.
@@ -28,7 +28,7 @@ that a ZeroDivisionError will be raised if the input area is equal to 0.
 
 ghenv.Component.Name = 'LB Area Normalize'
 ghenv.Component.NickName = 'Normalize'
-ghenv.Component.Message = '1.3.0'
+ghenv.Component.Message = '1.4.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
