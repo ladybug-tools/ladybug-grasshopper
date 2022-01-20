@@ -46,7 +46,7 @@ Grasshopper components, and rebuilding the collection.
 
 ghenv.Component.Name = "LB Arithmetic Operation"
 ghenv.Component.NickName = 'ArithOp'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -75,7 +75,9 @@ if all_required_inputs(ghenv.Component):
     # perform the arithmetic operation
     data = []
     for data_1, data_2 in zip(_data_1, _data_2):
-        result = eval(statement, {'data_1': data_1, 'data_2': data_2})  # I love Python!
+        data_1 = float(data_1) if isinstance(data_1, str) else data_1
+        data_2 = float(data_2) if isinstance(data_2, str) else data_2
+        result = eval(statement, {'data_1': data_1, 'data_2': data_2})
 
         # try to replace the data collection type
         try:
