@@ -1,0 +1,29 @@
+{
+  "version": "1.4.0", 
+  "nickname": "DataDT", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "hoys", 
+        "description": "Numbers for the, hours, days or months of the year in the data collection.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_data", 
+      "description": "An hourly, daily, or monthly collection from which hours, days, or\nmonths of the year will be retrieved.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.dt import DateTime\n    from ladybug.datacollection import HourlyDiscontinuousCollection, DailyCollection, \\\n        MonthlyCollection, MonthlyPerHourCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    if isinstance(_data, HourlyDiscontinuousCollection):\n        hoys = [dt.hoy for dt in _data.datetimes]\n    elif isinstance(_data, (MonthlyCollection, DailyCollection)):\n        hoys = _data.datetimes\n    elif isinstance(_data, MonthlyPerHourCollection):\n        hoys = [DateTime(dt[0], 1, dt[1], dt[2]).hoy for dt in _data.datetimes]\n    else:\n        raise ValueError('Expected data collection. Got {}.'.format(type(data)))\n", 
+  "category": "Ladybug", 
+  "name": "LB Data DateTimes", 
+  "description": "Get the hours, days, or months of the year associated with the values of a data collection.\n-"
+}
