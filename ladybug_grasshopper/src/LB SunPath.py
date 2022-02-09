@@ -94,7 +94,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -224,7 +224,7 @@ if all_required_inputs(ghenv.Component):
     projection_ = projection_.title() if projection_ is not None else None
 
     # create a intersection of the input hoys_ and the data hoys
-    if len(data_) > 0 and len(hoys_) > 0:
+    if len(data_) > 0 and data_[0] is not None and len(hoys_) > 0:
         all_aligned = all(data_[0].is_collection_aligned(d) for d in data_[1:])
         assert all_aligned, 'All collections input to data_ must be aligned for ' \
             'each Sunpath.\nGrafting the data_ and suplying multiple grafted ' \
@@ -251,7 +251,7 @@ if all_required_inputs(ghenv.Component):
             vectors.append(from_vector3d(sun.sun_vector))
             suns.append(sun)
 
-    if len(data_) > 0 and len(hoys_) > 0:  # build a sunpath for each data collection
+    if len(data_) > 0 and data_[0] is not None and len(hoys_) > 0:  # build a sunpath for each data collection
         title, all_sun_pts, all_analemma, all_daily, all_compass, all_col_pts, all_legends = \
             [], [], [], [], [], [], []
         for i, data in enumerate(data_):
