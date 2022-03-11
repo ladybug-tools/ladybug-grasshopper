@@ -8,8 +8,7 @@
 # @license AGPL-3.0-or-later <https://spdx.org/licenses/AGPL-3.0-or-later>
 
 """
-Calculate humidity metrics from relative humidity, dry bulb temperature and
-(if present) atmospheric pressure.
+Calculate heating and cooling degree-days from outdoor dry bulb temperature.
 -
 
     Args:
@@ -20,7 +19,7 @@ Calculate humidity metrics from relative humidity, dry bulb temperature and
         _cool_base_: A number for the base temperature above which a given hour
             is considered to be in cooling mode. Default is 23 Celcius, which is
             a common balance point for buildings.
-    
+
     Returns:
         hourly_heat: A data collection of heating degree-days.
             Plug this into the 'Time Interval Operation' component to get
@@ -36,7 +35,7 @@ Calculate humidity metrics from relative humidity, dry bulb temperature and
 
 ghenv.Component.Name = 'LB Degree Days'
 ghenv.Component.NickName = 'HDD_CDD'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -59,16 +58,16 @@ if all_required_inputs(ghenv.Component):
         _heat_base_ = 18
     if _cool_base_ is None:
         _cool_base_ = 23
-    
+
     hourly_heat = HourlyContinuousCollection.compute_function_aligned(
         heating_degree_time, [_dry_bulb, _heat_base_],
         HeatingDegreeTime(), 'degC-hours')
     hourly_heat.convert_to_unit('degC-days')
-    
+
     hourly_cool = HourlyContinuousCollection.compute_function_aligned(
         cooling_degree_time, [_dry_bulb, _cool_base_],
         CoolingDegreeTime(), 'degC-hours')
     hourly_cool.convert_to_unit('degC-days')
-    
+
     heat_deg_days = hourly_heat.total
     cool_deg_days = hourly_cool.total

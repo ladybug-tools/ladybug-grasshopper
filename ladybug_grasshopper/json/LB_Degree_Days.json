@@ -1,5 +1,5 @@
 {
-  "version": "1.4.0", 
+  "version": "1.4.1", 
   "nickname": "HDD_CDD", 
   "outputs": [
     [
@@ -57,8 +57,8 @@
     }
   ], 
   "subcategory": "1 :: Analyze Data", 
-  "code": "\ntry:\n    from ladybug_comfort.degreetime import heating_degree_time, cooling_degree_time\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.datatype.temperaturetime import HeatingDegreeTime, CoolingDegreeTime\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    if _heat_base_ is None:\n        _heat_base_ = 18\n    if _cool_base_ is None:\n        _cool_base_ = 23\n    \n    hourly_heat = HourlyContinuousCollection.compute_function_aligned(\n        heating_degree_time, [_dry_bulb, _heat_base_],\n        HeatingDegreeTime(), 'degC-hours')\n    hourly_heat.convert_to_unit('degC-days')\n    \n    hourly_cool = HourlyContinuousCollection.compute_function_aligned(\n        cooling_degree_time, [_dry_bulb, _cool_base_],\n        CoolingDegreeTime(), 'degC-hours')\n    hourly_cool.convert_to_unit('degC-days')\n    \n    heat_deg_days = hourly_heat.total\n    cool_deg_days = hourly_cool.total", 
+  "code": "\ntry:\n    from ladybug_comfort.degreetime import heating_degree_time, cooling_degree_time\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.datatype.temperaturetime import HeatingDegreeTime, CoolingDegreeTime\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    if _heat_base_ is None:\n        _heat_base_ = 18\n    if _cool_base_ is None:\n        _cool_base_ = 23\n\n    hourly_heat = HourlyContinuousCollection.compute_function_aligned(\n        heating_degree_time, [_dry_bulb, _heat_base_],\n        HeatingDegreeTime(), 'degC-hours')\n    hourly_heat.convert_to_unit('degC-days')\n\n    hourly_cool = HourlyContinuousCollection.compute_function_aligned(\n        cooling_degree_time, [_dry_bulb, _cool_base_],\n        CoolingDegreeTime(), 'degC-hours')\n    hourly_cool.convert_to_unit('degC-days')\n\n    heat_deg_days = hourly_heat.total\n    cool_deg_days = hourly_cool.total", 
   "category": "Ladybug", 
   "name": "LB Degree Days", 
-  "description": "Calculate humidity metrics from relative humidity, dry bulb temperature and\n(if present) atmospheric pressure.\n-"
+  "description": "Calculate heating and cooling degree-days from outdoor dry bulb temperature.\n-"
 }
