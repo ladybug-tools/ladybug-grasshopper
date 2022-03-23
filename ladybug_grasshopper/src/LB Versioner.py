@@ -17,8 +17,8 @@ be older but grasshopper plugin versions less than 0.3.0 are not supported.
 A list of all versions of the Grasshopper plugin and corresponding release notes
 can be found at: https://github.com/ladybug-tools/lbt-grasshopper/releases
 _
-This component can also overwrite the user libraries of standards (constructions,
-schedules, modifiers) with a completely fresh copy if clean_standards_ is set to True.
+NOTE THAT, IF LADYBUG TOOLS HAS BEEN INSTALLED UNDER "PROGRAM FILES,"
+RHINO MUST BE RUN AS AN ADMINSTRATOR FOR THIS COMPONENT TO RUN SUCCESSFULLY.
 -
     Args:
         _update: Set to True to update your installation of Ladybug Tools to the
@@ -35,13 +35,14 @@ schedules, modifiers) with a completely fresh copy if clean_standards_ is set to
             DO NOT SET TO TRUE IF YOU WANT TO KEEP ANY OBJECTS THAT YOU HAVE
             ADDED TO YOUR honeybee_standards FOLDER. If False or None, any
             existing standards will be left alone.
+
     Returns:
         Vviiiiiz!: !!!
 """
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -165,7 +166,15 @@ def download_repo_github(repo, target_directory, version=None):
         url = "https://github.com/ladybug-tools/{}/archive/v{}.zip".format(repo, version)
     zip_file = os.path.join(target_directory, '%s.zip' % repo)
     print ('Downloading "{}"  github repository to: {}'.format(repo, target_directory))
-    download_file_by_name(url, target_directory, zip_file)
+    try:
+        download_file_by_name(url, target_directory, zip_file)
+    except ValueError:
+        msg = 'Access is denied to: {}\nMake sure that you are running Rhino as ' \
+            'an Adminstrator by right-clikcing on\nRhino and selecting "Run As ' \
+            'Administrator" before opening Grasshopper and\n running this ' \
+            'component.'.format(target_directory)
+        print(msg)
+        raise ValueError(msg)
 
     #unzip the file
     unzip_file(zip_file, target_directory)
