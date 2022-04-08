@@ -29,7 +29,7 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
 ghenv.Component.Name = 'LB Download Weather'
 ghenv.Component.NickName = 'DownloadEPW'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -77,15 +77,7 @@ if all_required_inputs(ghenv.Component):
     # create default working_dir
     if _folder_ is None:
         _folder_ = folders.default_epw_folder
-    try:
-        _folder_.decode('ascii')
-    except UnicodeDecodeError:
-        raise ValueError(
-            '\nYour download folder "{}" contains non-ASCII characters\n'
-            'Use the _folder_ input of this component to download files'
-            ' to a location with acceptable characters.'.format(_folder_))
-    else:
-        print 'Files will be downloaded to: {}'.format(_folder_)
+    print 'Files will be downloaded to: {}'.format(_folder_)
 
     # default file names
     epw = os.path.join(_folder_, _folder_name, _folder_name + '.epw')
