@@ -29,10 +29,12 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
 ghenv.Component.Name = 'LB Download Weather'
 ghenv.Component.NickName = 'DownloadEPW'
-ghenv.Component.Message = '1.4.1'
+ghenv.Component.Message = '1.4.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
+
+import os
 
 try:
     from ladybug.futil import unzip_file
@@ -45,8 +47,6 @@ try:
     from ladybug_rhino.grasshopper import all_required_inputs, give_warning
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
-
-import os
 
 
 if all_required_inputs(ghenv.Component):
@@ -77,7 +77,7 @@ if all_required_inputs(ghenv.Component):
     # create default working_dir
     if _folder_ is None:
         _folder_ = folders.default_epw_folder
-    print 'Files will be downloaded to: {}'.format(_folder_)
+    print('Files will be downloaded to: {}'.format(_folder_))
 
     # default file names
     epw = os.path.join(_folder_, _folder_name, _folder_name + '.epw')
