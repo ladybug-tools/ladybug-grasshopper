@@ -34,13 +34,12 @@ can be found at: https://github.com/ladybug-tools/lbt-grasshopper/releases
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.4.2'
+ghenv.Component.Message = '1.4.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 import os
-import json
 import subprocess
 
 try:
@@ -65,7 +64,7 @@ if all_required_inputs(ghenv.Component) and _update:
         'Ladybug.Executor.exe')
 
     # run the command to update everything
-    if os.name == 'nt' and os.path.isfile(executor_path):
+    if os.name == 'nt' and os.path.isfile(executor_path) and 'Program Files' in executor_path:
         cmd = [
             executor_path, folders.python_exe_path,
             '-m ladybug_rhino change-installed-version'
