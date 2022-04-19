@@ -42,7 +42,7 @@ Create a colored plot of any hourly data collection.
             data collection is between 18 and 26, the second collection is less
             than 80 and the third collection is greater than 2.
         period_: A Ladybug analysis period to be applied to all of the input _data.
-    
+
     Returns:
         report: ...
         mesh: A colored mesh derived from the input _data. Multiple meshes will
@@ -57,7 +57,7 @@ Create a colored plot of any hourly data collection.
 
 ghenv.Component.Name = "LB Hourly Plot"
 ghenv.Component.NickName = 'HourlyPlot'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -140,10 +140,14 @@ if all_required_inputs(ghenv.Component):
         
         # increment the base point so that the next chart doesn't overlap this one
         try:
-            next_tstep = _data[i + 1].header.analysis_period.timestep
+            next_aper = _data[i + 1].header.analysis_period
+            next_tstep = next_aper.timestep
+            next_hour = next_aper.end_hour - next_aper.st_hour + 1
         except IndexError:
             next_tstep = 1
-        increment = 24 * next_tstep * _y_dim_ * 1.5
+            next_hour = 24
+        txt_dist = hour_plot.legend_parameters.text_height * (len(_data[i].header.metadata) + 6) * 1.5
+        increment = (next_hour * next_tstep * _y_dim_) + txt_dist
         _base_pt_ = Point3D(_base_pt_.x, _base_pt_.y - increment, _base_pt_.z)
 
     # convert nexted lists into data trees
