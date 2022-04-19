@@ -18,7 +18,7 @@ https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
 
     Args:
         _index_: An index refering to one of the following possible gradients:
-            0 - Orignal Ladybug
+            0 - Original Ladybug
             1 - Nuanced Ladybug
             2 - Multi-colored Ladybug
             3 - Ecotect
@@ -44,7 +44,8 @@ https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
             23 - Blue, Green, Red
             24 - Multicolored 2
             25 - Multicolored 3
-    
+            26 - OpenStudio Palette
+
     Returns:
         colors: A series of colors to be plugged into the "LB Legend Parameters"
             component.
@@ -52,7 +53,7 @@ https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
 
 ghenv.Component.Name = 'LB Color Range'
 ghenv.Component.NickName = 'ColRange'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
