@@ -23,7 +23,7 @@ to load the data collections from the file back into Grasshopper.
         _name_: A name for the file to which the data collections will be
             written. (Default: 'data').
         _folder_: An optional directory into which the data collections will be
-            written.  The default is set to the simulation folder.
+            written.  The default is set to a user-specific simulation folder.
         _dump: Set to "True" to save the honeybee objects to file.
 
     Returns:
@@ -33,7 +33,7 @@ to load the data collections from the file back into Grasshopper.
 
 ghenv.Component.Name = 'LB Dump Data'
 ghenv.Component.NickName = 'DumpData'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
@@ -65,17 +65,18 @@ FORMAT_MAP = {
 if all_required_inputs(ghenv.Component) and _dump:
     # set the component defaults
     name = _name_ if _name_ is not None else 'data'
+    home_folder = os.getenv('HOME') or os.path.expanduser('~')
     folder = _folder_ if _folder_ is not None else \
-        os.path.join(os.path.dirname(folders.ladybug_tools_folder), 'simulation')
-    format = 'csv' if _format_ is None else FORMAT_MAP[_format_.lower()]
+        os.path.join(home_folder, 'simulation')
+    file_format = 'csv' if _format_ is None else FORMAT_MAP[_format_.lower()]
 
     # write the data into the appropriate format
-    if format == 'csv':
+    if file_format == 'csv':
         try:
             data_file = collections_to_csv(_data, folder, name)
         except AssertionError as e:
             raise ValueError('{}\nTry using the JSON or PKL format.'.format(e))
-    elif format == 'json':
+    elif file_format == 'json':
         data_file = collections_to_json(_data, folder, name)
-    elif format == 'pkl':
+    elif file_format == 'pkl':
         data_file = collections_to_pkl(_data, folder, name)
