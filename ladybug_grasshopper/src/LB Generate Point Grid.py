@@ -39,7 +39,7 @@ will accept.
 
 ghenv.Component.Name = "LB Generate Point Grid"
 ghenv.Component.NickName = 'GenPts'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -71,8 +71,15 @@ if all_required_inputs(ghenv.Component):
                         for f in lb_faces]
         except AttributeError:
             pass  # no plane connected; juse use default orientation
-        lb_meshes = [geo.mesh_grid(_grid_size, offset=_offset_dist_) for geo in lb_faces]
-        if len(lb_meshes) == 1:
+        lb_meshes = []
+        for geo in lb_faces:
+            try:
+                lb_meshes.append(geo.mesh_grid(_grid_size, offset=_offset_dist_))
+            except AssertionError:  # tiny geometry not compatible with quad faces
+                continue
+        if len(lb_meshes) == 0:
+            lb_mesh = None
+        elif len(lb_meshes) == 1:
             lb_mesh = lb_meshes[0]
         elif len(lb_meshes) > 1:
             lb_mesh = Mesh3D.join_meshes(lb_meshes)
@@ -87,7 +94,10 @@ if all_required_inputs(ghenv.Component):
                     '_geometry must be a Brep or a Mesh. Got {}.'.format(type(_geometry)))
 
     # generate the test points, vectors, and areas.
-    points = [from_point3d(pt) for pt in lb_mesh.face_centroids]
-    vectors = [from_vector3d(vec) for vec in lb_mesh.face_normals]
-    face_areas = lb_mesh.face_areas
-    mesh = from_mesh3d(lb_mesh)
+    if lb_mesh is not None:
+        points = [from_point3d(pt) for pt in lb_mesh.face_centroids]
+        vectors = [from_vector3d(vec) for vec in lb_mesh.face_normals]
+        face_areas = lb_mesh.face_areas
+        mesh = [from_mesh3d(lb_mesh)]
+    else:
+        mesh = []
