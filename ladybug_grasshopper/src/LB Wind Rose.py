@@ -100,7 +100,7 @@ Create a plot of any hourly data by wind directions.
 
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.4.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -268,8 +268,8 @@ if all_required_inputs(ghenv.Component):
         compass = compass_objects(windrose.compass, _center_pt_.z, None)
         orient_line = [from_linesegment2d(seg, _center_pt_.z)
                             for seg in windrose.orientation_lines]
-        freq_line = [from_polygon2d(poly) for poly in windrose.frequency_lines]
-        windrose_lines = [from_polygon2d(poly) for poly in windrose.windrose_lines]
+        freq_line = [from_polygon2d(poly, _center_pt_.z) for poly in windrose.frequency_lines]
+        windrose_lines = [from_polygon2d(poly, _center_pt_.z) for poly in windrose.windrose_lines]
         fac = (i + 1) * windrose.compass_radius * 3
         center_pt_2d = Point2D(_center_pt_.x + fac, _center_pt_.y)
 
