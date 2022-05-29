@@ -34,12 +34,13 @@ can be found at: https://github.com/ladybug-tools/lbt-grasshopper/releases
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.4.3'
+ghenv.Component.Message = '1.4.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 import os
+import tempfile
 import subprocess
 
 try:
@@ -49,6 +50,7 @@ except ImportError as e:
 
 try:
     from ladybug_rhino.versioning.diff import current_userobject_version
+    from ladybug_rhino.versioning.change import latest_github_version
     from ladybug_rhino.grasshopper import all_required_inputs, give_warning, \
         give_popup_message
 except ImportError as e:
@@ -82,6 +84,9 @@ if all_required_inputs(ghenv.Component) and _update:
         raise ValueError(stdout)
 
     # give a completion message
+    if version_ is None:
+        temp_dir = tempfile.gettempdir()
+        version_ = latest_github_version('lbt-grasshopper', temp_dir)
     version = 'LATEST' if version_ is None else version_
     success_msg = 'Change to Version {} Successful!'.format(version)
     restart_msg = 'RESTART RHINO to load the new components + library.'
