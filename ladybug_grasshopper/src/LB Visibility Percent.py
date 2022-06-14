@@ -85,7 +85,7 @@ point of interest.
 
 ghenv.Component.Name = "LB Visibility Percent"
 ghenv.Component.NickName = 'VisibilityPercent'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'

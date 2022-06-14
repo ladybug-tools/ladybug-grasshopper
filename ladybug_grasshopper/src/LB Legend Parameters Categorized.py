@@ -65,7 +65,7 @@ of data, binning values into groups based on custom ranges.
 
 ghenv.Component.Name = 'LB Legend Parameters Categorized'
 ghenv.Component.NickName = 'LegendParCategorized'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

@@ -22,7 +22,7 @@ an OSM file in the OpenStudio Application).
 
 ghenv.Component.Name = 'LB Open File'
 ghenv.Component.NickName = 'OpenFile'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

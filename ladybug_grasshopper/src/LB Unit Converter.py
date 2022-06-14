@@ -24,7 +24,7 @@ Convert a value or list of values from one unit to another.
 
 ghenv.Component.Name = 'LB Unit Converter'
 ghenv.Component.NickName = 'Units'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

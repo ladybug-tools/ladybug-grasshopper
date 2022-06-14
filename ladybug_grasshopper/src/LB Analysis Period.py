@@ -30,7 +30,7 @@ Create an Analysis Period to describe a slice of time during the year.
 
 ghenv.Component.Name = 'LB Analysis Period'
 ghenv.Component.NickName = 'AnalysisPeriod'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'

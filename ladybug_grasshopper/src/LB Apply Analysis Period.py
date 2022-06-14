@@ -21,7 +21,7 @@ Apply an analysis period to a data collection.
 
 ghenv.Component.Name = 'LB Apply Analysis Period'
 ghenv.Component.NickName = 'ApplyPer'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

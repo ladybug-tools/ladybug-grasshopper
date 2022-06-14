@@ -66,7 +66,7 @@ radiant exchange.
 
 ghenv.Component.Name = 'LB Outdoor Solar MRT'
 ghenv.Component.NickName = 'OutdoorSolarMRT'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '6'

@@ -56,7 +56,7 @@ be installed on other's machines.
 
 ghenv.Component.Name = 'LB Export UserObject'
 ghenv.Component.NickName = 'ExportUO'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

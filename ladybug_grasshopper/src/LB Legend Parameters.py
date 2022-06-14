@@ -58,7 +58,7 @@ that can accept Legend Parameters from this component.
 
 ghenv.Component.Name = 'LB Legend Parameters'
 ghenv.Component.NickName = 'LegendPar'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

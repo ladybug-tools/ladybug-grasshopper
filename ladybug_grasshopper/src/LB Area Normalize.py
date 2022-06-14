@@ -28,7 +28,7 @@ that a ZeroDivisionError will be raised if the input area is equal to 0.
 
 ghenv.Component.Name = 'LB Area Normalize'
 ghenv.Component.NickName = 'Normalize'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

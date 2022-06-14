@@ -57,7 +57,7 @@ Create a colored plot of any hourly data collection.
 
 ghenv.Component.Name = "LB Hourly Plot"
 ghenv.Component.NickName = 'HourlyPlot'
-ghenv.Component.Message = '1.4.1'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

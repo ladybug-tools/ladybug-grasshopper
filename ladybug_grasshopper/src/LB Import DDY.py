@@ -22,7 +22,7 @@ Import data from a standard .ddy file.
 
 ghenv.Component.Name = "LB Import DDY"
 ghenv.Component.NickName = 'ImportDDY'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'

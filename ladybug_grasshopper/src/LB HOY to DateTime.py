@@ -28,7 +28,7 @@ hour + minute of the day.
 
 ghenv.Component.Name = "LB HOY to DateTime"
 ghenv.Component.NickName = 'DateTime'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

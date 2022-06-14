@@ -32,7 +32,7 @@ outputs have changed) will be circled in red and should be replaced manually.
 
 ghenv.Component.Name = 'LB Sync Grasshopper File'
 ghenv.Component.NickName = 'SyncGHFile'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
