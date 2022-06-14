@@ -28,7 +28,7 @@ polygons.
 
 ghenv.Component.Name = 'LB Mesh to Hatch'
 ghenv.Component.NickName = 'Hatch'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

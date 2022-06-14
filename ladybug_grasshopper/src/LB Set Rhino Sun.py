@@ -33,7 +33,7 @@ This can be help coordinate Rhino visualizations with Ladybug analyses.
 
 ghenv.Component.Name = 'LB Set Rhino Sun'
 ghenv.Component.NickName = 'RhinoSun'
-ghenv.Component.Message = '1.4.1'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

@@ -54,7 +54,7 @@ found, and error will be raised and the component will fail to run.
 
 ghenv.Component.Name = 'LB EPW to DDY'
 ghenv.Component.NickName = 'EPWtoDDY'
-ghenv.Component.Message = '1.4.1'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

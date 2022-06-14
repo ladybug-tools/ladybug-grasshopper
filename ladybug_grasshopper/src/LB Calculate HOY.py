@@ -25,7 +25,7 @@ Calculate hour of the year from month, day, hour, minute.
 
 ghenv.Component.Name = 'LB Calculate HOY'
 ghenv.Component.NickName = 'HOY'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'

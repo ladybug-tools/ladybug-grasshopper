@@ -35,7 +35,7 @@ Calculate heating and cooling degree-days from outdoor dry bulb temperature.
 
 ghenv.Component.Name = 'LB Degree Days'
 ghenv.Component.NickName = 'HDD_CDD'
-ghenv.Component.Message = '1.4.1'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'

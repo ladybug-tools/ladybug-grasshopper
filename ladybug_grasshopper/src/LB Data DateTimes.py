@@ -21,7 +21,7 @@ Get the hours, days, or months of the year associated with the values of a data 
 
 ghenv.Component.Name = 'LB Data DateTimes'
 ghenv.Component.NickName = 'DataDT'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

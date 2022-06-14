@@ -58,7 +58,7 @@ at -5 C and 26 C respectively.
 
 ghenv.Component.Name = "LB Clothing by Temperature"
 ghenv.Component.NickName = 'CloByTemp'
-ghenv.Component.Message = '1.4.0'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
