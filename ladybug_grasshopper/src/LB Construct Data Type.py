@@ -14,6 +14,9 @@ Construct a Ladybug DataType to be used in the header of a ladybug DataCollectio
     Args:
         _name: A name for the data type as a string.
         _unit: A unit for the data type as a string.
+        cumulative_: Boolean to tell whether the data type can be cumulative when it
+            is represented over time (True) or it can only be averaged over time
+            to be meaningful (False).
         categories_: An optional list of text for categories to be associated with
             the data type. These categories will show up in the legend whenever
             data with this data type is visualized. The input should be
@@ -31,7 +34,7 @@ Construct a Ladybug DataType to be used in the header of a ladybug DataCollectio
 
 ghenv.Component.Name = "LB Construct Data Type"
 ghenv.Component.NickName = 'ConstrType'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -56,4 +59,8 @@ if all_required_inputs(ghenv.Component):
             key, value = prop.split(':')
             unit_descr[int(key)] = value.strip()
 
-    type = GenericType(_name, _unit, unit_descr=unit_descr)
+    if cumulative_:
+        type = GenericType(_name, _unit, unit_descr=unit_descr,
+                           point_in_time=False, cumulative=True)
+    else:
+        type = GenericType(_name, _unit, unit_descr=unit_descr)

@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0", 
+  "version": "1.5.1", 
   "nickname": "ConstrType", 
   "outputs": [
     [
@@ -28,6 +28,13 @@
       "default": null
     }, 
     {
+      "access": "item", 
+      "name": "cumulative_", 
+      "description": "Boolean to tell whether the data type can be cumulative when it\nis represented over time (True) or it can only be averaged over time\nto be meaningful (False).", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
       "access": "list", 
       "name": "categories_", 
       "description": "An optional list of text for categories to be associated with\nthe data type. These categories will show up in the legend whenever\ndata with this data type is visualized. The input should be\ntext strings with a category number (integer) and name separated\nby a colon. For example:\n_\n.    -1: Cold\n.     0: Neutral\n.     1: Hot", 
@@ -36,7 +43,7 @@
     }
   ], 
   "subcategory": "1 :: Analyze Data", 
-  "code": "\ntry:\n    from ladybug.datatype.generic import GenericType\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # process the categories_ if they are supplied\n    unit_descr = None\n    if categories_ != []:\n        unit_descr = {}\n        for prop in categories_:\n            key, value = prop.split(':')\n            unit_descr[int(key)] = value.strip()\n\n    type = GenericType(_name, _unit, unit_descr=unit_descr)", 
+  "code": "\ntry:\n    from ladybug.datatype.generic import GenericType\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # process the categories_ if they are supplied\n    unit_descr = None\n    if categories_ != []:\n        unit_descr = {}\n        for prop in categories_:\n            key, value = prop.split(':')\n            unit_descr[int(key)] = value.strip()\n\n    if cumulative_:\n        type = GenericType(_name, _unit, unit_descr=unit_descr,\n                           point_in_time=False, cumulative=True)\n    else:\n        type = GenericType(_name, _unit, unit_descr=unit_descr)\n", 
   "category": "Ladybug", 
   "name": "LB Construct Data Type", 
   "description": "Construct a Ladybug DataType to be used in the header of a ladybug DataCollection.\n-"
