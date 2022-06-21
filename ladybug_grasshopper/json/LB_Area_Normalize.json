@@ -1,12 +1,12 @@
 {
-  "version": "1.5.0", 
+  "version": "1.5.1", 
   "nickname": "Normalize", 
   "outputs": [
     [
       {
         "access": "None", 
         "name": "data", 
-        "description": "A Ladybug data collection object derived from the operation between\nthe two data inputs.", 
+        "description": "A Ladybug data collection object derived that is normalized by the\ninput area.", 
         "type": null, 
         "default": null
       }
@@ -23,7 +23,7 @@
     {
       "access": "item", 
       "name": "_area", 
-      "description": "Script variable Python", 
+      "description": "A number representing area by which all of the data is normalized.", 
       "type": "double", 
       "default": null
     }, 
