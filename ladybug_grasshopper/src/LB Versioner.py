@@ -34,7 +34,7 @@ can be found at: https://github.com/ladybug-tools/lbt-grasshopper/releases
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -52,7 +52,7 @@ try:
     from ladybug_rhino.versioning.diff import current_userobject_version
     from ladybug_rhino.versioning.change import latest_github_version
     from ladybug_rhino.grasshopper import all_required_inputs, give_warning, \
-        give_popup_message
+        give_popup_message, is_user_admin
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -66,7 +66,8 @@ if all_required_inputs(ghenv.Component) and _update:
         'Ladybug.Executor.exe')
 
     # run the command to update everything
-    if os.name == 'nt' and os.path.isfile(executor_path) and 'Program Files' in executor_path:
+    if os.name == 'nt' and os.path.isfile(executor_path) and \
+            'Program Files' in executor_path and not is_user_admin():
         cmd = [
             executor_path, folders.python_exe_path,
             '-m ladybug_rhino change-installed-version'
