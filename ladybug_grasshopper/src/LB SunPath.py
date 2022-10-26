@@ -90,11 +90,15 @@ analysis and shading design.
             point. So casting this output to text and then to a color will
             yeild color objects that can be used for previewing other types
             of geometry with the input data_. Will be None if no _data is connected.
+        vis_set: An object containing VisualizationSet arguments for drawing a detailed
+            version of the Sunpath in the Rhino scene. This can be connected to
+            the "LB Preview Visualization Set" component to display this version
+            of the Sunpath in Rhino.
 """
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -125,7 +129,7 @@ try:
     from ladybug_rhino.togeometry import to_vector2d, to_point2d, to_point3d
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree, \
-        hide_output, show_output, schedule_solution
+        hide_output, show_output, schedule_solution, objectify_output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -221,6 +225,7 @@ if all_required_inputs(ghenv.Component):
     _scale_ = 1 if _scale_ is None else _scale_ # process the scale into a radius
     radius = (100 * _scale_) / conversion_to_meters()
     solar_time_ = False if solar_time_ is None else solar_time_  # process solar time
+    daily_ = False if daily_ is None else daily_  # process the daily input
     projection_ = projection_.title() if projection_ is not None else None
 
     # create a intersection of the input hoys_ and the data hoys
@@ -322,3 +327,10 @@ if all_required_inputs(ghenv.Component):
                 Plane(o=center_pt3d.move(Vector3D(-radius * 1.25, -radius * 1.25))),
                 radius / 15, font)
         show_output(ghenv.Component, 5)
+
+    # create the output VisualizationSet arguments
+    l_par = None
+    if len(legend_par_) != 0:
+        l_par = legend_par_[0] if len(legend_par_) == 1 else legend_par_
+    vis_set = [sp, hoys_, data_, l_par, radius, center_pt3d, solar_time_, daily_, projection_]
+    vis_set = objectify_output('VisualizationSet Aruments [Sunpath]', vis_set)

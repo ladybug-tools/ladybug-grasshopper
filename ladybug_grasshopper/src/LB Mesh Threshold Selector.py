@@ -58,10 +58,10 @@ radiation for photovoltaic panels, etc.
 
 ghenv.Component.Name = 'LB Mesh Threshold Selector'
 ghenv.Component.NickName = 'MeshSelector'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
-ghenv.Component.AdditionalHelpFromDocStrings = '0'
+ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
     from ladybug_rhino.togeometry import to_mesh3d
