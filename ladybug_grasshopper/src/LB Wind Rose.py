@@ -92,15 +92,20 @@ Create a plot of any hourly data by wind directions.
         prevailing: The predominant direction of the outpt wind rose in clockwise
             degrees from north. 0 is North, 90 is East, 180 is South, 270 is West.
         angles: A list of angles corresponding to each windrose directions.
-        calm_hours: The number of hours with calm wind speeds. Only returns a value if the input 
-            _data is wind speed. 
-        histogram_data: The input _data in a histogram structure after it has gone through any of 
-            the statement or period operations input to this component.
+        calm_hours: The number of hours with calm wind speeds. Only returns a value
+            if the input _data is wind speed. 
+        histogram_data: The input _data in a histogram structure after it has gone
+            through any of the statement or period operations input to
+            this component.
+        vis_set: An object containing VisualizationSet arguments for drawing a detailed
+            version of the Wind Rose in the Rhino scene. This can be connected to
+            the "LB Preview Visualization Set" component to display this version
+            of the Wind Rose in Rhino.
 """
 
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -116,7 +121,7 @@ except ImportError as e:
 
 try:
     from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
-    from ladybug_geometry.geometry3d.pointvector import Point3D
+    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
 
@@ -223,11 +228,14 @@ if all_required_inputs(ghenv.Component):
         _max_freq_lines_ = max(max_freqs)
 
     # plot the windroses
+    first_windrose = None
     for i, speed_data in enumerate(_data):
         # make the windrose
         win_dir = _wind_direction if isinstance(speed_data.header.data_type, Speed) \
             else filt_wind_dir
         windrose = WindRose(win_dir, speed_data, _dir_count_)
+        if i == 0:
+            first_windrose = windrose
 
         # set the wind rose properties
         if len(legend_par_) > 0:
@@ -256,18 +264,26 @@ if all_required_inputs(ghenv.Component):
         msh = from_mesh2d(windrose.colored_mesh, _center_pt_.z)
 
         # Make the other graphic outputs
-        legend = legend_objects(windrose.legend)
+        lb_legend = windrose.legend
+        ttl_pt = windrose.container.lower_title_location
+        if _center_pt_.z != 0:
+            move_vec = Vector3D(0, 0, _center_pt_.z)
+            ttl_pt = ttl_pt.move(move_vec)
+            if lb_legend.legend_parameters.is_base_plane_default:
+                lb_legend = lb_legend.duplicate()
+                lb_legend.legend_parameters.base_plane = \
+                    lb_legend.legend_parameters.base_plane.move(move_vec)
+        legend = legend_objects(lb_legend)
         freq_per = windrose._frequency_hours / \
             len([b for a in windrose.histogram_data for b in a])
         freq_text = '\nEach closed polyline shows frequency of {}% = {} hours.'.format(
                 round(freq_per * 100, 1), windrose._frequency_hours)
-        titl = text_objects(title_text(speed_data) + calm_text + freq_text,
-                            windrose.container.lower_title_location,
+        titl = text_objects(title_text(speed_data) + calm_text + freq_text, ttl_pt,
                             windrose.legend_parameters.text_height,
                             windrose.legend_parameters.font)
         compass = compass_objects(windrose.compass, _center_pt_.z, None)
         orient_line = [from_linesegment2d(seg, _center_pt_.z)
-                            for seg in windrose.orientation_lines]
+                       for seg in windrose.orientation_lines]
         freq_line = [from_polygon2d(poly, _center_pt_.z) for poly in windrose.frequency_lines]
         windrose_lines = [from_polygon2d(poly, _center_pt_.z) for poly in windrose.windrose_lines]
         fac = (i + 1) * windrose.compass_radius * 3
@@ -297,3 +313,5 @@ if all_required_inputs(ghenv.Component):
     theta = 180.0 / windrose._number_of_directions
     angles = [(angle + theta) % 360.0 for angle in windrose.angles[:-1]]
     prevailing = windrose.prevailing_direction
+    vis_set = objectify_output(
+        'VisualizationSet Aruments [Sunpath]', [first_windrose, _center_pt_.z])
