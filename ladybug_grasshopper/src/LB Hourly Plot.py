@@ -53,11 +53,15 @@ Create a colored plot of any hourly data collection.
         labels: A list of text objects that label the borders with the time
             intervals that they demarcate.
         title: A text object for the global_title.
+        vis_set: An object containing VisualizationSet arguments for drawing a detailed
+            version of the Hourly Plot in the Rhino scene. This can be connected to
+            the "LB Preview Visualization Set" component to display this version
+            of the Hourly Plot in Rhino.
 """
 
 ghenv.Component.Name = "LB Hourly Plot"
 ghenv.Component.NickName = 'HourlyPlot'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -81,7 +85,8 @@ try:
         from_polyline2d, from_linesegment2d
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.fromobjects import legend_objects
-    from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree
+    from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree, \
+        objectify_output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -102,17 +107,18 @@ if all_required_inputs(ghenv.Component):
     reverse_y_ = reverse_y_ if reverse_y_ is not None else False
 
     # empty lists of objects to be filled with visuals
-    mesh, title, all_legends, all_borders, all_labels = [], [], [], [], []
+    mesh, title, all_legends, all_borders, all_labels, vis_set = [], [], [], [], [], []
 
     for i, data_coll in enumerate(_data):
         try:  # sense when several legend parameters are connected
             lpar = legend_par_[i]
         except IndexError:
-            lpar = None if len(legend_par_) == 0 else legend_par_[-1]
+            lpar = None if len(legend_par_) == 0 else legend_par_[-1].duplicate()
 
         # create the hourly plot object and get the main pieces of geometry
         hour_plot = HourlyPlot(data_coll, lpar, _base_pt_,
                                _x_dim_, _y_dim_, _z_dim_, reverse_y_)
+        
         msh = from_mesh2d(hour_plot.colored_mesh2d, _base_pt_.z) if _z_dim_ == 0 else \
             from_mesh3d(hour_plot.colored_mesh3d)
         mesh.append(msh)
@@ -137,7 +143,7 @@ if all_required_inputs(ghenv.Component):
                                hour_plot.legend_parameters.font, 1, 0)
                   for txt, pt in zip(hour_plot.month_labels, hour_plot.month_label_points2d)]
         all_labels.append(label1 + label2)
-        
+
         # increment the base point so that the next chart doesn't overlap this one
         try:
             next_aper = _data[i + 1].header.analysis_period
@@ -150,7 +156,16 @@ if all_required_inputs(ghenv.Component):
         increment = (next_hour * next_tstep * _y_dim_) + txt_dist
         _base_pt_ = Point3D(_base_pt_.x, _base_pt_.y - increment, _base_pt_.z)
 
+        # append the VisualizationSet arguments with fixed geometry
+        hp_leg_par3d = hour_plot.legend_parameters.properties_3d
+        hp_leg_par3d.base_plane = hp_leg_par3d.base_plane
+        hp_leg_par3d.segment_height = hp_leg_par3d.segment_height
+        hp_leg_par3d.segment_width = hp_leg_par3d.segment_width
+        hp_leg_par3d.text_height = hp_leg_par3d.text_height
+        vis_set.append((hour_plot, _base_pt_.z))
+
     # convert nexted lists into data trees
     legend = list_to_data_tree(all_legends)
     borders = list_to_data_tree(all_borders)
     labels = list_to_data_tree(all_labels)
+    vis_set = objectify_output('VisualizationSet Aruments [HourlyPlot]', vis_set)
