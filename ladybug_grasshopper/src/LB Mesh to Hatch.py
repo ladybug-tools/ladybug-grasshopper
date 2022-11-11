@@ -28,7 +28,7 @@ polygons.
 
 ghenv.Component.Name = 'LB Mesh to Hatch'
 ghenv.Component.NickName = 'Hatch'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -36,7 +36,7 @@ ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:
     from ladybug_rhino.togeometry import to_mesh3d
-    from ladybug_rhino.bakegeometry import add_mesh3d_as_hatch_to_scene
+    from ladybug_rhino.bakegeometry import bake_mesh3d_as_hatch
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
@@ -44,4 +44,4 @@ except ImportError as e:
 
 if all_required_inputs(ghenv.Component) and _run:
     lb_mesh = to_mesh3d(_mesh, color_by_face=False)
-    add_mesh3d_as_hatch_to_scene(lb_mesh, layer_)
+    bake_mesh3d_as_hatch(lb_mesh, layer_)
