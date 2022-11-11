@@ -43,13 +43,18 @@ this component using the "LB Generate Point Grid" component.
 
 ghenv.Component.Name = 'LB Spatial Heatmap'
 ghenv.Component.NickName = 'Heatmap'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
-    from ladybug.graphic import GraphicContainer
+    from ladybug.legend import LegendParameters
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
+
+try:
+    from ladybug_display.visualization import VisualizationSet
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
@@ -65,16 +70,22 @@ except ImportError as e:
 
 
 if all_required_inputs(ghenv.Component):
-    # generate Ladybug objects
+    # translate to Ladybug objects
     lb_mesh = to_mesh3d(_mesh)
     if offset_dom_:
         dom_st, dom_end = offset_dom_
         lb_mesh = lb_mesh.height_field_mesh(_values, (dom_st, dom_end))
-    graphic = GraphicContainer(_values, lb_mesh.min, lb_mesh.max, legend_par_)
+
+    # create the VisualizationSet and GraphicContainer
+    if legend_title_ is not None:
+        legend_par_ = legend_par_.duplicate() if legend_par_ is not None \
+            else LegendParameters()
+        legend_par_.title = legend_title_
+    vis_set = VisualizationSet.from_single_analysis_geo(
+        'Data_Mesh', [lb_mesh], _values, legend_par_)
+    graphic = vis_set.graphic_container()
 
     # generate titles
-    if legend_title_ is not None:
-        graphic.legend_parameters.title = legend_title_
     if global_title_ is not None:
         title = text_objects(global_title_, graphic.lower_title_location,
                              graphic.legend_parameters.text_height * 1.5,
