@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0", 
+  "version": "1.5.1", 
   "nickname": "PET", 
   "outputs": [
     [
@@ -27,7 +27,7 @@
       {
         "access": "None", 
         "name": "comfort", 
-        "description": "Integers noting whether the input conditions are acceptable\naccording to the assigned comfort_parameter.\n_\nValues are one of the following:\n* 0 = uncomfortable\n* 1 = comfortable", 
+        "description": "Integers noting whether the input conditions result in no\nthermal stress (aka. they are comfortable.\n_\nValues are one of the following:\n* 0 = uncomfortable\n* 1 = comfortable", 
         "type": null, 
         "default": null
       }, 

@@ -68,8 +68,8 @@ a specific individual.
         core_temp: The core body temperature of the human subject [C].
         skin_temp: The skin temperature of the human subject underneath the
             clothing layer [C].
-        comfort: Integers noting whether the input conditions are acceptable
-            according to the assigned comfort_parameter.
+        comfort: Integers noting whether the input conditions result in no
+            thermal stress (aka. they are comfortable.
             _
             Values are one of the following:
                 * 0 = uncomfortable
@@ -107,7 +107,7 @@ a specific individual.
 
 ghenv.Component.Name = 'LB PET Comfort'
 ghenv.Component.NickName = 'PET'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

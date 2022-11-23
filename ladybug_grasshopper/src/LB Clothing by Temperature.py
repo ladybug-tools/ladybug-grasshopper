@@ -13,7 +13,8 @@ temperatures to which a human subject is adapting (typically the outdoor
 air temperature).
 _
 This resulting clothing values can be plugged into the _clothing_ input of the
-"LB PMV Comfort" component or the "HB PMV Comfort Map".
+"LB PMV Comfort" component or the "LB PET Comfort" component. They can also
+be used in thermal mapping recipes.
 _
 By default, this function derives clothing levels using a model developed by
 Schiavon, Stefano based on outdoor air temperature, which is implemented in the
@@ -58,7 +59,7 @@ at -5 C and 26 C respectively.
 
 ghenv.Component.Name = "LB Clothing by Temperature"
 ghenv.Component.NickName = 'CloByTemp'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -90,11 +91,12 @@ if all_required_inputs(ghenv.Component):
     # if the temperature is hourly continuous, simplify the values
     if isinstance(_temperature, HourlyContinuousCollection):
         date_times, temps = _temperature.datetimes, _temperature.values
-        last_time, last_val = date_times[0].sub_hour(6), temps[0]
+        last_time = date_times[0].sub_hour(18)  # clothing determined at 6 AM
+        last_val = temps[0]
         new_vals = []
         for v, dt in zip(temps, date_times):
             time_diff = dt - last_time
-            if time_diff.seconds / 3600 >= 12:
+            if time_diff.days >= 1:
                 last_time, last_val = dt, v
             new_vals.append(last_val)
         _temperature = _temperature.duplicate()
