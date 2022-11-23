@@ -1,0 +1,134 @@
+{
+  "version": "1.5.0", 
+  "nickname": "PET", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "pet", 
+        "description": "Physiological Equivalent Temperature (PET) [C]. PET is a \"feels like\"\ntemperature value and is defined as the operative temperature\nof a reference environment that would cause the same physiological\nresponse in the human subject as the environment under study.\nThat is, the same skin temperature and core body temperature.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "core_temp", 
+        "description": "The core body temperature of the human subject [C].", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "skin_temp", 
+        "description": "The skin temperature of the human subject underneath the\nclothing layer [C].", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "comfort", 
+        "description": "Integers noting whether the input conditions are acceptable\naccording to the assigned comfort_parameter.\n_\nValues are one of the following:\n* 0 = uncomfortable\n* 1 = comfortable", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "condition", 
+        "description": "Integers noting the thermal status of a subject.\n_\nValues are one of the following:\n* -1 = cold\n*  0 = netural\n* +1 = hot", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "category", 
+        "description": "Integers noting the thermal status on a nine-point scale.\n_\nValues are one of the following:\n* -4 = very strong/extreme cold stress\n* -3 = strong cold stress\n* -2 = moderate cold stress\n* -1 = slight cold stress\n* 0 = no thermal stress\n* +1 = slight heat stress\n* +2 = moderate heat stress\n* +3 = strong heat stress\n* +4 = very strong/extreme heat stress", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "core_cond", 
+        "description": "Integers noting the classification of core body temperature.\n_\nValues are one of the following:\n* -2 = Hypothermia\n* -1 = Cold\n* 0 = Normal\n* +1 = Hot\n* +2 = Hyperthermia", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "comf_obj", 
+        "description": "A Python object containing all inputs and results of the\nanalysis.  This can be plugged into components like the \"Comfort\nStatistics\" component to get further information.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_air_temp", 
+      "description": "Data Collection or individual value for air temperature in C.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_mrt_", 
+      "description": "Data Collection or individual value of mean radiant temperature\n(MRT) in C. Default is the same as the air_temp.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_rel_humid", 
+      "description": "Data Collection or individual value for relative humidity in %.\nNote that percent values are between 0 and 100.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_air_speed_", 
+      "description": "Data Collection or individual value for air speed in m/s.\nDefault is a very low speed of 0.1 m/s, which is typical of the\nroom air speeds induced by HVAC systems.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_pressure_", 
+      "description": "A value or data collection representing atmospheric pressure [Pa]\nDefault is to use air pressure at sea level (101,325 Pa).", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_met_rate_", 
+      "description": "Data Collection or individual value of metabolic rate in met.\nNote that the original PET model requires that the activity of\nthe human subject be accounted for as additional Watts above\nthe basal metabolism, which is often difficult to estimate. In\norder to accept an input in [met], it is assumed that 1 met refers\nto Resting Metabolic Rate (RMR) and this is 1.17 times the male\nBasal Metabolic Rate (BMR) or 1.22 times the female BMR.\nDefault is set to 2.4 met for walking. Typical values include\nthe following.\n_\n* 1 met = Metabolic rate of a resting seated person\n* 1.2 met = Metabolic rate of a standing person\n* 2.4 met = Metabolic rate of a person walking at ~1 m/s (2 mph)", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_clothing_", 
+      "description": "Data Collection or individual value of clothing insulation in clo.\nDefault is set to 0.7 clo for long sleeve shirt and pants. Typical values\ninclude the following.\n_\n* 1 clo = Three-piece suit\n* 0.5 clo = Shorts + T-shirt\n* 0 clo = No clothing", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "pet_par_", 
+      "description": "Optional comfort parameters from the \"LB PET Body Parameters\"\ncomponent to specify the body properties of the human subject.\nThis includes the age, height, sex, body mass, and more.\nThe default attempts to model as average of a human body as\npossible.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_run", 
+      "description": "Set to True to run the component.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datatype.temperature import Temperature\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_comfort.collection.pet import PET\n    from ladybug_comfort.parameter.pet import PETParameter\n    from ladybug_comfort.pet import physiologic_equivalent_temperature, pet_category, \\\n        pet_category_humid, core_temperature_category\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef extract_collections(input_list):\n    \"\"\"Process inputs into collections and floats.\"\"\"\n    defaults = [None, _air_temp, 0.1, None, 2.4, 0.7, 101325]\n    data_colls = []\n    for i, input in enumerate(input_list):\n        if input is None:\n            input_list[i] = defaults[i]\n        elif isinstance(input, BaseCollection):\n            data_colls.append(input)\n        else:\n            try:\n                input_list[i] = float(input)\n            except ValueError as e:\n                raise TypeError('input {} is not valid. Expected float or '\n                                'DataCollection. Got {}'.format(input, type(input)))\n    return input_list, data_colls\n\n\nif all_required_inputs(ghenv.Component) and _run is True:\n    # Process inputs and assign defaults.\n    input_list = [_air_temp, _mrt_, _air_speed_, _rel_humid,\n                  _met_rate_, _clothing_, _pressure_]\n    input, data_colls = extract_collections(input_list)\n    pet_par = pet_par_ or PETParameter()\n\n    if data_colls == []:\n        # The inputs are all individual values.\n        pet_result = physiologic_equivalent_temperature(\n            input[0], float(input[1]), input[2], input[3], input[4], input[5],\n            pet_par.age, pet_par.sex, pet_par.height, pet_par.body_mass,\n            pet_par.posture, input[6])\n        pet = pet_result['pet']\n        core_temp = pet_result['t_core']\n        skin_temp = pet_result['t_skin']\n        cat_func = pet_category_humid if pet_par.humid_acclimated else pet_category\n        category = cat_func(pet)\n        core_cond = core_temperature_category(pet_result['t_core'])\n        comfort = category == 0\n        condition = 0\n        if category < 0:\n            condition = -1\n        elif category > 0:\n            condition = 1\n    else:\n        # The inputs include Data Collections.\n        if not isinstance(_air_temp, BaseCollection):\n            _air_temp = data_colls[0].get_aligned_collection(\n                float(_air_temp), Temperature(), 'C')\n\n        comf_obj = PET(\n            _air_temp, _rel_humid, _mrt_, _air_speed_, _pressure_,\n            _met_rate_, _clothing_, pet_par)\n        pet = comf_obj.physiologic_equivalent_temperature\n        core_temp = comf_obj.core_body_temperature\n        skin_temp = comf_obj.skin_temperature\n        comfort = comf_obj.is_comfortable\n        condition = comf_obj.thermal_condition\n        category = comf_obj.pet_category\n        core_cond = comf_obj.core_temperature_category\n", 
+  "category": "Ladybug", 
+  "name": "LB PET Comfort", 
+  "description": "Calculate Physiological Equivalent Temperature (PET).\n_\nPET uses the Munich Energy Balance Model (MEMI), which is arguably the most\ndetailed 3-node human energy balance model in common use today. It can account\nfor various physiological features of the human subject, including age, sex,\nheight, and body mass, making it one of the only models that is suitable for\nforecasting the thermal experience of a specific individual. This also makes\nit one of the better models for estimating core body temperature and whether\na given set of conditions is likely to induce hypothermia or hyperthermia in\na specific individual.\n-"
+}
