@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0", 
+  "version": "1.5.1", 
   "nickname": "SolarBodyPar", 
   "outputs": [
     [
@@ -16,7 +16,7 @@
     {
       "access": "item", 
       "name": "_posture_", 
-      "description": "A text string indicating the posture of the body. Letters must\nbe lowercase.  Choose from the following:\n- standing\n- seated\n- supine\nDefault is \"standing\".", 
+      "description": "A text string indicating the posture of the body. Letters must\nbe lowercase. Default is \"standing\". Choose from the following:\n- standing\n- seated\n- supine", 
       "type": "string", 
       "default": null
     }, 

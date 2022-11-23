@@ -10,10 +10,11 @@
 """
 Calculate Predicted Mean Vote (PMV).
 -
-PMV is a thermal comfort model for use on the interior of buildings
-where a heating or cooling system is operational.
-Note that, for naturally ventilated buildings, the Adaptive thermal
-comfort model should be used.
+PMV is a thermal comfort model for use on the interior of buildings where a
+heating or cooling system is operational. For naturally ventilated buildings,
+the Adaptive thermal comfort model is recommended and, for outdoor conditions,
+models such as Universal Thermal Climate Index (UTCI) or Physiological
+Equivalent Temperature (PET) are recommended.
 -
 
     Args:
@@ -28,12 +29,14 @@ comfort model should be used.
         _met_rate_: Data Collection or individual value of metabolic rate in met.
             Default is set to 1.1 met for seated, typing. Typical values include
             the following.
+            _
             * 1 met = Metabolic rate of a resting seated person
             * 1.2 met = Metabolic rate of a standing person
             * 2.4 met = Metabolic rate of a person walking at ~1 m/s (2 mph)
         _clothing_: Data Collection or individual value of clothing insulation in clo.
             Default is set to 0.7 clo for long sleeve shirt and pants. Typical values
             include the following.
+            _
             * 1 clo = Three-piece suit
             * 0.5 clo = Shorts + T-shirt
             * 0 clo = No clothing
@@ -105,7 +108,7 @@ comfort model should be used.
 
 ghenv.Component.Name = 'LB PMV Comfort'
 ghenv.Component.NickName = 'PMV'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

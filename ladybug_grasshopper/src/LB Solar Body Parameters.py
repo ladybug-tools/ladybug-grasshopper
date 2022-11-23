@@ -17,11 +17,10 @@ mean radiant temperature (MRT) deltas as a result of being in the sun.
 
     Args:
         _posture_: A text string indicating the posture of the body. Letters must
-            be lowercase.  Choose from the following:
+            be lowercase. Default is "standing". Choose from the following:
                 - standing
                 - seated
                 - supine
-            Default is "standing".
         _sharp_: A number between 0 and 180 representing the solar horizontal
             angle relative to front of person (SHARP). 0 signifies sun that is
             shining directly into the person's face and 180 signifies sun that
@@ -48,7 +47,7 @@ mean radiant temperature (MRT) deltas as a result of being in the sun.
 
 ghenv.Component.Name = 'LB Solar Body Parameters'
 ghenv.Component.NickName = 'SolarBodyPar'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
