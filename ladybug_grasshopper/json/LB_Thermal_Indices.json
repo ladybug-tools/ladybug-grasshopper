@@ -1,0 +1,64 @@
+{
+  "version": "1.5.0", 
+  "nickname": "ThermalIndices", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "wbgt", 
+        "description": "A data collection or value for Wet Bulb Globe Temperature (WBGT) [C].\nWBGT is a type of feels-like temperature that is widely used as a\nheat stress index (ISO 7243). It is incorporates the effect of\ntemperature, humidity, wind speed, and mean radiant temperature\n(optionally including the effect of sun).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "heat_index", 
+        "description": "A data collection or value for Heat Index (HI) temperature [C].\nHeat index is derived from original work carried out by Robert G.\nSteadman, which defined heat index through large tables of empirical\ndata. The formula here approximates the heat index to within +/- 0.7C\nand is the result of a multivariate fit. Heat index was adopted by\nthe US's National Weather Service (NWS) in 1979.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "wind_chill", 
+        "description": "A data collection or value for Wind Cill Temperature (WCT) [C].\nWind Chill Index is derived from original work carried out by\nGregorczuk. It qualifies thermal sensations of a person in\nwintertime. It is especially useful at low and very low air\ntemperature and at high wind speed.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_air_temp", 
+      "description": "Data Collection or individual value for air temperature in C.\nThis input is used by all three metrics.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_mrt_", 
+      "description": "Data Collection or individual value for mean radiant temperature\n(MRT) in C. Default is the same as the air_temp. This input only\naffects the WBGT.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_rel_humid", 
+      "description": "Data Collection or individual value for relative humidity in %.\nNote that percent values are between 0 and 100. This input affects\nWBGT as well as HI.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_wind_vel", 
+      "description": "Data Collection or individual value for meteoroligical wind velocity\nat 10 m above ground level in m/s. This is used by both WBGT and WCT.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug_comfort.wbgt import wet_bulb_globe_temperature\n    from ladybug_comfort.hi import heat_index as heat_index_temperature\n    from ladybug_comfort.wc import windchill_temp\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.datatype.temperature import WetBulbGlobeTemperature, \\\n        HeatIndexTemperature, WindChillTemperature\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    if _mrt_ is None:\n        _mrt_ = _air_temp\n\n    wbgt = HourlyContinuousCollection.compute_function_aligned(\n        wet_bulb_globe_temperature, [_air_temp, _mrt_, _wind_vel, _rel_humid],\n        WetBulbGlobeTemperature(), 'C')\n\n    heat_index = HourlyContinuousCollection.compute_function_aligned(\n        heat_index_temperature, [_air_temp, _rel_humid],\n        HeatIndexTemperature(), 'C')\n\n    wind_chill = HourlyContinuousCollection.compute_function_aligned(\n        windchill_temp, [_air_temp, _wind_vel],\n        WindChillTemperature(), 'C')", 
+  "category": "Ladybug", 
+  "name": "LB Thermal Indices", 
+  "description": "Calculate thermal indices that have historically been used by meteorologists.\nAll of them are \"feels like\" temperatures that attempt to account for factors\nbeyond sir temperature. These include the following:\n_\n* Wet Bulb Globe Temperature (WBGT)\n* Heat Index (HI)\n* Wind Chill Temperature (WCT)\n_\nMost of these indices have fallen out of use in favor of Universal Thermal\nClimate Index (UTCI). However, they are still used in some regions and are a\npart of older codes and standards.\n-"
+}
