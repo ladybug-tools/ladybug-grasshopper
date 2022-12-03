@@ -1,0 +1,64 @@
+{
+  "version": "1.5.0", 
+  "nickname": "WindSpeed", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "air_speed", 
+        "description": "A data collection or single value for the air speed at the input\n_height_ above the ground for the input _terrain_. This can be plugged\ninto thermal comfort models like PET or SET/PMV. Alternatively, by\nconnecting the wind data to the \"LB Wind rose\" component, a wind rose\nfor the input _terrain_ and _height_ above the ground can be produced.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_met_wind_vel", 
+      "description": "A data collection of meteorological wind speed measured at\nthe _met_height_ with the _met_terrian [m/s]. Typically, this comes\nfrom the \"LB Import EPW\" component. This can also be a number for\nthe meteorological wind speed in m/s.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_height_", 
+      "description": "The height above the ground to be evaluated in meters. (Default: 1 meter,\nwhich is suitable for most thermal comfort models like PET and SET.).", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_terrain_", 
+      "description": "Text string that sets the terrain class associated with the output air_speed.\nThis can also be an integer that codes for the terrain. (Default: city).\nMust be one the following.\n_\n0 = city - 50% of buildings above 21m over a distance of at least 2000m upwind.\n1 = suburban - suburbs, wooded areas.\n2 = country - open, with scattered objects generally less than 10m high.\n3 = water - flat areas downwind of a large water body (max 500m inland).", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_met_height_", 
+      "description": "A number for the height above the ground at which the meteorological\nwind speed is measured in meters. (Default: 10 meters, which is the\nstandard used by most airports and EPW files).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_met_terrain_", 
+      "description": "Text string that sets the terrain class associated with the\nmeteorological wind speed. This can also be an integer that codes\nfor the terrain. (Default: country, which is typical of most\nairports where wind measurements are taken). Must be one the following.\n_\n0 = city - 50% of buildings above 21m over a distance of at least 2000m upwind.\n1 = suburban - suburbs, wooded areas.\n2 = country - open, with scattered objects generally less than 10m high.\n3 = water - flat areas downwind of a large water body (max 500m inland).", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "log_law_", 
+      "description": "A boolean to note whether the wind profile should use a logarithmic\nlaw to determine wind speeds instead of the default power law,\nwhich is used by EnergyPlus. (Default: False).", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\n    from ladybug.windprofile import WindProfile\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n# dictionary to map integers to terrain types\nTERRAIN_TYPES = {\n    '0': 'city',\n    '1': 'suburban',\n    '2': 'country',\n    '3': 'water',\n    'city': 'city',\n    'suburban': 'suburban',\n    'country': 'country',\n    'water': 'water'\n}\n\n\nif all_required_inputs(ghenv.Component):\n    # set default values\n    _height_ = 1 if _height_ is None else _height_\n    _terrain_ = 'city' if _terrain_ is None else TERRAIN_TYPES[_terrain_.lower()]\n    _met_height_ = 10 if _met_height_ is None else _met_height_\n    _met_terrain_ = 'country' if _met_terrain_ is None \\\n        else TERRAIN_TYPES[_met_terrain_.lower()]\n    log_law_ = False if log_law_ is None else log_law_\n\n    # create the wind profile object and extract the air speeds\n    profile = WindProfile(_terrain_, _met_terrain_, _met_height_, log_law_)\n    if isinstance(_met_wind_vel, BaseCollection):\n        air_speed = profile.calculate_wind_data(_met_wind_vel, _height_)\n    else:  # assume that it is a single number\n        _met_wind_vel = float(_met_wind_vel)\n        air_speed = profile.calculate_wind(_met_wind_vel, _height_)\n", 
+  "category": "Ladybug", 
+  "name": "LB Wind Speed", 
+  "description": "Calculate wind speed at a specific height above the ground for a given terrain type.\n_\nBy default, the component will calculate wind speed at a height of 1 meter, which\nis suitable for most thermal comfort models like PET and SET. Alternatively, by\nhooking up the output wind data to the \"LB Wind rose\" component, a wind rose\nfor any terrain or at height above the ground can be produced.\n_\nThis component uses the same wind profile function as used by the \"LB Wind Profile\"\ncomponent.\n-"
+}

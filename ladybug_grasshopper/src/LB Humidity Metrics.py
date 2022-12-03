@@ -28,10 +28,10 @@ Calculate humidity metrics from relative humidity, dry bulb temperature and
 
 ghenv.Component.Name = "LB Humidity Metrics"
 ghenv.Component.NickName = 'HumidityR'
-ghenv.Component.Message = '1.5.1'
+ghenv.Component.Message = '1.5.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '4'
+ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:
     from ladybug.psychrometrics import humid_ratio_from_db_rh, enthalpy_from_db_hr, \
