@@ -104,10 +104,10 @@ direction (eg. NE).
         mesh_arrows: A list of colored mesh objects that represent the wind speeds
             along the height of the wind profile.
         profile_curve: A curve outlining the wind speed as it changes with height.
-        speed_axis: A list of line segments and text objects that that mark the X axis,
-            which realtes to the wind speed in (m/s).
-        height_axis: A list of line segments and text objects that that mark the Y axis,
-            which realtes to the the height above the ground in Rhino model units.
+        speed_axis: A list of line segments and text objects that mark the X axis,
+            which relates to the wind speed in (m/s).
+        height_axis: A list of line segments and text objects that mark the Y axis,
+            which relates to the the height above the ground in Rhino model units.
         legend: A legend for the colored mesh_arrows, which notes their speed.
         title: A text object for the global_title.
         vis_set: An object containing VisualizationSet arguments for drawing a detailed
@@ -118,9 +118,9 @@ direction (eg. NE).
 
 ghenv.Component.Name = 'LB Wind Profile'
 ghenv.Component.NickName = 'WindProfile'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '1 :: Analyze Data'
+ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
 
 import math
@@ -146,7 +146,7 @@ try:
         from_mesh3d, from_linesegment3d, from_polyline3d
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.fromobjects import legend_objects
-    from ladybug_rhino.grasshopper import all_required_inputs
+    from ladybug_rhino.grasshopper import all_required_inputs, objectify_output
     from ladybug_rhino.config import conversion_to_meters, units_system
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
@@ -300,3 +300,8 @@ if all_required_inputs(ghenv.Component):
     anchor_pts = [from_point3d(pt) for pt in anchor_pts]
     wind_vectors = [from_vector3d(vec) for vec in wind_vectors]
     wind_speeds.insert(0, 0)  # insert 0 wind speed for bottom of curve
+
+    # create the output VisualizationSet arguments
+    vis_set = [profile, met_ws, met_wd, legend_par_, bp, _profile_height_,
+               _vec_spacing_, len_d, height_d, max_speed, scale_fac, feet_labels]
+    vis_set = objectify_output('VisualizationSet Aruments [WindProfile]', vis_set)
