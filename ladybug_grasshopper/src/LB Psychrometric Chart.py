@@ -94,11 +94,15 @@ weather data or indoor temperature and humidity ratios from an energy simulation
         psych_chart: A Psychrometric Chart object, which can be connected to any
             of the "Comfort Polygon" components in order to plot polygons on
             the chart and perform thermal comfort analyses on the data.
+        vis_set: An object containing VisualizationSet arguments for drawing a detailed
+            version of the Psychrometric Chart in the Rhino scene. This can be
+            connected to the "LB Preview Visualization Set" component to display
+            this version of the Psychrometric Chart in Rhino.
 """
 
 ghenv.Component.Name = 'LB Psychrometric Chart'
 ghenv.Component.NickName = 'PsychrometricChart'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -125,7 +129,7 @@ try:
     from ladybug_rhino.fromobjects import legend_objects
     from ladybug_rhino.color import color_to_color
     from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree, \
-        hide_output, show_output, longest_list
+        hide_output, show_output, longest_list, objectify_output
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -217,6 +221,7 @@ if all_required_inputs(ghenv.Component):
     points = []
     data_colls = []
     psych_chart = []
+    vis_set = []
 
     # loop through the input temperatures and humidity and plot psych charts
     for j, (temperature, rel_humid) in enumerate(zip(_temperature, _rel_humidity)):
@@ -268,11 +273,15 @@ if all_required_inputs(ghenv.Component):
             title_items = ['Time [hr]'] + ['{}: {}'.format(k, v) for k, v in meta_i]
         else:
             title_items = ['Psychrometric Chart']
+        ttl_tp = psy_chart.container.upper_title_location
+        if z != 0:
+            ttl_tp = Plane(n=ttl_tp.n, o=Point3D(ttl_tp.o.x, ttl_tp.o.y, z), x=ttl_tp.x)
         title[j + j * len(data_)].append(text_objects(
-            '\n'.join(title_items), psy_chart.container.upper_title_location,
+            '\n'.join(title_items), ttl_tp,
             psy_chart.legend_parameters.text_height * 1.5,
             psy_chart.legend_parameters.font, 0, 0))
         psych_chart.append(psy_chart)
+        vs_args = [psy_chart]
 
         # plot the data on the chart
         lb_points = psy_chart.data_points
@@ -280,7 +289,13 @@ if all_required_inputs(ghenv.Component):
         if len(lb_points) != 1:  # hide the points and just display the mesh
             hide_output(ghenv.Component, 8)
             mesh.append(from_mesh2d(psy_chart.colored_mesh, z))
-            legend.append(legend_objects(psy_chart.legend))
+            leg = psy_chart.legend
+            if z != 0 and leg.legend_parameters.is_base_plane_default:
+                nl_par = leg.legend_parameters.duplicate()
+                m_vec = Vector3D(0, 0, z)
+                nl_par.base_plane = nl_par.base_plane.move(m_vec)
+                leg._legend_par = nl_par
+            legend.append(legend_objects(leg))
         else:  # show the single point on the chart
             show_output(ghenv.Component, 8)
 
@@ -288,6 +303,7 @@ if all_required_inputs(ghenv.Component):
         if len(data_) != 0:
             data_colls.append(all_data[:-2])
             move_dist = x_dim * (psy_chart.max_temperature - psy_chart.min_temperature + 20)
+            vs_leg_par = []
             for i, d in enumerate(all_data[:-2]):
                 # create a new psychrometric chart offset from the original
                 new_pt = Point2D(base_pt.x + move_dist * (i + 1), base_pt.y)
@@ -300,17 +316,31 @@ if all_required_inputs(ghenv.Component):
                 psych_chart.append(psy_chart)
                 lb_mesh, container = psy_chart.data_mesh(d, leg_par_by_index(i + 1))
                 mesh.append(from_mesh2d(lb_mesh, z))
-                legend.append(legend_objects(container.legend))
+                leg = container.legend
+                vs_leg_par.append(leg.legend_parameters)
+                if z != 0 and leg.legend_parameters.is_base_plane_default:
+                    nl_par = leg.legend_parameters.duplicate()
+                    m_vec = Vector3D(0, 0, z)
+                    nl_par.base_plane = nl_par.base_plane.move(m_vec)
+                    leg._legend_par = nl_par
+                legend.append(legend_objects(leg))
                 move_vec = Vector2D(base_pt.x + move_dist * (i + 1), 0)
                 points.append([from_point2d(pt.move(move_vec)) for pt in lb_points])
 
                 # add a title for the new chart
                 title_items = ['{} [{}]'.format(d.header.data_type, d.header.unit)] + \
                     ['{}: {}'.format(key, val) for key, val in d.header.metadata.items()]
+                ttl_tp = psy_chart.container.upper_title_location
+                if z != 0:
+                    ttl_tp = Plane(n=ttl_tp.n, o=Point3D(ttl_tp.o.x, ttl_tp.o.y, z), x=ttl_tp.x)
                 title[j + j * len(data_) + (i + 1)].append(text_objects(
-                    '\n'.join(title_items), psy_chart.container.upper_title_location,
+                    '\n'.join(title_items), ttl_tp,
                     psy_chart.legend_parameters.text_height * 1.5,
                     psy_chart.legend_parameters.font, 0, 0))
+            vs_args.extend([all_data[:-2], vs_leg_par, z, bool(plot_wet_bulb_)])
+        else:
+            vs_args.extend([None, None, z, bool(plot_wet_bulb_)])
+        vis_set.append(vs_args)
 
     # upack all of the python matrices into data trees
     title = list_to_data_tree(title)
@@ -321,3 +351,6 @@ if all_required_inputs(ghenv.Component):
     legend = list_to_data_tree(legend)
     points = list_to_data_tree(points)
     data = list_to_data_tree(data_colls)
+
+    # output arguments for the visualization set
+    vis_set = objectify_output('VisualizationSet Aruments [PsychrometricChart]', vis_set)
