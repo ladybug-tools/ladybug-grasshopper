@@ -69,26 +69,30 @@ mesh that shows the range of the data within specific percentiles.
             and the intervals of the Y-axis.
         y_title: A text oject for the Y-axis title.
         title: A text object for the global_title.
+        vis_set: An object containing VisualizationSet arguments for drawing a detailed
+            version of the Monthly Chart in the Rhino scene. This can be connected to
+            the "LB Preview Visualization Set" component to display this version
+            of the Monthly Chart in Rhino.
 """
 
 ghenv.Component.Name = 'LB Monthly Chart'
 ghenv.Component.NickName = 'MonthlyChart'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
-    from ladybug.monthlychart import MonthlyChart
-except ImportError as e:
-    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
-
-try:
     from ladybug_geometry.geometry2d.pointvector import Point2D
-    from ladybug_geometry.geometry3d.pointvector import Point3D
+    from ladybug_geometry.geometry3d.pointvector import Vector3D, Point3D
     from ladybug_geometry.geometry3d.plane import Plane
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
+
+try:
+    from ladybug.monthlychart import MonthlyChart
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
     from ladybug_rhino.config import conversion_to_meters, tolerance
@@ -99,7 +103,8 @@ try:
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.colorize import ColoredPolyline
     from ladybug_rhino.fromobjects import legend_objects
-    from ladybug_rhino.grasshopper import all_required_inputs, schedule_solution
+    from ladybug_rhino.grasshopper import all_required_inputs, objectify_output, \
+        schedule_solution
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -138,17 +143,29 @@ if all_required_inputs(ghenv.Component) and None not in _data:
     borders = [from_polyline2d(month_chart.chart_border, z_val)] + \
             [from_linesegment2d(line, z_val) for line in month_chart.y_axis_lines] + \
             [from_linesegment2d(line, z_val_tol) for line in month_chart.month_lines]
-    legend = legend_objects(month_chart.legend)
+    leg = month_chart.legend
+    if z_val != 0 and leg.legend_parameters.is_base_plane_default:
+        nl_par = leg.legend_parameters.duplicate()
+        m_vec = Vector3D(0, 0, z_val)
+        nl_par.base_plane = nl_par.base_plane.move(m_vec)
+        leg._legend_par = nl_par
+    legend = legend_objects(leg)
 
     # process all of the text-related outputs
     title_txt = month_chart.title_text if global_title_ is None else global_title_
     txt_hgt = month_chart.legend_parameters.text_height
     font = month_chart.legend_parameters.font
-    title = text_objects(title_txt, month_chart.lower_title_location, txt_hgt, font)
+    ttl_tp = month_chart.lower_title_location
+    if z_val != 0:
+        ttl_tp = Plane(n=ttl_tp.n, o=Point3D(ttl_tp.o.x, ttl_tp.o.y, z_val), x=ttl_tp.x)
+    title = text_objects(title_txt, ttl_tp, txt_hgt, font)
 
     # process the first y axis
     y1_txt = month_chart.y_axis_title_text1 if len(y_axis_title_) == 0 else y_axis_title_[0]
-    y_title = text_objects(y1_txt, month_chart.y_axis_title_location1, txt_hgt, font)
+    y1_tp = month_chart.y_axis_title_location1
+    if z_val != 0:
+        y1_tp = Plane(n=y1_tp.n, o=Point3D(y1_tp.o.x, y1_tp.o.y, z_val), x=y1_tp.x)
+    y_title = text_objects(y1_txt, y1_tp, txt_hgt, font)
     if time_marks_:
         txt_h = _x_dim_ / 20 if _x_dim_ / 20 < txt_hgt * 0.75 else txt_hgt * 0.75
         label1 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_h, font, 1, 0)
@@ -164,7 +181,10 @@ if all_required_inputs(ghenv.Component) and None not in _data:
     # process the second y axis if it exists
     if month_chart.y_axis_title_text2 is not None:
         y2_txt = month_chart.y_axis_title_text2 if len(y_axis_title_) <= 1 else y_axis_title_[1]
-        y_title2 = text_objects(y2_txt, month_chart.y_axis_title_location2, txt_hgt, font)
+        y2_tp = month_chart.y_axis_title_location2
+        if z_val != 0:
+            y2_tp = Plane(n=y2_tp.n, o=Point3D(y2_tp.o.x, y2_tp.o.y, z_val), x=y2_tp.x)
+        y_title2 = text_objects(y2_txt, y2_tp, txt_hgt, font)
         y_title = [y_title, y_title2]
         label3 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z_val)), txt_hgt, font, 0, 3)
                  for txt, pt in zip(month_chart.y_axis_labels2, month_chart.y_axis_label_points2)]
@@ -182,3 +202,7 @@ if all_required_inputs(ghenv.Component) and None not in _data:
         # CWM: I don't know why we have to re-schedule the solution but this is the
         # only way I found to get the colored polylines to appear (redraw did not work).
         schedule_solution(ghenv.Component, 2)
+
+    # output arguments for the visualization set
+    vis_set = [month_chart, z_val, time_marks_, global_title_, y_axis_title_]
+    vis_set = objectify_output('VisualizationSet Aruments [MonthlyChart]', vis_set)
