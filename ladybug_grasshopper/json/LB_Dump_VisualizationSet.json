@@ -1,0 +1,57 @@
+{
+  "version": "1.5.0", 
+  "nickname": "DumpVisSet", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "vs_file", 
+        "description": "The path of the file where the VisualisationSet is saved.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_vs", 
+      "description": "A VisualizationSet object to be written to a file. Typically, this is\nthe output from the \"LB Preview VisualizationSet\" component but\nit can also be a custom VisualiztionSet object created with the\nLadybug Tools SDK.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_format_", 
+      "description": "Text or an integer to set the format of the output file.\nChoose from the options below. (Default: JSON).\n* 0 = JSON - Cross-language and handles any types of collections\n* 1 = PKL - Compressed format only readable with Python", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_name_", 
+      "description": "A name for the file to which the VisualizationSet will be written.\nThe default is derived from the identifier of the visualization set.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_folder_", 
+      "description": "An optional directory into which the VisualizationSet will be\nwritten.  The default is set to a user-specific simulation folder.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_dump", 
+      "description": "Set to \"True\" to save the VisualizationSet to a file.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\nimport os\n\ntry:\n    from ladybug.config import folders\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:  # import the core ladybug_{{cad}} dependencies\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\nFORMAT_MAP = {\n    '0': 'json',\n    '1': 'pkl',\n    'json': 'json',\n    'pkl': 'pkl'\n}\n\n\nif all_required_inputs(ghenv.Component) and _dump:\n        # extract the VisualizationSet object if the input is the bake-able form\n    if hasattr(_vs, 'vis_set'):\n        _vs = _vs.vis_set\n\n    # set the component defaults\n    name = _name_ if _name_ is not None else _vs.identifier\n    home_folder = os.getenv('HOME') or os.path.expanduser('~')\n    folder = _folder_ if _folder_ is not None else \\\n        os.path.join(home_folder, 'simulation')\n    file_format = 'json' if _format_ is None else FORMAT_MAP[_format_.lower()]\n\n    # write the data into the appropriate format\n    if file_format == 'json':\n        vs_file = _vs.to_json(name, folder)\n    elif file_format == 'pkl':\n        vs_file = _vs.to_pkl(name, folder)\n", 
+  "category": "Ladybug", 
+  "name": "LB Dump VisualizationSet", 
+  "description": "Dump a Ladybug VisualiztionSet into a file.\n_\nThe \"LB Preview VisualizationSet\" component can be used to visualize the content\nfrom the file back into Grasshopper.\n-"
+}

@@ -1,5 +1,5 @@
 {
-  "version": "1.5.0", 
+  "version": "1.5.1", 
   "nickname": "DumpData", 
   "outputs": [
     [
@@ -44,7 +44,7 @@
     {
       "access": "item", 
       "name": "_dump", 
-      "description": "Set to \"True\" to save the honeybee objects to file.", 
+      "description": "Set to \"True\" to save the data collection to a file.", 
       "type": "bool", 
       "default": null
     }
