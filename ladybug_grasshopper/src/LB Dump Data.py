@@ -24,7 +24,7 @@ to load the data collections from the file back into Grasshopper.
             written. (Default: 'data').
         _folder_: An optional directory into which the data collections will be
             written.  The default is set to a user-specific simulation folder.
-        _dump: Set to "True" to save the honeybee objects to file.
+        _dump: Set to "True" to save the data collection to a file.
 
     Returns:
         report: Errors, warnings, etc.
@@ -33,7 +33,7 @@ to load the data collections from the file back into Grasshopper.
 
 ghenv.Component.Name = 'LB Dump Data'
 ghenv.Component.NickName = 'DumpData'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
