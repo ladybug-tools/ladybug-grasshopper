@@ -8,10 +8,10 @@
 # @license AGPL-3.0-or-later <https://spdx.org/licenses/AGPL-3.0-or-later>
 
 """
-Get a matrix containing radiation values from each patch of a sky dome.
+Get a matrix representing the benefit/harm of radiation based on temperature data.
 _
-Creating this matrix is a necessary pre-step before doing incident radiation
-analysis with Rhino geometry or generating a radiation rose.
+Radiation benefit matrices are helpful for evaluating building massing and facade
+designs in terms of passive solar heat gain vs. cooling energy increase.
 _
 This component uses Radiance's gendaymtx function to calculate the radiation
 for each patch of the sky. Gendaymtx is written by Ian Ashdown and Greg Ward.
@@ -26,6 +26,14 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
             direction to North. (Default: 0)
         _location: A ladybug Location that has been output from the "LB Import EPW"
             component or the "LB Construct Location" component.
+        _temperature: An annual hourly DataCollection of temperature, which will be used
+            to establish whether radiation is desired or not for each time step.
+        _bal_temp_: The temperature in Celsius between which radiation switches from being a
+            benefit to a harm. Typical residential buildings have balance temperatures
+            as high as 18C and commercial buildings tend to have lower values
+            around 12C. (Default 15C).
+        _bal_offset_: The temperature offset from the balance temperature in Celsius where
+            radiation is neither harmful nor helpful. (Default: 2).
         _direct_rad: An annual hourly DataCollection of Direct Normal Radiation such
             as that which is output from the "LB Import EPW" component or the
             "LB Import STAT" component.
@@ -53,15 +61,15 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
     Returns:
         report: ...
-        sky_mtx: A sky matrix object containing the radiation coming from each patch
-            of the sky. This can be used for a radiation study, a radition rose,
+        sky_mtx: A sky matrix object containing the radiation benefit/harm coming from each
+            patch of the sky. This can be used for a radiation study, a radition rose,
             or a sky dome visualization. It can also be deconstructed into its
             individual values with the "LB Deconstruct Matrix" component.
 """
 
-ghenv.Component.Name = 'LB Cumulative Sky Matrix'
-ghenv.Component.NickName = 'SkyMatrix'
-ghenv.Component.Message = '1.5.1'
+ghenv.Component.Name = 'LB Benefit Sky Matrix'
+ghenv.Component.NickName = 'BenefitMatrix'
+ghenv.Component.Message = '1.5.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -95,6 +103,8 @@ check_radiance_date()
 
 if all_required_inputs(ghenv.Component):
     # process and set defaults for all of the global inputs
+    _bal_temp_ = 15 if _bal_temp_ is None else _bal_temp_
+    _bal_offset_ = 2 if _bal_offset_ is None else _bal_offset_
     if north_ is not None:  # process the north_
         try:
             north_ = math.degrees(
@@ -106,7 +116,8 @@ if all_required_inputs(ghenv.Component):
     ground_r = 0.2 if _ground_ref_ is None else _ground_ref_
 
     # create the sky matrix object
-    sky_mtx = SkyMatrix.from_components(
-        _location, _direct_rad, _diffuse_rad, _hoys_, north_, high_density_, ground_r)
+    sky_mtx = SkyMatrix.from_components_benefit(
+        _location, _direct_rad, _diffuse_rad, _temperature, _bal_temp_, _bal_offset_,
+        _hoys_, north_, high_density_, ground_r)
     if _folder_:
         sky_mtx.folder = _folder_

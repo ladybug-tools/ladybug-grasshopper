@@ -118,10 +118,10 @@ direction (eg. NE).
 
 ghenv.Component.Name = 'LB Wind Profile'
 ghenv.Component.NickName = 'WindProfile'
-ghenv.Component.Message = '1.5.1'
+ghenv.Component.Message = '1.5.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '4'
+ghenv.Component.AdditionalHelpFromDocStrings = '5'
 
 import math
 
