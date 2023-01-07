@@ -35,10 +35,11 @@ where relfection of solar energy are important, honeybee-radiance should be used
 -
 
     Args:
-        _sky_mtx: A Sky Matrix from the "LB Cumulative Sky Matrix" component, which
-            describes the radiation coming from the various patches of the sky.
-            The "LB Sky Dome" component can be used to visualize any sky matrix
-            to understand its relationship to the test geometry.
+        _sky_mtx: A Sky Matrix from the "LB Cumulative Sky Matrix" component or the
+            "LB Benefit Sky Matrix" component, which describes the radiation
+            coming from the various patches of the sky. The "LB Sky Dome"
+            component can be used to visualize any sky matrix to understand
+            its relationship to the test geometry.
         _geometry: Rhino Breps and/or Rhino Meshes for which incident radiation analysis
             will be conducted. If Breps are input, they will be subdivided using
             the _grid_size to yeild individual points at which analysis will
@@ -58,6 +59,9 @@ where relfection of solar energy are important, honeybee-radiance should be used
             of the input _geometry.  Typically, this should be a small positive
             number to ensure points are not blocked by the mesh. (Default: 10 cm
             in the equivalent Rhino Model units).
+        irradiance_: Boolean to note whether the study should output units of cumulative
+            Radiation (kWh/m2) [False] or units of average Irradiance (W/m2)
+            [True].  (Default: False).
         legend_par_: Optional legend parameters from the "LB Legend Parameters"
             that will be used to customize the display of the results.
         _cpu_count_: An integer to set the number of CPUs used in the execution of the
@@ -98,7 +102,7 @@ where relfection of solar energy are important, honeybee-radiance should be used
 
 ghenv.Component.Name = "LB Incident Radiation"
 ghenv.Component.NickName = 'IncidentRadiation'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -112,6 +116,8 @@ except ImportError:  # python 3
 try:
     from ladybug.viewsphere import view_sphere
     from ladybug.graphic import GraphicContainer
+    from ladybug.legend import LegendParameters
+    from ladybug.color import Colorset
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
@@ -164,11 +170,19 @@ if all_required_inputs(ghenv.Component) and _run:
     # compute the results
     results = []
     int_matrix = []
-    for int_vals, angles in zip(int_matrix_init, angles):
-        pt_rel = [ival * math.cos(ang) for ival, ang in zip(int_vals, angles)]
+    for int_vals, angs in zip(int_matrix_init, angles):
+        pt_rel = [ival * math.cos(ang) for ival, ang in zip(int_vals, angs)]
         int_matrix.append(pt_rel)
         rad_result = sum(r * w for r, w in zip(pt_rel, all_rad))
         results.append(rad_result)
+
+    # convert to irradiance if requested
+    study_name = 'Incident Radiation'
+    if irradiance_:
+        study_name = 'Incident Irradiance'
+        factor = 1000 / _sky_mtx.wea_duration if hasattr(_sky_mtx, 'wea_duration') \
+            else 1000 / (((mtx[0][3] - mtx[0][2]).total_seconds() / 3600) + 1)
+        results = [r * factor for r in results]
 
     # output the intersection matrix and compute total radiation
     int_mtx = objectify_output('Geometry/Sky Intersection Matrix', int_matrix)
@@ -178,10 +192,19 @@ if all_required_inputs(ghenv.Component) and _run:
         total += rad * area * unit_conv
 
     # create the mesh and legend outputs
-    graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)
-    graphic.legend_parameters.title = 'kWh/m2'
+    l_par = legend_par_ if legend_par_ is not None else LegendParameters()
+    if hasattr(_sky_mtx, 'benefit_matrix') and _sky_mtx.benefit_matrix is not None:
+        study_name = '{} Benefit/Harm'.format(study_name)
+        if l_par.are_colors_default:
+            l_par.colors = reversed(Colorset.benefit_harm())
+        if l_par.min is None:
+            l_par.min = min((min(results), -max(results)))
+        if l_par.max is None:
+            l_par.max = max((-min(results), max(results)))
+    graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, l_par)
+    graphic.legend_parameters.title = 'kWh/m2' if not irradiance_ else 'W/m2'
     title = text_objects(
-        'Incident Radiation', graphic.lower_title_location,
+        study_name, graphic.lower_title_location,
         graphic.legend_parameters.text_height * 1.5,
         graphic.legend_parameters.font)
 

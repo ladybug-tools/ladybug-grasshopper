@@ -1,0 +1,141 @@
+{
+  "version": "1.5.0", 
+  "nickname": "RadiationDome", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "mesh", 
+        "description": "A colored mesh of a dome, representing the intensity of radiation/irradiance\nfrom different cardinal directions.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "compass", 
+        "description": "A set of circles, lines and text objects that mark the cardinal\ndirections in relation to the radiation dome.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "legend", 
+        "description": "A legend showing the kWh/m2 or W/m2 values that correspond to the colors\nof the mesh.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "title", 
+        "description": "A text object for the title of the radiation dome.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "dir_vecs", 
+        "description": "A list of vectors for each of the directions the dome is facing.\nAll vectors are unit vectors.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "dir_values", 
+        "description": "Radiation values for each of the dome directions in kWh/m2 or W/m2.\nThis will be one list if show_comp_ is \"False\" and a list of 3\nlists (aka. a Data Tree) for total, direct, diffuse if show_comp_\nis \"True\".", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "max_pt", 
+        "description": "A point on the radiation dome with the greatest amount of solar\nradiation/irradiance. For a radiation benefit sky, this is the\norientation with the greatest benefit. This can be used to\nunderstand the optimalorientation of solar panels or the best\ndirection to face for passive solar heating.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "max_info", 
+        "description": "Information about the direction with the greates amount of radiation.\nThis includes the altitude, azimuth, and radiation/irradiance value.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_sky_mtx", 
+      "description": "A Sky Matrix from the \"LB Cumulative Sky Matrix\" component or the\n\"LB Benefit Sky Matrix\" component, which describes the radiation\ncoming from the various patches of the sky.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "context_", 
+      "description": "Rhino Breps and/or Rhino Meshes representing context geometry\nthat can block solar radiation to the center of the radiation dome.", 
+      "type": "GeometryBase", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_az_count_", 
+      "description": "An integer greater than or equal to 3, which notes the number of\nhorizontal orientations to be evaluated on the dome. (Default: 72).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_alt_count_", 
+      "description": "An integer greater than or equal to 3, which notes the number of\nvertical orientations to be evaluated on the dome. (Default: 18).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_center_pt_", 
+      "description": "A point for the center of the radiation dome. (Default: (0, 0, 0))", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_scale_", 
+      "description": "A number to set the scale of the Radiation Dome. The default is 1,\nwhich corresponds to a radius of 100 meters in the current Rhino\nmodel's unit system.", 
+      "type": "double", 
+      "default": 1
+    }, 
+    {
+      "access": "item", 
+      "name": "projection_", 
+      "description": "Optional text for the name of a projection to use from the sky\ndome hemisphere to the 2D plane. If None, a 3D sky dome will be drawn\ninstead of a 2D one. (Default: None) Choose from the following:\n* Orthographic\n* Stereographic", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "irradiance_", 
+      "description": "Boolean to note whether the radiation dome should be plotted with units\nof cumulative Radiation (kWh/m2) [False] or with units of average\nIrradiance (W/m2) [True]. (Default: False).", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "show_comp_", 
+      "description": "Boolean to indicate whether only one dome with total radiation\nshould be displayed (False) or three domes with the solar radiation\ncomponents (total, direct, and diffuse) should be shown. (Default: False).", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "legend_par_", 
+      "description": "An optional LegendParameter object to change the display of the\nradiation dome (Default: None).", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "2 :: Visualize Data", 
+  "code": "\ntry:\n    from ladybug_geometry.geometry3d.pointvector import Point3D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug.viewsphere import view_sphere\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_radiance.visualize.raddome import RadiationDome\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_radiance:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.togeometry import to_point3d\n    from ladybug_{{cad}}.fromgeometry import from_point3d, \\\n        from_vector3d, from_mesh3d\n    from ladybug_{{cad}}.intersect import join_geometry_to_mesh, intersect_mesh_rays\n    from ladybug_{{cad}}.fromobjects import legend_objects, compass_objects\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, \\\n        de_objectify_output, list_to_data_tree\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef translate_dome(lb_mesh, lb_compass, graphic, title_txt):\n    \"\"\"Translate radiation dome geometry into a format suitable for {{Cad}}.\n\n    Args:\n        lb_mesh: A ladybug Mesh3D for the dome.\n        lb_compass: A ladybug Compass object.\n        graphic: A GraphicContainer for the dome.\n        title_txt: Text for title of the dome.\n\n    Returns:\n        dome_mesh: A {{Cad}} colored mesh for the dome.\n        dome_compass: {{Cad}} objects for the dome compass.\n        dome_legend:  {{Cad}} objects for the dome legend.\n        dome_title: A bake-able title for the dome.\n    \"\"\"\n    # translate the dome visualization, including legend and compass\n    dome_mesh = from_mesh3d(lb_mesh)\n    dome_legend = legend_objects(graphic.legend)\n    dome_angles = list(range(0, 360, int(360 / _az_count_)))\n    start, stop, step, dome_angles = 0, 360, 360 / _az_count_, []\n    while start < stop:\n        dome_angles.append(start)\n        start += step\n    dome_angles = [int(n) for n in dome_angles]\n    if len(dome_angles) > 36:\n        dome_angles = dome_angles[::2]\n    dome_compass = compass_objects(\n        lb_compass, z, dome_angles, projection_, graphic.legend_parameters.font)\n\n    # construct a title from the metadata\n    dome_title = text_objects(title_txt, graphic.lower_title_location,\n                              graphic.legend_parameters.text_height,\n                              graphic.legend_parameters.font)\n\n    return dome_mesh, dome_compass, dome_legend, dome_title\n\n\nif all_required_inputs(ghenv.Component):\n    # set defaults for global variables\n    _az_count_ = 72 if _az_count_ is None else _az_count_\n    _alt_count_ = 18 if _alt_count_ is None else _alt_count_\n    _scale_ = 1 if _scale_ is None else _scale_\n    radius = (100 * _scale_) / conversion_to_meters()\n    if _center_pt_ is not None:  # process the center point\n        center_pt3d = to_point3d(_center_pt_)\n        z = center_pt3d.z\n    else:\n        center_pt3d, z = Point3D(), 0\n\n    # compute the intersection matrix if context is specified\n    n_vecs = RadiationDome.dome_vectors(_az_count_, _alt_count_)\n    dir_vecs = [from_vector3d(vec) for vec in n_vecs]\n    int_mtx = None\n    if len(context_) != 0 and context_[0] is not None:\n        shade_mesh = join_geometry_to_mesh(context_)\n        p_vecs = view_sphere.tregenza_sphere_vectors if len(_sky_mtx.data[1]) == 145 \\\n            else view_sphere.reinhart_sphere_vectors\n        patch_dirs = [from_vector3d(vec) for vec in p_vecs]\n        int_mtx, angles = intersect_mesh_rays(\n            shade_mesh, [from_point3d(center_pt3d)] * len(dir_vecs),\n            patch_dirs, dir_vecs)\n\n    # create the RadiationRose object\n    rad_dome = RadiationDome(\n        _sky_mtx, int_mtx, _az_count_, _alt_count_, legend_par_,\n        irradiance_, center_pt3d, radius, projection_)\n\n    # create the dome visualization\n    if not show_comp_:  # only create the total dome mesh\n        mesh, compass, legend, title = translate_dome(*rad_dome.draw())\n        dir_values = rad_dome.total_values\n    else:  # create domes for total, direct and diffuse\n        # loop through the 3 radiation types and produce a dome\n        mesh, compass, legend, title = [], [], [], []\n        rad_types = ('total', 'direct', 'diffuse')\n        for dome_i in range(3):\n            cent_pt = Point3D(center_pt3d.x + radius * 3 * dome_i,\n                              center_pt3d.y, center_pt3d.z)\n            dome_mesh, dome_compass, dome_legend, dome_title = \\\n                translate_dome(*rad_dome.draw(rad_types[dome_i], cent_pt))\n            mesh.append(dome_mesh)\n            compass.extend(dome_compass)\n            legend.extend(dome_legend)\n            title.append(dome_title)\n        dir_values = list_to_data_tree(\n            (rad_dome.total_values, rad_dome.direct_values, rad_dome.diffuse_values))\n\n    # output infomration about the maximum direction\n    max_pt = from_point3d(rad_dome.max_point)\n    max_info = rad_dome.max_info\n", 
+  "category": "Ladybug", 
+  "name": "LB Radiation Dome", 
+  "description": "Visualize the radiation falling on an object from different directions over a dome.\n_\nThe Radiation Dome depicts the amount of solar energy received by all directions\nover a dome. This is useful for understanding the optimal orientation of solar\npanels and how the performance of the panel might change if it's orientation\nis off from the optimal position. It can also be used to identify the optimal\nwall orientation for passive solar heating when used with skies of\nradiation harm/benefit. When used with clear sky matrices, it can identify\nthe orientations that result in the highest and lowest peak cooling load.\n_\nThe Radiation Dome can be understood in different ways:\n1) It's a 3D representation of the \"LB Radiation Rose,\" depicting all tilt angles\n    for that rose at once.\n2) It's the reciprocal of the \"LB Sky Dome,\" since it shows how the radiation from\n    that sky falls onto a hemispherical object.\n3) It's an radiation study of a hemisphere. The results here are effectively the\n    same as running a hemisphere through the \"LB Incident Radiation\" component.\n-"
+}

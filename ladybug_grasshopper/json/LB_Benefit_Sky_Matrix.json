@@ -1,0 +1,99 @@
+{
+  "version": "1.5.0", 
+  "nickname": "BenefitMatrix", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "sky_mtx", 
+        "description": "A sky matrix object containing the radiation benefit/harm coming from each\npatch of the sky. This can be used for a radiation study, a radition rose,\nor a sky dome visualization. It can also be deconstructed into its\nindividual values with the \"LB Deconstruct Matrix\" component.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "north_", 
+      "description": "A number between -360 and 360 for the counterclockwise\ndifference between the North and the positive Y-axis in degrees.\n90 is West and 270 is East. This can also be Vector for the\ndirection to North. (Default: 0)", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_location", 
+      "description": "A ladybug Location that has been output from the \"LB Import EPW\"\ncomponent or the \"LB Construct Location\" component.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_temperature", 
+      "description": "An annual hourly DataCollection of temperature, which will be used\nto establish whether radiation is desired or not for each time step.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_bal_temp_", 
+      "description": "The temperature in Celsius between which radiation switches from being a\nbenefit to a harm. Typical residential buildings have balance temperatures\nas high as 18C and commercial buildings tend to have lower values\naround 12C. (Default 15C).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_bal_offset_", 
+      "description": "The temperature offset from the balance temperature in Celsius where\nradiation is neither harmful nor helpful. (Default: 2).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_direct_rad", 
+      "description": "An annual hourly DataCollection of Direct Normal Radiation such\nas that which is output from the \"LB Import EPW\" component or the\n\"LB Import STAT\" component.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_diffuse_rad", 
+      "description": "An annual hourly DataCollection of Diffuse Horizontal Radiation\nsuch as that which is output from the \"LB Import EPW\" component or\nthe \"LB Import STAT\" component.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_hoys_", 
+      "description": "A number or list of numbers between 0 and 8760 that respresent\nthe hour(s) of the year for which to generate the sky matrix. The\n\"LB Calculate HOY\" component can output this number given a month,\nday and hour. The \"LB Analysis Period\" component can output a\nlist of HOYs within a certain hour or date range. By default,\nthe matrix will be for the entire year.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "high_density_", 
+      "description": "A Boolean to indicate whether the higher-density Reinhart sky\nmatrix should be generated (True), which has roughly 4 times the sky\npatches as the (default) original Tregenza sky (False). Note that,\nwhile the Reinhart sky has a higher resolution and is more accurate,\nit will result in considerably longer calculation time for incident\nradiation studies. The difference in sky resolution can be observed\nwith the \"LB Sky Dome\" component. (Default: False).", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_ground_ref_", 
+      "description": "A number between 0 and 1 to note the average ground reflectance\nthat is associated with the sky matrix. (Default: 0.2).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_folder_", 
+      "description": "The folder in which the Radiance commands are executed to\nproduce the sky matrix. If None, it will be written to Ladybug's\ndefault EPW folder.", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "2 :: Visualize Data", 
+  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Vector2D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_radiance.skymatrix import SkyMatrix\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_vector2d\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\ntry:\n    from lbt_recipes.version import check_radiance_date\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import honeybee_radiance:\\n\\t{}'.format(e))\n\n# check the istalled Radiance date and get the path to the gemdaymtx executable\ncheck_radiance_date()\n\n\nif all_required_inputs(ghenv.Component):\n    # process and set defaults for all of the global inputs\n    _bal_temp_ = 15 if _bal_temp_ is None else _bal_temp_\n    _bal_offset_ = 2 if _bal_offset_ is None else _bal_offset_\n    if north_ is not None:  # process the north_\n        try:\n            north_ = math.degrees(\n                to_vector2d(north_).angle_clockwise(Vector2D(0, 1)))\n        except AttributeError:  # north angle instead of vector\n            north_ = float(north_)\n    else:\n        north_ = 0\n    ground_r = 0.2 if _ground_ref_ is None else _ground_ref_\n\n    # create the sky matrix object\n    sky_mtx = SkyMatrix.from_components_benefit(\n        _location, _direct_rad, _diffuse_rad, _temperature, _bal_temp_, _bal_offset_,\n        _hoys_, north_, high_density_, ground_r)\n    if _folder_:\n        sky_mtx.folder = _folder_\n", 
+  "category": "Ladybug", 
+  "name": "LB Benefit Sky Matrix", 
+  "description": "Get a matrix representing the benefit/harm of radiation based on temperature data.\n_\nRadiation benefit matrices are helpful for evaluating building massing and facade\ndesigns in terms of passive solar heat gain vs. cooling energy increase.\n_\nThis component uses Radiance's gendaymtx function to calculate the radiation\nfor each patch of the sky. Gendaymtx is written by Ian Ashdown and Greg Ward.\nMorere information can be found in Radiance manual at:\nhttp://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymtx.pdf\n-"
+}
