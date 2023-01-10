@@ -74,7 +74,7 @@ as tilted photovoltaic panels.
 
 ghenv.Component.Name = 'LB Radiation Rose'
 ghenv.Component.NickName = 'RadRose'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -103,7 +103,7 @@ try:
     from ladybug_rhino.fromobjects import legend_objects, compass_objects
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.grasshopper import all_required_inputs, \
-        de_objectify_output, list_to_data_tree
+        objectify_output, list_to_data_tree
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -198,3 +198,7 @@ if all_required_inputs(ghenv.Component):
             title.append(rose_title)
         dir_values = list_to_data_tree(
             (rad_rose.total_values, rad_rose.direct_values, rad_rose.diffuse_values))
+
+    # output the visualization set
+    vis_set = [rad_rose, max_rad_, show_comp_]
+    vis_set = objectify_output('VisualizationSet Aruments [RadiationRose]', vis_set)
