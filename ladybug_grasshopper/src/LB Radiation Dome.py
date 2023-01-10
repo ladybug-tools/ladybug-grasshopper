@@ -77,11 +77,15 @@ The Radiation Dome can be understood in different ways:
             direction to face for passive solar heating.
         max_info: Information about the direction with the greates amount of radiation.
             This includes the altitude, azimuth, and radiation/irradiance value.
+        vis_set: An object containing VisualizationSet arguments for drawing a detailed
+            version of the Radiation Dome in the Rhino scene. This can be
+            connected to the "LB Preview Visualization Set" component to display
+            this version of the Radiation Dome in Rhino.
 """
 
 ghenv.Component.Name = 'LB Radiation Dome'
 ghenv.Component.NickName = 'RadiationDome'
-ghenv.Component.Message = '1.5.0'
+ghenv.Component.Message = '1.5.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -110,7 +114,7 @@ try:
     from ladybug_rhino.fromobjects import legend_objects, compass_objects
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.grasshopper import all_required_inputs, \
-        de_objectify_output, list_to_data_tree
+        objectify_output, list_to_data_tree
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -205,3 +209,7 @@ if all_required_inputs(ghenv.Component):
     # output infomration about the maximum direction
     max_pt = from_point3d(rad_dome.max_point)
     max_info = rad_dome.max_info
+
+    # output the visualization set
+    vis_set = [rad_dome, show_comp_]
+    vis_set = objectify_output('VisualizationSet Aruments [RadiationDome]', vis_set)

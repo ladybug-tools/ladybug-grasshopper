@@ -61,11 +61,15 @@ dome, subdivided into patches with a radiation value for each patch.
             etc. This will be one list if show_comp_ is "False" and a list of
             3 lists (aka. a Data Tree) for total, direct, diffuse if show_comp_
             is "True".
+        vis_set: An object containing VisualizationSet arguments for drawing a detailed
+            version of the Sky Dome in the Rhino scene. This can be connected to
+            the "LB Preview Visualization Set" component to display this version
+            of the Sky Dome in Rhino.
 """
 
 ghenv.Component.Name = 'LB Sky Dome'
 ghenv.Component.NickName = 'SkyDome'
-ghenv.Component.Message = '1.5.1'
+ghenv.Component.Message = '1.5.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -87,7 +91,7 @@ try:
     from ladybug_rhino.fromobjects import legend_objects, compass_objects
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.grasshopper import all_required_inputs, \
-        de_objectify_output, list_to_data_tree
+        objectify_output, list_to_data_tree
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -161,3 +165,7 @@ if all_required_inputs(ghenv.Component):
         rad_data = (sky_dome.total_values, sky_dome.direct_values, sky_dome.diffuse_values)
         patch_values = list_to_data_tree(rad_data)
         mesh_values = list_to_data_tree(mesh_values)
+
+    # output the visualization set
+    vis_set = [sky_dome, show_comp_]
+    vis_set = objectify_output('VisualizationSet Aruments [SkyDome]', vis_set)
