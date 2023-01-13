@@ -65,7 +65,7 @@
     {
       "access": "item", 
       "name": "solar_rights_", 
-      "description": "Set to True to compute a solar rights boundary and False to compute\na solar collection boundary. Solar rights boundaries represent the\nboundary below which one can build without shading the surrounding\nobstacles from any of the _vectors. Solar collection boundaries\nrepresent the boundary above which the one will have direct solar\naccess to all of the input _vectors. (Default: False).", 
+      "description": "Set to True to compute a solar rights boundary and False to compute\na solar collection boundary. Solar rights boundaries represent the\nboundary below which one can build without shading the surrounding\nobstacles from any of the _vectors. Solar collection boundaries\nrepresent the boundary above which one will have direct solar\naccess to all of the input _vectors. (Default: False).", 
       "type": "bool", 
       "default": null
     }, 

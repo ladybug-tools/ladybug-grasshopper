@@ -48,7 +48,7 @@ positions.
             a solar collection boundary. Solar rights boundaries represent the
             boundary below which one can build without shading the surrounding
             obstacles from any of the _vectors. Solar collection boundaries
-            represent the boundary above which the one will have direct solar
+            represent the boundary above which one will have direct solar
             access to all of the input _vectors. (Default: False).
         _run: Set to "True" to run the component and get a solar envelope.
 
