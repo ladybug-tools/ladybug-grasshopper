@@ -109,7 +109,7 @@ if all_required_inputs(ghenv.Component):
     rays, int_pts = [], []
     for ray, pt, norm in zip(start_rays, source_points, study_mesh.face_normals):
         if norm.angle(neg_lb_vec) < cutoff_ang:
-            pl_pts = trace_ray(ray, rtrace_geo, _bounce_count_ + 1)
+            pl_pts = trace_ray(ray, rtrace_geo, _bounce_count_ + 2)
             # if the intersection was successful, create a polyline represeting the ray
             if pl_pts:
                 # gather all of the intersection points

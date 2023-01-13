@@ -20,6 +20,7 @@ The ladybug-grasshopper plugin has the following dependencies (other than Rhino/
 * [ladybug-geometry](https://github.com/ladybug-tools/ladybug-geometry)
 * [ladybug-comfort](https://github.com/ladybug-tools/ladybug-comfort)
 * [ladybug-display](https://github.com/ladybug-tools/ladybug-display)
+* [ladybug-radiance](https://github.com/ladybug-tools/ladybug-radiance)
 * [ladybug-rhino](https://github.com/ladybug-tools/ladybug-rhino)
 
 ## Installation

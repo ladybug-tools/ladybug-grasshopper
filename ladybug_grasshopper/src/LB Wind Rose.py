@@ -42,7 +42,7 @@ Create a plot of any hourly data by wind directions.
             show_calm_ is True, then the initial frequency interval corresponds
             to the number of calm hours in the data collection, which may not
             align with this freq_dist_ (Default: 5 meters)
-       _freq_hours_: The number of hours in each frequency interval (Default: 50).
+        _freq_hours_: The number of hours in each frequency interval (Default: 50).
         _max_freq_lines_: A number representing the maximum frequency intervals in
             the rose, which determines the maximum amount of hours represented by the
             outermost ring of the windrose. Specifically, this number multiplied by the
@@ -310,7 +310,7 @@ if all_required_inputs(ghenv.Component):
     hide_output(ghenv.Component, 5)  # keep the devault visual simple
 
     # compute direction angles and prevailing direction
-    theta = 180.0 / windrose._number_of_directions
+    theta = 180.0 / _dir_count_
     angles = [(angle + theta) % 360.0 for angle in windrose.angles[:-1]]
     prevailing = windrose.prevailing_direction
     vis_set = objectify_output(
