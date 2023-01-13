@@ -1,0 +1,36 @@
+{
+  "version": "1.5.5", 
+  "nickname": "VisSet", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "vs", 
+        "description": "A VisualizationSet object that can be baked into the Rhino document by\nrunning \"Bake\" on this component or written to a standalone file\nusing the \"LB Dump VisualizationSet\" component.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_vis_set", 
+      "description": "VisualizationSet arguments from any Ladybug Tools component with a vis_set\noutput. This can also be the path to a .vsf file that exists on this\nmachine (these files are often written with the \"LB Dump VisualizationSet\"\ncomponent). Lastly, this input can be a custom VisualizationSet that\nhas been created with the Ladybug Tools SDK.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "leg_par2d_", 
+      "description": "Optional 2D LegendParameters from the \"LB Legend Parameters 2D\"\ncomponent, which will be used to customize a legend in the plane\nof the screen so that it functions like a head-up display (HUD).\nIf unspecified, the VisualizationSet will be rendered with 3D\nlegends in the Rhino scene much like the other native Ladybug\nTools components.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "", 
+  "category": "Ladybug", 
+  "name": "LB Preview VisualizationSet", 
+  "description": "Preview a VisualizationSet from any component with a vis_set output.\n_\nThe VisualizationSet is often a much more detailed view of the geometry that\nthe component typically generates and includes features like recommended line\nweights/types, display modes (eg. wireframe vs. shaded), transparency, and more.\n-"
+}
