@@ -50,7 +50,7 @@ class MyComponent(component):
     def RunScript(self, _vis_set, leg_par2d_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.5.5'
+        ghenv.Component.Message = '1.6.1'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -64,7 +64,7 @@ class MyComponent(component):
             from ladybug_rhino.grasshopper import all_required_inputs, \
                 objectify_output, de_objectify_output
             from ladybug_rhino.preview import VisualizationSetConverter
-            from ladybug_rhino.bakeobjects import VisSetGoo
+            from ladybug_rhino.visset import VisSetGoo
         except ImportError as e:
             raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
         
@@ -101,8 +101,12 @@ class MyComponent(component):
             if len(_vis_set) == 1:
                 vis_set = _vis_set[0]
             else:
-                vis_set = objectify_output(
-                    'Multiple Vis Sets', [[obj] for obj in _vis_set])
+                if hasattr(_vis_set[0], 'data'):
+                    vis_set = objectify_output(
+                        'Multiple Vis Set Args', [obj.data for obj in _vis_set])
+                else:
+                    vis_set = objectify_output(
+                        'Multiple Vis Sets', [[obj] for obj in _vis_set])
             vis_set_obj = process_vis_set(vis_set)
             # process connected 2D legend parameters
             if leg_par2d_ is None:
