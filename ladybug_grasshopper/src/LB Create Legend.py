@@ -23,7 +23,7 @@ with the legends automatically output from different studies.
             legend. (Default: Rhino origin - (0, 0, 0))
         title_: A text string representing a legend title. Legends are usually
             titled with the units of the data.
-        legend_par_: Optional legend parameters from the  Legend Parameters component.
+        legend_par_: Optional legend parameters from the "LB Legend Parameters" component.
         leg_par2d_: Optional 2D LegendParameters from the "LB Legend Parameters 2D"
             component, which will be used to customize a legend in the plane
             of the screen so that it functions like a head-up display (HUD).
@@ -51,7 +51,7 @@ class MyComponent(component):
     def RunScript(self, _values, _base_plane_, title_, legend_par_, leg_par2d_):
         ghenv.Component.Name = "LB Create Legend"
         ghenv.Component.NickName = 'CreateLegend'
-        ghenv.Component.Message = '1.6.1'
+        ghenv.Component.Message = '1.6.2'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '0'

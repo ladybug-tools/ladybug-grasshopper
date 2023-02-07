@@ -1,5 +1,5 @@
 {
-  "version": "1.6.1", 
+  "version": "1.6.2", 
   "nickname": "CreateLegend", 
   "outputs": [
     [
@@ -65,7 +65,7 @@
     {
       "access": "item", 
       "name": "legend_par_", 
-      "description": "Optional legend parameters from the  Legend Parameters component.", 
+      "description": "Optional legend parameters from the \"LB Legend Parameters\" component.", 
       "type": "System.Object", 
       "default": null
     }, 
