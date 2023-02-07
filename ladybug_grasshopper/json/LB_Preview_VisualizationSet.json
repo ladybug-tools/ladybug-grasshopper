@@ -1,5 +1,5 @@
 {
-  "version": "1.6.1", 
+  "version": "1.6.2", 
   "nickname": "VisSet", 
   "outputs": [
     [
@@ -22,9 +22,23 @@
     }, 
     {
       "access": "item", 
+      "name": "leg_par_", 
+      "description": "Script variable VisSet", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
       "name": "leg_par2d_", 
       "description": "Optional 2D LegendParameters from the \"LB Legend Parameters 2D\"\ncomponent, which will be used to customize a legend in the plane\nof the screen so that it functions like a head-up display (HUD).\nIf unspecified, the VisualizationSet will be rendered with 3D\nlegends in the Rhino scene much like the other native Ladybug\nTools components.", 
       "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "x", 
+      "description": "Optional text or an integer to select a specific data set from analysis\ngeometries within the Visualization Set. Note that this input only has\nmeaning for Visualization Sets that contain multiple data sets assigned\nto the same geometry. When using an integer, this will refer to the\nindex of the data set to be visualized (starting with 0). When using\ntext, this will refer to the name of the data type for the data set\nto be displayed.", 
+      "type": "string", 
       "default": null
     }
   ], 
