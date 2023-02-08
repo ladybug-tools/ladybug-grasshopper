@@ -60,50 +60,22 @@ class MyComponent(component):
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.6.2'
+        ghenv.Component.Message = '1.6.3'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
         
         try:
-            from ladybug_display.visualization import VisualizationSet, AnalysisGeometry
+            from ladybug_display.visualization import AnalysisGeometry
         except ImportError as e:
             raise ImportError('\nFailed to import ladybug_display:\n\t{}'.format(e))
         
         try:
-            from ladybug_rhino.grasshopper import all_required_inputs, \
-                objectify_output, de_objectify_output
+            from ladybug_rhino.grasshopper import all_required_inputs, objectify_output
             from ladybug_rhino.preview import VisualizationSetConverter
-            from ladybug_rhino.visset import VisSetGoo
+            from ladybug_rhino.visset import VisSetGoo, process_vis_set
         except ImportError as e:
             raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
-        
-        
-        def process_vis_set(vis_set):
-            """Process various different types of VisualizationSet inputs.
-        
-            This includes VisualizationSet files, classes that have to_vis_set methods
-            on them, and objects containing arguments for to_vis_set methods
-            """
-            if isinstance(vis_set, VisualizationSet):
-                return vis_set
-            elif isinstance(vis_set, str):  # assume that it's a file
-                return VisualizationSet.from_file(vis_set)
-            elif hasattr(vis_set, 'to_vis_set'):  # an object with a method to be called
-                return vis_set.to_vis_set()
-            elif hasattr(vis_set, 'data'):  # an object to be decoded
-                args_list = de_objectify_output(vis_set)
-                if isinstance(args_list[0], (list, tuple)):  # a list of VisaulizationSets
-                    base_set = args_list[0][0].to_vis_set(*args_list[0][1:])
-                    for next_vis_args in args_list[1:]:
-                        for geo_obj in next_vis_args[0].to_vis_set(*next_vis_args[1:]):
-                            base_set.add_geometry(geo_obj)
-                    return base_set
-                else:  # a single list of arguments for to_vis_set
-                    return args_list[0].to_vis_set(*args_list[1:])
-            else:
-                msg = 'Input _vis_set was not recognized as a valid input.'
-                raise ValueError(msg)
         
         
         if all_required_inputs(ghenv.Component):
