@@ -1,0 +1,43 @@
+{
+  "version": "1.6.0", 
+  "nickname": "DeconstructVisSet", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "context", 
+        "description": "A list of geometry objects that constitute the context geometry of the\nVisualizationSet. When the VisualizationSet contains multiple context\ngeometry instances, this will be a data tree with one branch for\neach context object.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "analysis", 
+        "description": "A list of geometry objects that constitute the analysis geometry of the\nVisualizationSet. When the VisualizationSet contains multiple analysis\ngeometry instances, this will be a data tree with one branch for\neach analysis object.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "A list of numbers that constitue the data set associated with the analysis\ngeometry. In the event of multiple data sets assigned to the same\nanalysis geometry, this will be a data tree of numbers with one branch\nfor each data set. In the event of multiple analysis geometries, this\nwill be a nested data tree where the first number in the path matches\nthe analysis geometry branch and the last number matches the data set\nnumber.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_vis_set", 
+      "description": "VisualizationSet arguments from any Ladybug Tools component with a vis_set\noutput. This can also be the path to a .vsf file that exists on this\nmachine (these files are often written with the \"LB Dump VisualizationSet\"\ncomponent). Lastly, this input can be a custom VisualizationSet that\nhas been created with the Ladybug Tools SDK.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:  # import the honeybee dependencies\n    from ladybug_display.geometry3d import DisplayText3D\n    from ladybug_display.visualization import ContextGeometry, AnalysisGeometry\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_display:\\n\\t{}'.format(e))\n\ntry:  # import the ladybug_{{cad}} dependencies\n    from ladybug_{{cad}}.fromobjects import from_geometry\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.visset import process_vis_set\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, list_to_data_tree\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\nTEXT_HORIZ = {'Left': 0, 'Center': 1, 'Right': 2}\nTEXT_VERT = {'Top': 0, 'Middle': 3, 'Bottom': 5}\n\n\nif all_required_inputs(ghenv.Component):\n    # extract the VisualizationSet object\n    _vs = process_vis_set(_vis_set)\n\n    # loop through the constituient objects and deconstruct them\n    context, analysis, data = [], [], []\n    for geo_obj in _vs.geometry:\n        if isinstance(geo_obj, ContextGeometry):\n            con_geos = []\n            for g in geo_obj.geometry:\n                if not isinstance(g, DisplayText3D):\n                    con_geos.append(from_geometry(g.geometry))\n                else:\n                    t_obj = text_objects(\n                        g.text, g.plane, g.height, g.font,\n                        TEXT_HORIZ[g.horizontal_alignment],\n                        TEXT_VERT[g.vertical_alignment])\n                    con_geos.append(t_obj)\n            context.append(con_geos)\n        elif isinstance(geo_obj, AnalysisGeometry):\n            a_geos, data_sets = [], []\n            for g in geo_obj.geometry:\n                a_geos.append(from_geometry(g))\n            for d in geo_obj.data_sets:\n                data_sets.append(d.values)\n            analysis.append([a_geos])\n            data.append(data_sets)\n\n    # convert everything into data trees\n    context = list_to_data_tree(context)\n    analysis = list_to_data_tree(analysis)\n    data = list_to_data_tree(data)\n", 
+  "category": "Ladybug", 
+  "name": "LB Deconstruct VisualizationSet", 
+  "description": "Deconstruct a Ladybug VisualizationSet into all of its constituent objects.\n_\nThis includes Context Geometry, Analysis Geometry, and any data sets that are\nassociated with the analysis geometry. The last one is particularly helpful\nfor performing analysis in the data associated with a particular visualization.\n-"
+}

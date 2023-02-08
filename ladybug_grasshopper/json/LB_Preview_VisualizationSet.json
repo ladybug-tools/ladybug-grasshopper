@@ -1,5 +1,5 @@
 {
-  "version": "1.6.2", 
+  "version": "1.6.3", 
   "nickname": "VisSet", 
   "outputs": [
     [
@@ -36,7 +36,7 @@
     }, 
     {
       "access": "item", 
-      "name": "x", 
+      "name": "data_set_", 
       "description": "Optional text or an integer to select a specific data set from analysis\ngeometries within the Visualization Set. Note that this input only has\nmeaning for Visualization Sets that contain multiple data sets assigned\nto the same geometry. When using an integer, this will refer to the\nindex of the data set to be visualized (starting with 0). When using\ntext, this will refer to the name of the data type for the data set\nto be displayed.", 
       "type": "string", 
       "default": null
