@@ -8,11 +8,8 @@
 # @license AGPL-3.0-or-later <https://spdx.org/licenses/AGPL-3.0-or-later>
 
 """
-Use this component to change the colors, numerical range, and/or number of divisions
-of any Ladybug legend along with the corresponding colored mesh that the legend refers to.
--
-Any Ladybug component that outputs a colored mesh and a legend will have an input
-that can accept Legend Parameters from this component.
+Customize the properties of a screen-oreinted 2D legend displaying with the
+"LB Preview VisualizationSet" component.
 -
 
     Args:
@@ -54,7 +51,7 @@ that can accept Legend Parameters from this component.
 
 ghenv.Component.Name = 'LB Legend 2D Parameters'
 ghenv.Component.NickName = 'Legend2D'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

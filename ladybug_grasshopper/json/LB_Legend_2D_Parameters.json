@@ -1,5 +1,5 @@
 {
-  "version": "1.6.0", 
+  "version": "1.6.1", 
   "nickname": "Legend2D", 
   "outputs": [
     [
@@ -53,5 +53,5 @@
   "code": "\n\ntry:\n    from ladybug.legend import Legend2DParameters\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\n\ndef parse_dim_text(dim_text):\n    \"\"\"Parse text representing a dimension into an input for legend parameters.\"\"\"\n    try:\n        px_txt = int(dim_text)\n        return '{}px'.format(px_txt)\n    except ValueError:\n        return dim_text\n\n\n# parse all of the inputs\norigin_x_ = parse_dim_text(origin_x_) if origin_x_ is not None else None\norigin_y_ = parse_dim_text(origin_y_) if origin_y_ is not None else None\nseg_height_ = parse_dim_text(seg_height_) if seg_height_ is not None else None\nseg_width_ = parse_dim_text(seg_width_) if seg_width_ is not None else None\ntext_height_ = parse_dim_text(text_height_) if text_height_ is not None else None\n\n# make the 2D legend parameters\nleg_par2d = Legend2DParameters(origin_x_, origin_y_, seg_height_, seg_width_, text_height_)\n", 
   "category": "Ladybug", 
   "name": "LB Legend 2D Parameters", 
-  "description": "Use this component to change the colors, numerical range, and/or number of divisions\nof any Ladybug legend along with the corresponding colored mesh that the legend refers to.\n-\nAny Ladybug component that outputs a colored mesh and a legend will have an input\nthat can accept Legend Parameters from this component.\n-"
+  "description": "Customize the properties of a screen-oreinted 2D legend displaying with the\n\"LB Preview VisualizationSet\" component.\n-"
 }
