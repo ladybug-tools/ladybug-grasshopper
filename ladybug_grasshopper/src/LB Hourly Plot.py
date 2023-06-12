@@ -26,6 +26,9 @@ Create a colored plot of any hourly data collection.
         reverse_y_: Boolean to note whether the Y-axis of the chart is reversed
             If True, time over the course of the day will flow from the top of
             the chart to the bottom instead of the bottom to the top.
+        clock_24_: Boolean to note whether the hour labels on the Y-Axis of the chart
+            should be in 24-hour clock format (eg. 18:00) or they should be
+            in 12-hour clock format (eg. 6PM).
         legend_par_: An optional LegendParameter object to change the display of the
             HourlyPlot. This can also be a list of legend parameters to be
             applied to the different connected _data.
@@ -61,7 +64,7 @@ Create a colored plot of any hourly data collection.
 
 ghenv.Component.Name = "LB Hourly Plot"
 ghenv.Component.NickName = 'HourlyPlot'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -134,10 +137,11 @@ if all_required_inputs(ghenv.Component):
         title.append(tit_txt)
 
         # create the text label objects
+        hr_text = hour_plot.hour_labels_24 if clock_24_ else hour_plot.hour_labels
         label1 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, _base_pt_.z)),
                                hour_plot.legend_parameters.text_height,
                                hour_plot.legend_parameters.font, 2, 3)
-                  for txt, pt in zip(hour_plot.hour_labels, hour_plot.hour_label_points2d)]
+                  for txt, pt in zip(hr_text, hour_plot.hour_label_points2d)]
         label2 = [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, _base_pt_.z)),
                                hour_plot.legend_parameters.text_height,
                                hour_plot.legend_parameters.font, 1, 0)
