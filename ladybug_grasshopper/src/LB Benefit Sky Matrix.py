@@ -10,8 +10,13 @@
 """
 Get a matrix representing the benefit/harm of radiation based on temperature data.
 _
-Radiation benefit matrices are helpful for evaluating building massing and facade
-designs in terms of passive solar heat gain vs. cooling energy increase.
+When this sky matrix is used in radiation studies or to produce radiation graphics,
+positive values represent helpful wintertime sun energy that can offset heating loads
+during cold temperatures while negative values represent harmful summertime sun
+energy that can increase cooling loads during hot temperatures.
+_
+Radiation benefit skies are particularly helpful for evaluating building massing
+and facade designs in terms of passive solar heat gain vs. cooling energy increase.
 _
 This component uses Radiance's gendaymtx function to calculate the radiation
 for each patch of the sky. Gendaymtx is written by Ian Ashdown and Greg Ward.
@@ -69,7 +74,7 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
 ghenv.Component.Name = 'LB Benefit Sky Matrix'
 ghenv.Component.NickName = 'BenefitMatrix'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
