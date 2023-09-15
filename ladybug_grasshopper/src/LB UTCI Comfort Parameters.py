@@ -19,7 +19,7 @@ These parameters can be plugged into any of the components that compute UTCI com
             cold stress. (Default: 9C).
         heat_thresh: Temperature in Celsius above which the UTCI represents
             heat stress. (Default: 26C).
-    
+
     Returns:
         utci_par: A UTCI comfort parameter object that can be plugged into
             any of the components that compute UTCI thermal comfort.
@@ -27,7 +27,7 @@ These parameters can be plugged into any of the components that compute UTCI com
 
 ghenv.Component.Name = 'LB UTCI Comfort Parameters'
 ghenv.Component.NickName = 'UTCIPar'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
