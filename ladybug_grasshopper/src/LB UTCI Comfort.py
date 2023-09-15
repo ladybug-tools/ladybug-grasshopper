@@ -40,6 +40,10 @@ Equivalent Temperature (PET) model is recommended.
             human subject by 1.5 will make them a suitable input for this
             component. Default is a low speed of 0.5 m/s, which is the lowest
             input speed that is recommended for the UTCI model.
+        utci_par_: Optional comfort parameters from the "LB UTCI Comfort Parameters"
+            component to specify the temperatures (in Celcius) that are
+            considered acceptable/comfortable. The default will assume a that 
+            the comfort range is between 9C and 26C.
         _run: Set to True to run the component.
 
     Returns:
@@ -79,7 +83,7 @@ Equivalent Temperature (PET) model is recommended.
 
 ghenv.Component.Name = 'LB UTCI Comfort'
 ghenv.Component.NickName = 'UTCI'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
@@ -124,7 +128,8 @@ if all_required_inputs(ghenv.Component) and _run is True:
     # Process inputs and assign defaults.
     input_list = [_air_temp, _mrt_, _wind_vel_, _rel_humid]
     input, data_colls = extract_collections(input_list)
-    
+    utci_par = utci_par_ or UTCIParameter()
+
     if data_colls == []:
         # The inputs are all individual values.
         utci = universal_thermal_climate_index(
@@ -138,8 +143,8 @@ if all_required_inputs(ghenv.Component) and _run is True:
         if not isinstance(_air_temp, BaseCollection):
             _air_temp = data_colls[0].get_aligned_collection(
                 float(_air_temp), Temperature(), 'C')
-        
-        comf_obj = UTCI(_air_temp, _rel_humid, _mrt_, _wind_vel_)
+
+        comf_obj = UTCI(_air_temp, _rel_humid, _mrt_, _wind_vel_, utci_par)
         utci = comf_obj.universal_thermal_climate_index
         comfort = comf_obj.is_comfortable
         condition = comf_obj.thermal_condition
