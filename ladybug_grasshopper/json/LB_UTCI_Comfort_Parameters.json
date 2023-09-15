@@ -1,0 +1,36 @@
+{
+  "version": "1.6.0", 
+  "nickname": "UTCIPar", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "utci_par", 
+        "description": "A UTCI comfort parameter object that can be plugged into\nany of the components that compute UTCI thermal comfort.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_cold_thresh_", 
+      "description": "Temperature in Celsius below which the UTCI represents\ncold stress. (Default: 9C).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_heat_thresh_", 
+      "description": "A number between 0 and 1 indicating the upper limit of\nhumidity ratio that is considered acceptable.\nDefault is 1 for essentially no limit.", 
+      "type": "double", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_comfort.parameter.utci import UTCIParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\n\nmoderate_cold, moderate_heat = None, None\nif _cold_thresh_ and _cold_thresh_ < 0:\n    moderate_cold = _cold_thresh_\nif _heat_thresh_ and _heat_thresh_ > 28:\n    moderate_heat = _heat_thresh_\n\nutci_par = UTCIParameter(\n    cold_thresh=_cold_thresh_,\n    heat_thresh=_heat_thresh_,\n    moderate_cold_thresh=moderate_cold,\n    moderate_heat_thresh=moderate_heat\n)\n", 
+  "category": "Ladybug", 
+  "name": "LB UTCI Comfort Parameters", 
+  "description": "Create a set of parameters that define the acceptable conditions of the\nUniversal Thermal Climate Index (UTCI) comfort model.\n-\nThese parameters can be plugged into any of the components that compute UTCI comfort.\n-"
+}
