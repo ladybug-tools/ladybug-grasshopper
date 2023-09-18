@@ -1,5 +1,5 @@
 {
-  "version": "1.6.0", 
+  "version": "1.6.1", 
   "nickname": "SyncGHFile", 
   "outputs": [
     [
@@ -22,7 +22,7 @@
     }
   ], 
   "subcategory": "5 :: Version", 
-  "code": "\ntry:\n    from ladybug_{{cad}}.versioning.gather import gather_canvas_components\n    from ladybug_{{cad}}.versioning.diff import sync_component\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, give_warning\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _sync:\n    # load all of the {{PLGN}}Python userobjects and update the versions\n    components = gather_canvas_components(ghenv.Component)\n    report_init = []\n    for comp in components:\n        try:\n            report_init.append(sync_component(comp, ghenv.Component))\n        except Exception:\n            if hasattr(comp, 'Name'):\n                msg = 'Failed to Update \"{}\"'.format(comp.Name)\n                print msg\n                give_warning(ghenv.Component, msg)\n    report = '\\n'.join(r for r in report_init if r)\n", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.versioning.gather import gather_canvas_components\n    from ladybug_{{cad}}.versioning.diff import sync_component\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, give_warning\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _sync:\n    # load all of the {{PLGN}}Python userobjects and update the versions\n    components = gather_canvas_components(ghenv.Component)\n    report_init = []\n    for comp in components:\n        try:\n            report_init.append(sync_component(comp, ghenv.Component))\n        except Exception:\n            if hasattr(comp, 'Name'):\n                msg = 'Failed to Update \"{}\"'.format(comp.Name)\n                print(msg)\n                give_warning(ghenv.Component, msg)\n    report = '\\n'.join(r for r in report_init if r)\n", 
   "category": "Ladybug", 
   "name": "LB Sync Grasshopper File", 
   "description": "Sync the Ladybug Tools components in a Grasshopper file with the version of the\ncomponents that currently exist in the Grasshopper toolbar.\n-\nThis is useful for updating old Grasshopper definitions to newer plugin versions.\nHowever, this component will sync components regardless of version number or\ndate, even if the components in the toolbar are of an older version than those\ncurrently on the Grasshopper canvass.\n-\nAny components that cannot be updated automatically (because their inputs or\noutputs have changed) will be circled in red and should be replaced manually.\n-"

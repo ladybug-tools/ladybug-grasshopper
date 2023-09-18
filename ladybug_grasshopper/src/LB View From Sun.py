@@ -34,7 +34,7 @@ particular hour of the day.
 
 ghenv.Component.Name = 'LB View From Sun'
 ghenv.Component.NickName = 'ViewFromSun'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -49,7 +49,7 @@ except ImportError as e:
 
 if all_required_inputs(ghenv.Component):
     view_name = 'ViewFromSun_{}'.format(component_guid(ghenv.Component))
-    print view_name  # print so that the user has the name if needed
+    print(view_name)  # print so that the user has the name if needed
 
     # get the viewport from which the direction will be set
     view_port = None

@@ -104,7 +104,7 @@ polygons.
 
 ghenv.Component.Name = 'LB PMV Polygon'
 ghenv.Component.NickName = 'PMV Polygon'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -229,7 +229,7 @@ if all_required_inputs(ghenv.Component):
             if solar_data_ is None:
                 msg = 'In order to plot a "{}" polygon, solar_data_ ' \
                     'must be plugged into this component.'.format(p_name)
-                print msg
+                print(msg)
                 give_warning(ghenv.Component, msg)
             else:
                 bal_t = bal_temp if 'Capture Internal Heat' in strategies_ else None

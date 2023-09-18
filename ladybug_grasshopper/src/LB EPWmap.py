@@ -19,33 +19,36 @@ Open EPWmap in a web browser.
 
 ghenv.Component.Name = 'LB EPWmap'
 ghenv.Component.NickName = 'EPWMap'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
-try:
+# import core Python dependencies
+import webbrowser as wb
+import os
+
+try:  # import ladybug_rhino dependencies
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
-import webbrowser as wb
-import os
-
-
 # dictonary of accetable browsers and their default file paths.
 acceptable_browsers = [
+    ['chrome', 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'],
     ['chrome', 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'],
     ['firefox', 'C:\\Program Files\\Mozilla Firefox\\firefox.exe'],
     ['chrome', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'] # MacOS
-    ]
+]
 
 # URL to epwmap.
 url = 'http://www.ladybug.tools/epwmap/'
 
+
 # function for opening a browser page on Mac
 def mac_open(url):
     os.system("open \"\" " + url)
+
 
 if all_required_inputs(ghenv.Component) and _epw_map is True:
     broswer_found = False
@@ -56,15 +59,18 @@ if all_required_inputs(ghenv.Component) and _epw_map is True:
             wb.register(browser[0],  None, wb.BackgroundBrowser(browser_path), 1)
             try:
                 wb.get(browser[0]).open(url, 2, True)
-                print "Opening epwmap."
+                print('Opening epwmap.')
             except ValueError:
                 mac_open(url)
     if broswer_found == False:
-        print "An accepable broswer was not found on your machine.\n" \
-        "The default browser will be used but epwmap may not display correctly there."
+        print(
+            'An accepable broswer was not found on your machine.\n'
+            'The default browser will be used but epwmap may not display '
+            'correctly there.'
+        )
         try:
             wb.open(url, 2, True)
         except ValueError:
             mac_open(url)
 else:
-    print "Set _epw_map to True."
+    print('Set _epw_map to True.')

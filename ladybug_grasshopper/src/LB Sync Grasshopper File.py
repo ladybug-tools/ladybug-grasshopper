@@ -32,7 +32,7 @@ outputs have changed) will be circled in red and should be replaced manually.
 
 ghenv.Component.Name = 'LB Sync Grasshopper File'
 ghenv.Component.NickName = 'SyncGHFile'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -55,6 +55,6 @@ if all_required_inputs(ghenv.Component) and _sync:
         except Exception:
             if hasattr(comp, 'Name'):
                 msg = 'Failed to Update "{}"'.format(comp.Name)
-                print msg
+                print(msg)
                 give_warning(ghenv.Component, msg)
     report = '\n'.join(r for r in report_init if r)
