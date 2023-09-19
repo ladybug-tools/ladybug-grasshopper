@@ -43,7 +43,7 @@ this component using the "LB Generate Point Grid" component.
 
 ghenv.Component.Name = 'LB Spatial Heatmap'
 ghenv.Component.NickName = 'Heatmap'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -75,6 +75,13 @@ if all_required_inputs(ghenv.Component):
     if offset_dom_:
         dom_st, dom_end = offset_dom_
         lb_mesh = lb_mesh.height_field_mesh(_values, (dom_st, dom_end))
+
+    # check the values against the mesh
+    assert len(_values) == len(lb_mesh.faces) or len(_values) == len(lb_mesh.vertices), \
+        'Expected the number of data set values ({}) to align with the number of faces ' \
+        '({}) or the number of vertices ({}).\nConsider flattening the _values input ' \
+        'and using the "Mesh Join" component to join the _mesh input.'.format(
+            len(_values), len(lb_mesh.faces), len(lb_mesh.vertices))
 
     # create the VisualizationSet and GraphicContainer
     if legend_title_ is not None:
