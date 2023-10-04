@@ -102,10 +102,10 @@ weather data or indoor temperature and humidity ratios from an energy simulation
 
 ghenv.Component.Name = 'LB Psychrometric Chart'
 ghenv.Component.NickName = 'PsychrometricChart'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '1'
+ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 try:
     from ladybug.datacollection import BaseCollection
@@ -127,7 +127,6 @@ try:
         from_linesegment2d, from_point2d
     from ladybug_rhino.text import text_objects
     from ladybug_rhino.fromobjects import legend_objects
-    from ladybug_rhino.color import color_to_color
     from ladybug_rhino.grasshopper import all_required_inputs, list_to_data_tree, \
         hide_output, show_output, longest_list, objectify_output
 except ImportError as e:

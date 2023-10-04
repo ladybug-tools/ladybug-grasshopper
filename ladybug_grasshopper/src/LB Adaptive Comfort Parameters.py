@@ -17,45 +17,53 @@ Adaptive thermal comfort.
 -
 
     Args:
-        _ashrae_or_en15251_: A boolean to note whether to use the ASHRAE-55 neutral
-            temperature function (True) or the EN-15251 function (False).
-            Note that this input will also determine default values for many of
-            the other properties of this object.
+        _ashrae_or_en_: A boolean to note whether to use the ASHRAE-55 neutral
+            temperature function (True) or the european neutral function (False),
+            which is consistent with both EN-15251 and EN-16798. Note that this
+            input will also determine default values for many of the other
+            properties of this object.
         _neutral_offset_:  The number of degrees Celcius from the neutral temperature
             where the input operative temperature is considered acceptable.
             The default is 2.5C when the neutral temperature function is ASHRAE-55
-            and 3C when the neutral temperature function is EN-15251.
-            You may want to use the set_neutral_offset_from_ppd() or the
-            set_neutral_offset_from_comfort_class() methods on this object to set
-            this value using ppd from the ASHRAE-55 standard or comfort classes
-            from the EN-15251 standard respectively.
+            (consistent with 90% PPD) and 3C when the neutral temperature
+            function is EN (consistent with comfort class II).
+            _
+            For ASHRAE-55, the following neutral offsets apply.
+                * 90 PPD - 2.5C
+                * 80 PPD - 3.5C
+            _
+            For the EN standard, the following neutral offsets apply.
+                * Class I - 2C
+                * Class II - 3C
+                * Class III - 4C
         _avgm_or_runmean_: A boolean to note whether the prevailing outdoor
             temperature is computed from the average monthly temperature (True) or
             a weighted running mean of the last week (False).  The default is True
             when the neutral temperature function is ASHRAE-55 and False when the
-            neutral temperature function is EN-15251.
-        _discr_or_cont_vel_: A boolean to note whether discrete
-            categories should be used to assess the effect of elevated air speed
-            (True) or whether a continuous function should be used (False).
-            The default is True when the neutral temperature function is ASHRAE-55
-            and False when the neutral temperature function is EN-15251.
-        _cold_prevail_limit_: A number indicating the prevailing outdoor
-            temperature below which acceptable indoor operative temperatures
-            flatline. The default is 10C when the neutral temperature function is
-            ASHRAE-55 and 15C when the neutral temperature function is EN-15251.
+            neutral temperature function is EN.
+        _discr_or_cont_vel_: A boolean to note whether discrete categories should be
+            used to assess the effect of elevated air speed (True) or whether
+            a continuous function should be used (False). Note that continuous
+            air speeds were only used in the older EN-15251 standard and are
+            not a part of the more recent EN-16798 standard.
+            When unassigned, this will be True for discrete air speeds.
+        _cold_prevail_limit_: A number indicating the prevailing outdoor temperature
+            below which acceptable indoor operative temperatures flat line.
+            The default is 10C, which is consistent with both ASHRAE-55 and
+            EN-16798. However, 15C was used for the older EN-15251 standard.
             This number cannot be greater than 22C and cannot be less than 10C.
         _conditioning_: A number between 0 and 1 that represents how "conditioned"
             vs. "free-running" the building is.
                 0 = free-running (completely passive with no air conditioning)
                 1 = conditioned (no operable windows and fully air conditioned)
-            The default is 0 since both the ASHRAE-55 and EN-15251 standards prohibit
+            The default is 0 since both the ASHRAE-55 and the EN standards prohibit
             the use of adaptive comfort methods when a heating/cooling system is active.
             When set to a non-zero number, a neutral temperature function for
             heated/cooled operation derived from the SCATs database will be used.
             For more information on how adaptive comfort methods can be applied to
             conditioned buildings, see the neutral_temperature_conditioned function
             in the ladybug_comfort documentation.
-    
+
     Returns:
         adapt_par: An Adaptive comfort parameter object that can be plugged into
             any of the components that compute Adaptive thermal comfort.
@@ -63,7 +71,7 @@ Adaptive thermal comfort.
 
 ghenv.Component.Name = 'LB Adaptive Comfort Parameters'
 ghenv.Component.NickName = 'AdaptPar'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.6.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -74,6 +82,6 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_comfort:\n\t{}'.format(e))
 
 
-adapt_par = AdaptiveParameter(_ashrae_or_en15251_, _neutral_offset_,
+adapt_par = AdaptiveParameter(_ashrae_or_en_, _neutral_offset_,
                               _avgm_or_runmean_, _discr_or_cont_vel_,
                               _cold_prevail_limit_, _conditioning_)

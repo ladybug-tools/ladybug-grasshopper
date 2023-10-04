@@ -104,10 +104,10 @@ polygons.
 
 ghenv.Component.Name = 'LB PMV Polygon'
 ghenv.Component.NickName = 'PMV Polygon'
-ghenv.Component.Message = '1.6.1'
+ghenv.Component.Message = '1.6.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '1'
+ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 try:
     from ladybug.psychchart import PsychrometricChart
