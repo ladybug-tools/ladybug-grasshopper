@@ -1,0 +1,190 @@
+{
+  "version": "1.6.0", 
+  "nickname": "AdaptiveChart", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "total_comfort", 
+        "description": "The percent of the data on the adaptive chart that is inside the\ncomfort polygon.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "comfort_data", 
+        "description": "Data collection or a 0/1 value noting whether each of the data\npoints on the chart lies inside of the comfort polygon.\n_\nThis can be connected to the \"LB Create Legend\" component to generate\na list of colors that can be used to color the points output from\n\"LB Adaptive Chart\" component to see exactly which points are\ncomfortable and which are not.\n_\nValues are one of the following:\n0 = uncomfortable\n1 = comfortable", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "condition_data", 
+        "description": "Data collection of integers noting the thermal status of the human\nsubject according to the assigned comfort parameters.\n_\nThis can be connected to the \"LB Create Legend\" component to generate\na list of colors that can be used to color the points output from\n\"LB Adaptive Chart\" component to see exactly which points are\nhot, cold, and neutral.\n_\nValues are one of the following:\n* -1 = cold\n*  0 = netural\n* +1 = hot", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "polygon", 
+        "description": "Brep representing the range of comfort for the input parameters.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "title", 
+        "description": "Text objects for the chart title and axes titles as well as a polyline for\nthe outer border of the chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "prevail_lines", 
+        "description": "A list of line segments and text objects for the outdoor prevailing\ntemperature labels on the chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "operative_lines", 
+        "description": "A list of line segments and text objects for the indoor operative\ntemperature labels on the chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "mesh", 
+        "description": "A colored mesh showing the number of input hours that happen in each part\nof the adaptive chart.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "legend", 
+        "description": "A colored legend showing the number of hours that correspond to\neach color.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "points", 
+        "description": "Points representing each of the input prevailing and operative temperature values.\nBy default, this ouput is hidden and it should be connected it to a\nnative Grasshopper preview component to view it.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "The input data_ with the input statements or the periods applied to it.\nThese can be deconstructed with the \"LB Deconstruct Data\" component\nand the resulting values can be plugged into the \"LB Create Legend\"\ncomponent to generate colors that can be used to color the points\nabove using the native Grasshopper \"Custom Preview\" component.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "vis_set", 
+        "description": "An object containing VisualizationSet arguments for drawing a detailed\nversion of the Adaptive Chart in the Rhino scene. This can be\nconnected to the \"LB Preview Visualization Set\" component to display\nthis version of the Adaptive Chart in Rhino.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_out_temp", 
+      "description": "Outdoor temperatures in one of the following formats:\n* A Data Collection of outdoor dry bulb temperatures recorded over\nthe entire year. This Data Collection must be continouous and\nmust either be an Hourly Collection or Daily Collection. In the event\nthat the input adapt_par_ has a _avgm_or_runmean_ set to True,\nMonthly collections are also acceptable here. Note that, because\nan annual input is required, this input collection does not have\nto align with the _air_temp or _mrt_ inputs.\n* A Data Collection of prevailing outdoor temperature values in C.\nThis Data Collection must align with the _air_temp or _mrt_\ninputs and bear the PrevailingOutdoorTemperature data type in\nits header.\n* A single prevailing outdoor temperature value in C to be used\nfor all of the _air_temp or _mrt_ inputs.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_air_temp", 
+      "description": "A hourly, daily, or sub-hourly data collection of temperature values\nfor indoor air temperature (or operative temperature). If this input\ndata collection is in in Farenheit, the entire chart will be drawn\nusing IP units.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_mrt_", 
+      "description": "A hourly, daily, or sub-hourly data collection for mean radiant temperature\n(MRT) in C. Default is the same as the air_temp, effectively\ninterpreting the _air_temp as operative tempreature.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_air_speed_", 
+      "description": "A number for the air speed values in m/s. Note that higher air speeds\nin the adaptive model only widen the upper boundary of the comfort\nrange at temperatures above 24 C and will not affect the lower temperature\nof the comfort range. Default is a very low speed of 0.1 m/s.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "adapt_par_", 
+      "description": "Optional comfort parameters from the \"LB Adaptive Comfort Parameters\"\ncomponent to specify the criteria under which conditions are\nconsidered acceptable/comfortable. The default will use ASHRAE-55\nadaptive comfort criteria.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_base_pt_", 
+      "description": "A point to be used as the bottom-left-most point from which all\ngeometry of the plot will be generated. (Default: (0, 0, 0)).", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_scale_", 
+      "description": "A number to set the dimensions of the chart. (Default: 1).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_prevail_range_", 
+      "description": "An optional domain (or number for the upper temperature), which\nwill be used to set the lower and upper boundaries of prevailing\noutdoor temperature on the chart. These should be in Celsius if the\nchart is plotted in Celsius and and Fahrenheit if it is in Fahrenheit.\nThe default is 10C to 33C when ASHRAE-55 is used and 10C to 30C when\nthe EN standard is used. This translates to 50F to 92F for ASHRAE-55\nand 50F to 86F for the EN standard.", 
+      "type": "Interval", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_operat_range_", 
+      "description": "An optional domain (or number for the upper temperature), which\nwill be used to set the lower and upper boundaries of indoor\noperative temperature on the chart. These should be in Celsius if the\nchart is plotted in Celsius and and Fahrenheit if it is in Fahrenheit.\nThe default is 14C to 40C, which translates to 58F to 104F.", 
+      "type": "Interval", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "legend_par_", 
+      "description": "An optional LegendParameter object from the \"LB Legend Parameters\"\ncomponent to change the display of the Adaptive Chart.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "data_", 
+      "description": "Optional data collections, which are aligned with the input _air_temp,\nwhich will be output from the data of this component and can be used\nto color points with data. This data can also be used along with\nthe statement_ below to select out data that meets certain conditions.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "statement_", 
+      "description": "A conditional statement as a string (e.g. a > 25).\n.\nThe variable of the first data collection should always be named 'a'\n(without quotations), the variable of the second list should be\nnamed 'b', and so on.\n.\nFor example, if three data collections are connected to _data\nand the following statement is applied:\n'10 < a < 30 and b < 33 and c > 2'\nThe resulting collections will only include values where the first\ndata collection is between 10 and 30, the second collection is less\nthan 33 and the third collection is greater than 2.\n.\nFor this component, the input indoor air temperature will always be\nthe last (or seconf-to-last) letter and this will be followed by\nthe input _mrt_ (if it is present).", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "period_", 
+      "description": "A Ladybug analysis period to be applied to the _out_temp and\n_air_temp of the input data_.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "2 :: Visualize Data", 
+  "code": "\ntry:\n    from ladybug_geometry.geometry2d import Point2D, Vector2D, LineSegment2D\n    from ladybug_geometry.geometry3d import Point3D, Vector3D, Plane\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug.datacollection import BaseCollection\n    from ladybug.datatype.temperature import PrevailingOutdoorTemperature\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_comfort.chart.adaptive import AdaptiveChart\n    from ladybug_comfort.parameter.adaptive import AdaptiveParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.togeometry import to_point2d, to_point3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh2d, from_polygon2d, \\\n        from_polyline2d, from_linesegment2d, from_point2d, \\\n        from_polyline2d_to_offset_brep\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.fromobjects import legend_objects\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, list_to_data_tree, \\\n        hide_output, longest_list, objectify_output\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef leg_par_by_index(i):\n    \"\"\"Get legend parameters associated with a given index of the chart.\"\"\"\n    try:\n        return legend_par_[i]\n    except IndexError:\n        return None\n\n\ndef small_labels(adapt_chart, labels, points, x_align, y_align, factor=1.0):\n    \"\"\"Translate a list of psych chart text labels into the {{Cad}} scene.\"\"\"\n    return [text_objects(txt, Plane(o=Point3D(pt.x, pt.y, z)),\n                         adapt_chart.legend_parameters.text_height * factor,\n                         adapt_chart.legend_parameters.font, x_align, y_align)\n            for txt, pt in zip(labels, points)]\n\n\ndef plane_from_point(point_2d, align_vec=Vector3D(1, 0, 0)):\n    \"\"\"Get a Plane from a Point2D.\n\n    Args:\n        point_2d: A Point2D to serve as the origin of the plane.\n        align_vec: A Vector3D to serve as the X-Axis of the plane.\n    \"\"\"\n    return Plane(o=Point3D(point_2d.x, point_2d.y, z), x=align_vec)\n\n\ndef draw_adapt_chart(adapt_chart):\n    \"\"\"Draw a given adaptive chart object into {{Cad}} geometry.\n\n    This will NOT translate any colored meshes or data points.\n    \"\"\"\n    # output the comfort polygon and neutral lines\n    polygon_i = [from_polyline2d_to_offset_brep([adapt_chart.comfort_polygon], offset, z)]\n    nl = adapt_chart.neutral_polyline\n    if isinstance(nl, LineSegment2D):\n        polygon_i.append(from_linesegment2d(nl, z))\n    else:\n        polygon_i.append(from_polyline2d(nl, z))\n\n    # output all of the lines/polylines for the various axes\n    title_i = [from_polygon2d(adapt_chart.chart_border, z)]\n    prev_lines_i = [from_linesegment2d(tpl, z) for tpl in adapt_chart.prevailing_lines]\n    op_lines_i = [from_linesegment2d(tol, z) for tol in adapt_chart.operative_lines]\n\n    # add the text to the various lines\n    title_i.append(text_objects(\n        adapt_chart.x_axis_text, plane_from_point(adapt_chart.x_axis_location),\n        adapt_chart.legend_parameters.text_height * 1.5,\n        adapt_chart.legend_parameters.font, 1, 0))\n    title_i.append(text_objects(\n        adapt_chart.y_axis_text, plane_from_point(adapt_chart.y_axis_location, Vector3D(0, 1)),\n        adapt_chart.legend_parameters.text_height * 1.5,\n        adapt_chart.legend_parameters.font, 1, 0))\n    prev_lines_i = prev_lines_i + small_labels(\n        adapt_chart, adapt_chart.prevailing_labels, adapt_chart.prevailing_label_points, 1, 0)\n    op_lines_i = op_lines_i + small_labels(\n        adapt_chart, adapt_chart.operative_labels, adapt_chart.operative_label_points, 0, 3)\n\n    # add all of the objects to the base list\n    polygon.append(polygon_i)\n    title.append(title_i)\n    prevail_lines.append(prev_lines_i)\n    operative_lines.append(op_lines_i)\n\n\nif all_required_inputs(ghenv.Component):\n    # process the base point\n    bp = to_point2d(_base_pt_) if _base_pt_ is not None else Point2D()\n    z = to_point3d(_base_pt_).z if _base_pt_ is not None else 0\n\n    # create lists to be filled with objects\n    total_comfort = []\n    comfort_data = []\n    condition_data = []\n    polygon = []\n    title = []\n    prevail_lines = []\n    operative_lines = []\n    mesh = []\n    legend = []\n    points = []\n    data_colls = []\n    vis_set = []\n\n    # loop through the input temperatures and humidity and plot psych charts\n    for j, temperature in enumerate(_air_temp):\n        # process the out_temp and mrt inputs\n        out_temp = longest_list(_out_temp, j)\n        mrt = None\n        if len(_mrt_) != 0:\n            mrt = longest_list(_mrt_, j)\n\n        # sense if the input temperature is in Farenheit\n        use_ip = False\n        if temperature.header.unit != 'C':  # convert to C and set chart to use_ip\n            temperature = temperature.to_si()\n            out_temp = out_temp.to_si()\n            if mrt is not None:\n                mrt = mrt.to_si()\n            use_ip = True\n\n        # set default values for the chart dimensions\n        adapt_par = adapt_par_ if adapt_par_ is not None else AdaptiveParameter()\n        _scale_ = 1.0 if _scale_ is None else _scale_\n        xy_dim = _scale_ * 2 / conversion_to_meters()\n        xy_dim = xy_dim * (9 / 5) if use_ip else xy_dim\n        offset = xy_dim * 0.25\n        if use_ip:\n            tp_min, tp_max = (50, 92) if adapt_par.ashrae_or_en else (50, 86)\n            to_min, to_max = 58, 104\n        else:\n            tp_min, tp_max = (10, 33) if adapt_par.ashrae_or_en else (10, 30)\n            to_min, to_max = 14, 40\n        if _prevail_range_ is not None:\n            tp_min, tp_max = _prevail_range_\n        if _operat_range_ is not None:\n            to_min, to_max = _operat_range_\n        y_move_dist = -xy_dim * 0.04 * j\n        base_pt = bp.move(Vector2D(0, y_move_dist))\n\n        # apply any analysis periods and conditional statements to the input collections\n        original_temperature = temperature\n        all_data = data_ + [temperature]\n        if mrt is not None:\n            all_data.append(mrt)\n        if period_ is not None:\n            all_data = [coll.filter_by_analysis_period(period_) for coll in all_data]\n        if statement_ is not None:\n            all_data = BaseCollection.filter_collections_by_statement(all_data, statement_)\n\n        # create the adaptive chart object and draw it in the {{Cad}} scene\n        if mrt is not None:\n            mrt = all_data.pop(-1)\n        adapt_chart = AdaptiveChart.from_air_and_rad_temp(\n            out_temp, all_data[-1], mrt, _air_speed_, adapt_par,\n            leg_par_by_index(0), base_pt, xy_dim, xy_dim,\n            tp_min, tp_max, to_min, to_max, use_ip=use_ip)\n        draw_adapt_chart(adapt_chart)\n        ttl_tp = adapt_chart.container.lower_title_location.move(\n            Vector3D(0, -adapt_chart.legend_parameters.text_height * 3))\n        if z != 0:\n            ttl_tp = Plane(n=ttl_tp.n, o=Point3D(ttl_tp.o.x, ttl_tp.o.y, z), x=ttl_tp.x)\n        title[j + j * len(data_)].append(text_objects(\n            adapt_chart.title_text, ttl_tp,\n            adapt_chart.legend_parameters.text_height * 1.5,\n            adapt_chart.legend_parameters.font, 0, 0))\n        vs_args = [adapt_chart]\n\n        # plot the data on the chart\n        lb_points = adapt_chart.data_points\n        points.append([from_point2d(pt) for pt in lb_points])\n        hide_output(ghenv.Component, 10)\n        mesh.append(from_mesh2d(adapt_chart.colored_mesh, z))\n        leg = adapt_chart.legend\n        if z != 0 and leg.legend_parameters.is_base_plane_default:\n            nl_par = leg.legend_parameters.duplicate()\n            m_vec = Vector3D(0, 0, z)\n            nl_par.base_plane = nl_par.base_plane.move(m_vec)\n            leg._legend_par = nl_par\n        legend.append(legend_objects(leg))\n\n        # process the comfort-related outputs\n        total_comfort.append(adapt_chart.percent_comfortable)\n        comfort_data.append(adapt_chart.is_comfortable)\n        condition_data.append(adapt_chart.thermal_condition)\n\n        # process any of the connected data into a legend and colors\n        if len(data_) != 0:\n            data_colls.append(all_data[:-1])\n            move_dist = xy_dim * (adapt_chart.max_prevailing - adapt_chart.min_prevailing + 20)\n            vs_leg_par = []\n            for i, d in enumerate(all_data[:-1]):\n                # create a new adaptive chart offset from the original\n                new_pt = Point2D(base_pt.x + move_dist * (i + 1), base_pt.y)\n                adapt_chart = AdaptiveChart.from_air_and_rad_temp(\n                    out_temp, all_data[-1], mrt, _air_speed_, adapt_par,\n                    leg_par_by_index(0), new_pt, xy_dim, xy_dim,\n                    tp_min, tp_max, to_min, to_max, use_ip=use_ip)\n                draw_adapt_chart(adapt_chart)\n                lb_mesh, container = adapt_chart.data_mesh(d, leg_par_by_index(i + 1))\n                mesh.append(from_mesh2d(lb_mesh, z))\n                leg = container.legend\n                vs_leg_par.append(leg.legend_parameters)\n                if z != 0 and leg.legend_parameters.is_base_plane_default:\n                    nl_par = leg.legend_parameters.duplicate()\n                    m_vec = Vector3D(0, 0, z)\n                    nl_par.base_plane = nl_par.base_plane.move(m_vec)\n                    leg._legend_par = nl_par\n                legend.append(legend_objects(leg))\n                move_vec = Vector2D(base_pt.x + move_dist * (i + 1), 0)\n                points.append([from_point2d(pt.move(move_vec)) for pt in lb_points])\n\n                # add a title for the new chart\n                title_items = ['Adaptive Chart'] +\\\n                    ['{} [{}]'.format(d.header.data_type, d.header.unit)] + \\\n                    ['{}: {}'.format(key, val) for key, val in d.header.metadata.items()]\n                ttl_tp = adapt_chart.container.lower_title_location.move(\n                    Vector3D(0, -adapt_chart.legend_parameters.text_height * 3))\n                if z != 0:\n                    ttl_tp = Plane(n=ttl_tp.n, o=Point3D(ttl_tp.o.x, ttl_tp.o.y, z), x=ttl_tp.x)\n                title[j + j * len(data_) + (i + 1)].append(text_objects(\n                    '\\n'.join(title_items), ttl_tp,\n                    adapt_chart.legend_parameters.text_height * 1.5,\n                    adapt_chart.legend_parameters.font, 0, 0))\n            vs_args.extend([all_data[:-2], vs_leg_par, z])\n        else:\n            vs_args.extend([None, None, z])\n        vis_set.append(vs_args)\n\n    # upack all of the python matrices into data trees\n    polygon = list_to_data_tree(polygon)\n    title = list_to_data_tree(title)\n    prevail_lines = list_to_data_tree(prevail_lines)\n    operative_lines = list_to_data_tree(operative_lines)\n    legend = list_to_data_tree(legend)\n    points = list_to_data_tree(points)\n    data = list_to_data_tree(data_colls)\n\n    # output arguments for the visualization set\n    vis_set = objectify_output('VisualizationSet Aruments [AdaptiveChart]', vis_set)\n", 
+  "category": "Ladybug", 
+  "name": "LB Adaptive Chart", 
+  "description": "Draw an adaptive comfort chart in the Rhino scene and plot a set of prevailing and\nindoor operative temperature values on it.\n_\nConnected data can include outdoor temperatures from imported EPW weather data\nas well as indoor temperatures from an energy simulation.\n-"
+}
