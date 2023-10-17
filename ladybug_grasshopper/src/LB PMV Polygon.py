@@ -90,21 +90,16 @@ polygons.
                 0 = uncomfortable
                 1 = comfortable
         comfort_poly: Brep representing the range of comfort for the input mrt, air speed,
-            metabolic rate and clothing level. IF multiple values have been
+            metabolic rate and clothing level. If multiple values have been
             input, multiple polygons will be output here.
         strategy_poly: Brep representing the area of the chart made comfortable by any
             input passive strategies. If multiple strategies have been input to
             the strategies_ input, multiple polygons will be output here.
-        strategy_par_: Optional passive strategy parameters from the "LB Passive Strategy
-            Parameters" component. This can be used to adjust assumptions
-            underlying the passive strategy polygons such as the maximum
-            comfortable fan speed, the building balance temperature, the
-            temperature limits for night flushing, etc.
 """
 
 ghenv.Component.Name = 'LB PMV Polygon'
 ghenv.Component.NickName = 'PMV Polygon'
-ghenv.Component.Message = '1.6.2'
+ghenv.Component.Message = '1.6.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'

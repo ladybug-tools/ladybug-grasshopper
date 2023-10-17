@@ -1,0 +1,92 @@
+{
+  "version": "1.6.0", 
+  "nickname": "UTCI Polygon", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "total_comfort", 
+        "description": "The percent of the data on the psychrometric chart that\nare inside all comfort polygons.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "total_comf_data", 
+        "description": "Data collection or a 0/1 value noting whether each of the data\npoints on the psychrometric chart lies inside of a comfort polygon.\n_\nThis can be connected to the \"LB Create Legend\" component to generate\na list of colors that can be used to color the points output from\n\"LB Psychrometric Chart\" component to see exactly which points are\ncomfortable and which are not.\n_\nValues are one of the following:\n0 = uncomfortable\n1 = comfortable", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "polygons", 
+        "description": "A list of Breps representing the range of comfort (or heat/cold stress) for the\ninput mrt and air speed.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "polygon_names", 
+        "description": "A list of names for each of the polygons which correspond with the polygons\noutput above. This will include both the comfort polygons and the\ncold/heat stress polygons.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "polygon_data", 
+        "description": "A list of data collections or 0/1 values indicating whether each \nof the data points on the psychrometric chart lies inside each of\nthe comfort polygons. Each data collection or here corresponds to the\nnames in the polygon_names output above.\n_\nValues are one of the following:\n0 = outside\n1 = inside", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_psych_chart", 
+      "description": "A hourly, daily, or sub-hourly data collection of temperature values\nor a single temperature value in Celcius to be used for the whole\nanalysis. If this input data collection is in in Farenheit, the\nentire chart will be drawn using IP units. Operative temperature\nshould be used if it is available. Otherwise, air temperature\n(aka. dry bulb temperature) is suitable.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_mrt_", 
+      "description": "A number or list of numbers for the mean radiant temperature. These\nshould be in Celsius if the Psychrometric Chart is in SI and\nFarenheit if the Psychrometric Chart is in IP. If None, a polygon for\noperative temperature will be plot, assuming that radiant temperature\nand air temperature are the same. (Default: None).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_wind_speed_", 
+      "description": "A number or list of numbers for for the meteorological wind speed\nvalues in m/s (measured 10 m above the ground). If None, this will\ndefault to a low wind speed of 0.5 m/s, which is the lowest input\nspeed that is recommended for the UTCI model.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "utci_par_", 
+      "description": "Optional UTCIParameter object to specify parameters under\nwhich conditions are considered acceptable. If None, default will\nassume comfort thresholds consistent with those used by meteorologists\nto categorize outdoor conditions.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "merge_poly_", 
+      "description": "Boolean to note whether all comfort polygons should be merged\ninto a single polygon instead of separate polygons for each set of\ninput conditions. (Default: False).", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "plot_stress_", 
+      "description": "Boolean to note whether polygons for heat/cold stress should be plotted\nin the output. This will include 3 polygons on either side of the comfort\npolygon(s) for...\n_\n* Moderate Stress\n* Strong Stress\n* Very Strong Stress", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "2 :: Visualize Data", 
+  "code": "\ntry:\n    from ladybug.psychchart import PsychrometricChart\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_comfort.chart.polygonutci import PolygonUTCI\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import tolerance\n    from ladybug_{{cad}}.fromgeometry import from_polyline2d_to_offset_brep\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, \\\n        list_to_data_tree, give_warning\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef strategy_warning(polygon_name):\n    \"\"\"Give a warning about a polygon not fitting on the chart.\"\"\"\n    msg = 'Polygon \"{}\" could not fit on the chart given the current location of ' \\\n        'the comfort polygon(s).\\nTry moving the comfort polygon(s) by changing ' \\\n        'its criteria to see the missing polygon.'.format(polygon_name)\n    give_warning(ghenv.Component, msg)\n    print(msg)\n\n\ndef process_polygon(polygon_name, polygon):\n    \"\"\"Process a strategy polygon that does not require any special treatment.\"\"\"\n    if polygon is not None:\n        polygon_names.append(polygon_name)\n        strategy_poly.append(from_polyline2d_to_offset_brep(polygon, offset, z))\n        dat = poly_obj.evaluate_polygon(polygon, tolerance)\n        dat = dat[0] if len(dat) == 1 else poly_obj.create_collection(dat, polygon_name)\n        polygon_data.append(dat)\n    else:\n        strategy_warning(polygon_name)\n\n\ndef merge_polygon_data(poly_data):\n    \"\"\"Merge an array of polygon comfort conditions into a single data list.\"\"\"\n    val_mtx = [dat.values for dat in poly_data]\n    merged_values = []\n    for hr_data in zip(*val_mtx):\n        hr_val = 1 if 1 in hr_data else 0\n        merged_values.append(hr_val)\n    return merged_values\n\n\nif all_required_inputs(ghenv.Component):\n    # convert the temperature values to C if the polygon is in IP\n    assert isinstance(_psych_chart, PsychrometricChart), 'PolygonUTCI ' \\\n        'psychrometric chart must be a ladybug PsychrometricChart. ' \\\n        'Got {}.'.format(type(_psych_chart))\n    z = _psych_chart.z\n    offset = _psych_chart.x_dim * 0.25\n    if _psych_chart.use_ip:\n        _mrt_ = PolygonUTCI.TEMP_TYPE.to_unit(_mrt_, 'C', 'F')\n\n    # create the PolygonUTCI object\n    poly_obj = PolygonUTCI(_psych_chart, _mrt_, _wind_speed_, comfort_parameter=utci_par_)\n\n    # draw the comfort polygon\n    polygon_names = []\n    comfort_data = []\n    if merge_poly_:\n        polygons = [from_polyline2d_to_offset_brep(poly_obj.merged_comfort_polygon, offset, z)]\n        comfort_data.append(poly_obj.merged_comfort_data)\n        polygon_names.append('Comfort')\n    else:\n        polygons = [\n            from_polyline2d_to_offset_brep(poly, offset, z)\n            for poly in poly_obj.comfort_polygons\n        ]\n        comfort_data.extend(poly_obj.comfort_data)\n        if len(polygons) == 1:\n            polygon_names.append('Comfort')\n        else:\n            names = ('Comfort {}'.format(i + 1) for i in range(len(polygons)))\n            polygon_names.extend(names)\n\n    # draw the cold/heat stress polygons if requested\n    polygon_data = comfort_data\n    if plot_stress_:\n        stress_polys = (\n            poly_obj.moderate_cold_polygon, poly_obj.strong_cold_polygon,\n            poly_obj.very_strong_cold_polygon, poly_obj.moderate_heat_polygon,\n            poly_obj.strong_heat_polygon, poly_obj.very_strong_heat_polygon\n        )\n        stress_names = (\n            'Moderate Cold Stress', 'Strong Cold Stress',\n            'Very Strong Cold Stress', 'Moderate Heat Stress',\n            'Strong Heat Stress', 'Very Strong Heat Stress'\n        )\n        for poly, name in zip(stress_polys, stress_names):\n            stress_data = poly_obj.evaluate_inside(poly[0], poly[2], name)\n            if 'Cold' in name:\n                polygons.insert(0, from_polyline2d_to_offset_brep(poly, offset, z))\n                polygon_names.insert(0, name)\n                polygon_data.insert(0, stress_data)\n            else:\n                polygons.append(from_polyline2d_to_offset_brep(poly, offset, z))\n                polygon_names.append(name)\n                polygon_data.append(stress_data)\n\n    # compute total comfort values\n    polygon_comfort = [dat.average * 100 for dat in comfort_data] if \\\n        isinstance(comfort_data[0], BaseCollection) else \\\n        [dat * 100 for dat in comfort_data]\n    if isinstance(comfort_data[0], BaseCollection):\n        merged_vals = merge_polygon_data(comfort_data)\n        total_comf_data = poly_obj.create_collection(merged_vals, 'Total Comfort')\n        total_comfort = total_comf_data.average * 100\n    else:\n        total_comf_data = 1 if sum(comfort_data) > 0 else 0\n        total_comfort = total_comf_data * 100\n", 
+  "category": "Ladybug", 
+  "name": "LB UTCI Polygon", 
+  "description": "Draw thermal comfort polygons on a Psychrometric Chart using the UTCI outdoor\nthermal comfort model.\n-"
+}
