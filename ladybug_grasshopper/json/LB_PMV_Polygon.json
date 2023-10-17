@@ -1,5 +1,5 @@
 {
-  "version": "1.6.2", 
+  "version": "1.6.3", 
   "nickname": "PMV Polygon", 
   "outputs": [
     [
@@ -41,7 +41,7 @@
       {
         "access": "None", 
         "name": "comfort_poly", 
-        "description": "Brep representing the range of comfort for the input mrt, air speed,\nmetabolic rate and clothing level. IF multiple values have been\ninput, multiple polygons will be output here.", 
+        "description": "Brep representing the range of comfort for the input mrt, air speed,\nmetabolic rate and clothing level. If multiple values have been\ninput, multiple polygons will be output here.", 
         "type": null, 
         "default": null
       }, 
