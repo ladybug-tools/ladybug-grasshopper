@@ -72,7 +72,7 @@ thermal comfort model.
 
 ghenv.Component.Name = 'LB UTCI Polygon'
 ghenv.Component.NickName = 'UTCI Polygon'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'

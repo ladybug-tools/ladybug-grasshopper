@@ -107,7 +107,7 @@ a specific individual.
 
 ghenv.Component.Name = 'LB PET Comfort'
 ghenv.Component.NickName = 'PET'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

@@ -74,7 +74,7 @@ http://www.radiance-online.org/learning/documentation/manual-pages/pdfs/gendaymt
 
 ghenv.Component.Name = 'LB Benefit Sky Matrix'
 ghenv.Component.NickName = 'BenefitMatrix'
-ghenv.Component.Message = '1.6.1'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

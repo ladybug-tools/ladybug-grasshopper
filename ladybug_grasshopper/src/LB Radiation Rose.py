@@ -74,7 +74,7 @@ as tilted photovoltaic panels.
 
 ghenv.Component.Name = 'LB Radiation Rose'
 ghenv.Component.NickName = 'RadRose'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'

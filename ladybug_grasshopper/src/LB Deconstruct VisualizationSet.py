@@ -42,7 +42,7 @@ for performing analysis in the data associated with a particular visualization.
 
 ghenv.Component.Name = "LB Deconstruct VisualizationSet"
 ghenv.Component.NickName = 'DeconstructVisSet'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

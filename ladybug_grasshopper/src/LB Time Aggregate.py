@@ -26,7 +26,7 @@ return a collection with an Energy data type in kWh.
 
 ghenv.Component.Name = 'LB Time Aggregate'
 ghenv.Component.NickName = 'Aggr'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

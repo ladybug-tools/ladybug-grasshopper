@@ -39,7 +39,7 @@ Deconstruct design day into parameters.
 
 ghenv.Component.Name = 'LB Deconstruct Design Day'
 ghenv.Component.NickName = 'DecnstrDesignDay'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

@@ -90,7 +90,7 @@ is visible will also be computed.
 
 ghenv.Component.Name = 'LB Sky Mask'
 ghenv.Component.NickName = 'SyMask'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

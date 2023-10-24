@@ -25,7 +25,7 @@ Load Ladybug data collections from a CSV, JSON, or PKL file.
 
 ghenv.Component.Name = 'LB Load Data'
 ghenv.Component.NickName = 'LoadData'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'

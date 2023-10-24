@@ -85,7 +85,7 @@ The Radiation Dome can be understood in different ways:
 
 ghenv.Component.Name = 'LB Radiation Dome'
 ghenv.Component.NickName = 'RadiationDome'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
