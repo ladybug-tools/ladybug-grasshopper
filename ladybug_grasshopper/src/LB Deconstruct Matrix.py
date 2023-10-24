@@ -21,7 +21,7 @@ Deconstruct a Ladybug Matrix object into a Grasshopper Data Tree of values.
 
 ghenv.Component.Name = "LB Deconstruct Matrix"
 ghenv.Component.NickName = 'XMatrix'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

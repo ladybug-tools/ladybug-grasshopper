@@ -27,7 +27,7 @@ These parameters can be plugged into any of the components that compute UTCI com
 
 ghenv.Component.Name = 'LB UTCI Comfort Parameters'
 ghenv.Component.NickName = 'UTCIPar'
-ghenv.Component.Message = '1.6.1'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

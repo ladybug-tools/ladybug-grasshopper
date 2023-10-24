@@ -139,7 +139,7 @@ as well as indoor temperatures from an energy simulation.
 
 ghenv.Component.Name = 'LB Adaptive Chart'
 ghenv.Component.NickName = 'AdaptiveChart'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'

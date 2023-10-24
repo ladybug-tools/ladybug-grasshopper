@@ -50,7 +50,7 @@ scattering, the Honeybee Radiance components should be used.
 
 ghenv.Component.Name = 'LB Surface Ray Tracing'
 ghenv.Component.NickName = 'SrfRayTrace'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

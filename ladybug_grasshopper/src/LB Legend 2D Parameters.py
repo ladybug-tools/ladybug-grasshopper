@@ -51,7 +51,7 @@ Customize the properties of a screen-oreinted 2D legend displaying with the
 
 ghenv.Component.Name = 'LB Legend 2D Parameters'
 ghenv.Component.NickName = 'Legend2D'
-ghenv.Component.Message = '1.6.1'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'

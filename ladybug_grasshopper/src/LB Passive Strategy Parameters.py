@@ -88,7 +88,7 @@ hours that the building keeps its "coolth".
 
 ghenv.Component.Name = 'LB Passive Strategy Parameters'
 ghenv.Component.NickName = 'StrategyPar'
-ghenv.Component.Message = '1.6.0'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
