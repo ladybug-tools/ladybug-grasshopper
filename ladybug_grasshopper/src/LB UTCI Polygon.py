@@ -72,7 +72,7 @@ thermal comfort model.
 
 ghenv.Component.Name = 'LB UTCI Polygon'
 ghenv.Component.NickName = 'UTCI Polygon'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -161,7 +161,7 @@ if all_required_inputs(ghenv.Component):
             polygon_names.extend(names)
 
     # draw the cold/heat stress polygons if requested
-    polygon_data = comfort_data
+    polygon_data = comfort_data[:]
     if plot_stress_:
         stress_polys = (
             poly_obj.moderate_cold_polygon, poly_obj.strong_cold_polygon,
