@@ -29,7 +29,7 @@ Create a compass sign that indicates the direction of North in the Rhino scene.
 
 ghenv.Component.Name = 'LB Compass'
 ghenv.Component.NickName = 'Compass'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '6'
@@ -53,8 +53,10 @@ try:
     from ladybug_rhino.togeometry import to_vector2d, to_point2d, to_point3d
     from ladybug_rhino.fromgeometry import from_arc2d, from_linesegment2d
     from ladybug_rhino.text import text_objects
+    from ladybug_rhino.grasshopper import turn_off_old_tag
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
 
 
 def translate_compass(compass, z=0, font='Arial'):

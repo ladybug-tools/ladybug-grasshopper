@@ -25,7 +25,7 @@ Calculate hour of the year from month, day, hour, minute.
 
 ghenv.Component.Name = 'LB Calculate HOY'
 ghenv.Component.NickName = 'HOY'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -34,6 +34,12 @@ try:
     from ladybug.dt import DateTime
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
+try:
+    from ladybug_rhino.grasshopper import turn_off_old_tag
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
+
 
 month = _month_ or 9
 day = _day_ or 21

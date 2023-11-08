@@ -1,57 +1,57 @@
 {
-  "version": "1.7.0", 
-  "nickname": "Legend2D", 
+  "description": "Customize the properties of a screen-oreinted 2D legend displaying with the\n\"LB Preview VisualizationSet\" component.\n-", 
   "outputs": [
     [
       {
-        "access": "None", 
+        "type": null, 
         "name": "leg_par2d", 
         "description": "A legend parameter object that can be plugged into any of the\nLadybug components with a legend.", 
-        "type": null, 
+        "access": "None", 
         "default": null
       }
     ]
   ], 
+  "code": "\n\ntry:\n    from ladybug.legend import Legend2DParameters\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\ndef parse_dim_text(dim_text):\n    \"\"\"Parse text representing a dimension into an input for legend parameters.\"\"\"\n    try:\n        px_txt = int(dim_text)\n        return '{}px'.format(px_txt)\n    except ValueError:\n        return dim_text\n\n\n# parse all of the inputs\norigin_x_ = parse_dim_text(origin_x_) if origin_x_ is not None else None\norigin_y_ = parse_dim_text(origin_y_) if origin_y_ is not None else None\nseg_height_ = parse_dim_text(seg_height_) if seg_height_ is not None else None\nseg_width_ = parse_dim_text(seg_width_) if seg_width_ is not None else None\ntext_height_ = parse_dim_text(text_height_) if text_height_ is not None else None\n\n# make the 2D legend parameters\nleg_par2d = Legend2DParameters(origin_x_, origin_y_, seg_height_, seg_width_, text_height_)\n", 
+  "name": "LB Legend 2D Parameters", 
+  "version": "1.7.1", 
+  "category": "Ladybug", 
+  "subcategory": "4 :: Extra", 
+  "nickname": "Legend2D", 
   "inputs": [
     {
-      "access": "item", 
+      "type": "string", 
       "name": "origin_x_", 
       "description": "An integer in pixels to note the X coordinate of the base point from\nwhere the 2D legend will be generated (assuming an origin in the\nupper-left corner of the screen with higher positive values of\nX moving to the right). Alternatively, this can be a text string\nending in a % sign to denote the percentage of the screen where\nthe X coordinate exists (eg. 5%). The default is set to make the\nlegend clearly visible in the upper-left corner of the\nscreen (10 pixels).", 
-      "type": "string", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "string", 
       "name": "origin_y_", 
       "description": "An integer in pixels to note the Y coordinate of the base point from\nwhere the legend will be generated (assuming an origin in the\nupper-left corner of the screen with higher positive values of\nY moving downward). Alternatively, this can be a text string\nending in a % sign to denote the percentage of the screen where\nthe X coordinate exists (eg. 5%). The default is set to make the\nlegend clearly visible in the upper-left corner of the\nscreen (50 pixels).", 
-      "type": "string", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "string", 
       "name": "seg_height_", 
       "description": "A integer in pixels to note the height for each of the legend segments.\nAlternatively, this can be a text string ending in a % sign to\ndenote the percentage of the screen (eg. 5%). The default is set\nto make most legends readable on standard resolution\nscreens (25px for horizontal and 36px for vertical).", 
-      "type": "string", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "string", 
       "name": "seg_width_", 
       "description": "An integer in pixels to set the width of each of the legend segments.\nAlternatively, this can be a text string ending in a % sign to\ndenote the percentage of the screen (eg. 5%). The default is set\nto make most legends readable on standard resolution\nscreens (36px for horizontal and 25px for vertical).", 
-      "type": "string", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "string", 
       "name": "text_height_", 
       "description": "An integer in pixels to set the height for the legend text.\nAlternatively, this can be a text string ending in a % sign to\ndenote the percentage of the screen (eg. 2%).", 
-      "type": "string", 
+      "access": "item", 
       "default": null
     }
-  ], 
-  "subcategory": "4 :: Extra", 
-  "code": "\n\ntry:\n    from ladybug.legend import Legend2DParameters\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\n\ndef parse_dim_text(dim_text):\n    \"\"\"Parse text representing a dimension into an input for legend parameters.\"\"\"\n    try:\n        px_txt = int(dim_text)\n        return '{}px'.format(px_txt)\n    except ValueError:\n        return dim_text\n\n\n# parse all of the inputs\norigin_x_ = parse_dim_text(origin_x_) if origin_x_ is not None else None\norigin_y_ = parse_dim_text(origin_y_) if origin_y_ is not None else None\nseg_height_ = parse_dim_text(seg_height_) if seg_height_ is not None else None\nseg_width_ = parse_dim_text(seg_width_) if seg_width_ is not None else None\ntext_height_ = parse_dim_text(text_height_) if text_height_ is not None else None\n\n# make the 2D legend parameters\nleg_par2d = Legend2DParameters(origin_x_, origin_y_, seg_height_, seg_width_, text_height_)\n", 
-  "category": "Ladybug", 
-  "name": "LB Legend 2D Parameters", 
-  "description": "Customize the properties of a screen-oreinted 2D legend displaying with the\n\"LB Preview VisualizationSet\" component.\n-"
+  ]
 }

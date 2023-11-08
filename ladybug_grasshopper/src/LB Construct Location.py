@@ -27,7 +27,7 @@ Construct location from latitude, lognitude, and time zone data.
 
 ghenv.Component.Name = 'LB Construct Location'
 ghenv.Component.NickName = 'ConstrLoc'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -36,5 +36,11 @@ try:
     from ladybug.location import Location
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+try:
+    from ladybug_rhino.grasshopper import turn_off_old_tag
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
+
 
 location = Location(_name_, '-', '-', _latitude_, _longitude_, _time_zone_, _elevation_)

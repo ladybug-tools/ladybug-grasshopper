@@ -1,85 +1,85 @@
 {
-  "version": "1.7.0", 
-  "nickname": "AnalysisPeriod", 
+  "description": "Create an Analysis Period to describe a slice of time during the year.\n-", 
   "outputs": [
     [
       {
-        "access": "None", 
+        "type": null, 
         "name": "period", 
         "description": "Analysis period.", 
-        "type": null, 
+        "access": "None", 
         "default": null
       }, 
       {
-        "access": "None", 
+        "type": null, 
         "name": "hoys", 
         "description": "List of dates in this analysis period.", 
-        "type": null, 
+        "access": "None", 
         "default": null
       }, 
       {
-        "access": "None", 
+        "type": null, 
         "name": "dates", 
         "description": "List of hours of the year in this analysis period.", 
-        "type": null, 
+        "access": "None", 
         "default": null
       }
     ]
   ], 
+  "code": "\ntry:\n    import ladybug.analysisperiod as ap\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import wrap_output, turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\nanp = ap.AnalysisPeriod(\n    _start_month_, _start_day_, _start_hour_,\n    _end_month_, _end_day_, _end_hour_, _timestep_)\n\nif anp:\n    period = anp\n    dates = wrap_output(anp.datetimes)\n    hoys = anp.hoys", 
+  "name": "LB Analysis Period", 
+  "version": "1.7.1", 
+  "category": "Ladybug", 
+  "subcategory": "1 :: Analyze Data", 
+  "nickname": "AnalysisPeriod", 
   "inputs": [
     {
-      "access": "item", 
+      "type": "int", 
       "name": "_start_month_", 
       "description": "Start month (1-12).", 
-      "type": "int", 
+      "access": "item", 
       "default": 1
     }, 
     {
-      "access": "item", 
+      "type": "int", 
       "name": "_start_day_", 
       "description": "Start day (1-31).", 
-      "type": "int", 
+      "access": "item", 
       "default": 1
     }, 
     {
-      "access": "item", 
+      "type": "int", 
       "name": "_start_hour_", 
       "description": "Start hour (0-23).", 
-      "type": "int", 
+      "access": "item", 
       "default": 0
     }, 
     {
-      "access": "item", 
+      "type": "int", 
       "name": "_end_month_", 
       "description": "End month (1-12).", 
-      "type": "int", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "int", 
       "name": "_end_day_", 
       "description": "End day (1-31).", 
-      "type": "int", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "int", 
       "name": "_end_hour_", 
       "description": "End hour (0-23).", 
-      "type": "int", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "int", 
       "name": "_timestep_", 
       "description": "An integer number for the number of time steps per hours.\nAcceptable inputs include: 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60", 
-      "type": "int", 
+      "access": "item", 
       "default": null
     }
-  ], 
-  "subcategory": "1 :: Analyze Data", 
-  "code": "\ntry:\n    import ladybug.analysisperiod as ap\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import wrap_output\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nanp = ap.AnalysisPeriod(\n    _start_month_, _start_day_, _start_hour_,\n    _end_month_, _end_day_, _end_hour_, _timestep_)\n\nif anp:\n    period = anp\n    dates = wrap_output(anp.datetimes)\n    hoys = anp.hoys", 
-  "category": "Ladybug", 
-  "name": "LB Analysis Period", 
-  "description": "Create an Analysis Period to describe a slice of time during the year.\n-"
+  ]
 }

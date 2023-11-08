@@ -53,7 +53,7 @@ https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
 
 ghenv.Component.Name = 'LB Color Range'
 ghenv.Component.NickName = 'ColRange'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -65,8 +65,10 @@ except ImportError as e:
 
 try:
     from ladybug_rhino.color import color_to_color
+    from ladybug_rhino.grasshopper import turn_off_old_tag
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
 
 
 _index_ = _index_ or 0

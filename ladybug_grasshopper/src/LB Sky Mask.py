@@ -90,7 +90,7 @@ is visible will also be computed.
 
 ghenv.Component.Name = 'LB Sky Mask'
 ghenv.Component.NickName = 'SyMask'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -116,8 +116,10 @@ try:
     from ladybug_rhino.togeometry import to_point3d, to_plane
     from ladybug_rhino.fromgeometry import from_mesh3d, from_point3d, from_vector3d
     from ladybug_rhino.intersect import join_geometry_to_mesh, intersect_mesh_rays
+    from ladybug_rhino.grasshopper import turn_off_old_tag
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
 
 
 def apply_mask_to_sky(sky_pattern, mask_pattern):

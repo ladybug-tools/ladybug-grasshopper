@@ -38,7 +38,7 @@ mean radiant temperature (MRT) deltas as a result of being in the sun.
         _emissivity_: A number between 0 and 1 representing the average
             longwave emissivity of the body.  Default is 0.95, which is almost
             always the case except in rare situations of wearing metalic clothing.
-    
+
     Returns:
         sol_body_par: A solar body parameter object that can be plugged into
             any of the components that estimate mean radiant temperature (MRT)
@@ -47,7 +47,7 @@ mean radiant temperature (MRT) deltas as a result of being in the sun.
 
 ghenv.Component.Name = 'LB Solar Body Parameters'
 ghenv.Component.NickName = 'SolarBodyPar'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -56,6 +56,11 @@ try:
     from ladybug_comfort.parameter.solarcal import SolarCalParameter
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_comfort:\n\t{}'.format(e))
+try:
+    from ladybug_rhino.grasshopper import turn_off_old_tag
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
 
 
 sol_body_par = SolarCalParameter(_posture_, _sharp_, _body_az_,

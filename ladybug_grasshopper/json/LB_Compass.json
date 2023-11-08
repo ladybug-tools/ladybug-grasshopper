@@ -1,43 +1,43 @@
 {
-  "version": "1.7.0", 
-  "nickname": "Compass", 
+  "description": "Create a compass sign that indicates the direction of North in the Rhino scene.\n-", 
   "outputs": [
     [
       {
-        "access": "None", 
+        "type": null, 
         "name": "compass", 
         "description": "A set of circles, lines and text objects that mark the cardinal\ndirections in the Rhino scene.", 
-        "type": null, 
+        "access": "None", 
         "default": null
       }
     ]
   ], 
+  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Vector2D, Point2D\n    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D\n    from ladybug_geometry.geometry3d.plane import Plane\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug.compass import Compass\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.togeometry import to_vector2d, to_point2d, to_point3d\n    from ladybug_{{cad}}.fromgeometry import from_arc2d, from_linesegment2d\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\ndef translate_compass(compass, z=0, font='Arial'):\n    \"\"\"Translate a Ladybug Compass object into {{Plugin}} geometry.\n\n    Args:\n        compass: A Ladybug Compass object to be converted to {{Cad}} geometry.\n        z: A number for the Z-coordinate to be used in translation. (Default: 0)\n        font: Optional text for the font to be used in creating the text.\n            (Default: 'Arial')\n\n    Returns:\n        A list of {{Cad}} geometries in the following order.\n        -   all_boundary_circles -- Three Circle objects for the compass boundary.\n        -   major_azimuth_ticks -- Line objects for the major azimuth labels.\n        -   major_azimuth_text -- Bake-able text objects for the major azimuth labels.\n     \"\"\"\n    # set default variables based on the compass properties\n    maj_txt = compass.radius / 2.5\n    xaxis = Vector3D(1, 0, 0).rotate_xy(math.radians(compass.north_angle))\n    result = []  # list to hold all of the returned objects\n\n    # create the boundary circles\n    for circle in compass.all_boundary_circles:\n        result.append(from_arc2d(circle, z))\n\n    # generate the labels and tick marks for the azimuths\n    for line in compass.major_azimuth_ticks:\n        result.append(from_linesegment2d(line, z))\n    for txt, pt in zip(compass.MAJOR_TEXT, compass.major_azimuth_points):\n        result.append(text_objects(\n            txt, Plane(o=Point3D(pt.x, pt.y, z), x=xaxis), maj_txt, font, 1, 3))\n    return result\n\n\n# set defaults for all of the\nif _north_ is not None:  # process the _north_\n    try:\n        _north_ = math.degrees(to_vector2d(_north_).angle_clockwise(Vector2D(0, 1)))\n    except AttributeError:  # north angle instead of vector\n        _north_ = float(_north_)\nelse:\n    _north_ = 0\nif _center_ is not None:  # process the center point into a Point2D\n    center_pt, z = to_point2d(_center_), to_point3d(_center_).z\nelse:\n    center_pt, z = Point2D(), 0\n_scale_ = 1 if _scale_ is None else _scale_ # process the scale into a radius\nradius = (10 * _scale_) / conversion_to_meters()\n\n# create the compass\ncompass = translate_compass(Compass(radius, center_pt, _north_, 1), z)\n", 
+  "name": "LB Compass", 
+  "version": "1.7.1", 
+  "category": "Ladybug", 
+  "subcategory": "4 :: Extra", 
+  "nickname": "Compass", 
   "inputs": [
     {
-      "access": "item", 
+      "type": "System.Object", 
       "name": "_north_", 
       "description": "A number between -360 and 360 for the counterclockwise difference\nbetween the North and the positive Y-axis in degrees. Counterclockwise\nmeans \"90 is West and 270 is East\". This can also be Vector for the\ndirection to North. (Default: 0)", 
-      "type": "System.Object", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "Point3d", 
       "name": "_center_", 
       "description": "A point for the center position of the compass in the Rhino\nscene. (Default: (0, 0, 0) aka. the Rhino scene origin).", 
-      "type": "Point3d", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "double", 
       "name": "_scale_", 
       "description": "A number to set the scale of the compass. The default is 1,\nwhich corresponds to a radius of 10 meters in the current Rhino\nmodel's unit system.", 
-      "type": "double", 
+      "access": "item", 
       "default": null
     }
-  ], 
-  "subcategory": "4 :: Extra", 
-  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Vector2D, Point2D\n    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D\n    from ladybug_geometry.geometry3d.plane import Plane\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug.compass import Compass\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.togeometry import to_vector2d, to_point2d, to_point3d\n    from ladybug_{{cad}}.fromgeometry import from_arc2d, from_linesegment2d\n    from ladybug_{{cad}}.text import text_objects\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef translate_compass(compass, z=0, font='Arial'):\n    \"\"\"Translate a Ladybug Compass object into {{Plugin}} geometry.\n\n    Args:\n        compass: A Ladybug Compass object to be converted to {{Cad}} geometry.\n        z: A number for the Z-coordinate to be used in translation. (Default: 0)\n        font: Optional text for the font to be used in creating the text.\n            (Default: 'Arial')\n\n    Returns:\n        A list of {{Cad}} geometries in the following order.\n        -   all_boundary_circles -- Three Circle objects for the compass boundary.\n        -   major_azimuth_ticks -- Line objects for the major azimuth labels.\n        -   major_azimuth_text -- Bake-able text objects for the major azimuth labels.\n     \"\"\"\n    # set default variables based on the compass properties\n    maj_txt = compass.radius / 2.5\n    xaxis = Vector3D(1, 0, 0).rotate_xy(math.radians(compass.north_angle))\n    result = []  # list to hold all of the returned objects\n\n    # create the boundary circles\n    for circle in compass.all_boundary_circles:\n        result.append(from_arc2d(circle, z))\n\n    # generate the labels and tick marks for the azimuths\n    for line in compass.major_azimuth_ticks:\n        result.append(from_linesegment2d(line, z))\n    for txt, pt in zip(compass.MAJOR_TEXT, compass.major_azimuth_points):\n        result.append(text_objects(\n            txt, Plane(o=Point3D(pt.x, pt.y, z), x=xaxis), maj_txt, font, 1, 3))\n    return result\n\n\n# set defaults for all of the\nif _north_ is not None:  # process the _north_\n    try:\n        _north_ = math.degrees(to_vector2d(_north_).angle_clockwise(Vector2D(0, 1)))\n    except AttributeError:  # north angle instead of vector\n        _north_ = float(_north_)\nelse:\n    _north_ = 0\nif _center_ is not None:  # process the center point into a Point2D\n    center_pt, z = to_point2d(_center_), to_point3d(_center_).z\nelse:\n    center_pt, z = Point2D(), 0\n_scale_ = 1 if _scale_ is None else _scale_ # process the scale into a radius\nradius = (10 * _scale_) / conversion_to_meters()\n\n# create the compass\ncompass = translate_compass(Compass(radius, center_pt, _north_, 1), z)\n", 
-  "category": "Ladybug", 
-  "name": "LB Compass", 
-  "description": "Create a compass sign that indicates the direction of North in the Rhino scene.\n-"
+  ]
 }

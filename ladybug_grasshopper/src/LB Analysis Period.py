@@ -30,7 +30,7 @@ Create an Analysis Period to describe a slice of time during the year.
 
 ghenv.Component.Name = 'LB Analysis Period'
 ghenv.Component.NickName = 'AnalysisPeriod'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -41,9 +41,10 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.grasshopper import wrap_output
+    from ladybug_rhino.grasshopper import wrap_output, turn_off_old_tag
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
 
 
 anp = ap.AnalysisPeriod(

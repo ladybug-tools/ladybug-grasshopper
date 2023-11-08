@@ -58,7 +58,7 @@ that can accept Legend Parameters from this component.
 
 ghenv.Component.Name = 'LB Legend Parameters'
 ghenv.Component.NickName = 'LegendPar'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -71,8 +71,10 @@ except ImportError as e:
 
 try:
     from ladybug_rhino.togeometry import to_plane
+    from ladybug_rhino.grasshopper import turn_off_old_tag
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
 
 
 if colors_ == []:
