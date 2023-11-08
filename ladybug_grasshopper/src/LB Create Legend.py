@@ -48,10 +48,16 @@ import rhinoscriptsyntax as rs
 
 class MyComponent(component):
     
+    def __init__(self):
+        super(MyComponent,self).__init__()
+        self.draw_2d_text = None
+        self.draw_sprite = None
+        self.colored_mesh = None
+    
     def RunScript(self, _values, _base_plane_, title_, legend_par_, leg_par2d_):
         ghenv.Component.Name = "LB Create Legend"
         ghenv.Component.NickName = 'CreateLegend'
-        ghenv.Component.Message = '1.6.3'
+        ghenv.Component.Message = '1.7.0'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '0'

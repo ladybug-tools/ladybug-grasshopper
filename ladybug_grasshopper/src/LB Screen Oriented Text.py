@@ -41,7 +41,7 @@ class MyComponent(component):
     def RunScript(self, _text, leg_par2d_, _font_):
         ghenv.Component.Name = 'LB Screen Oriented Text'
         ghenv.Component.NickName = 'Text2D'
-        ghenv.Component.Message = '1.6.0'
+        ghenv.Component.Message = '1.7.0'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '0'

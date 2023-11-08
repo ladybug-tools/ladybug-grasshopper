@@ -38,7 +38,7 @@ PMV thermal comfort.
 
 ghenv.Component.Name = 'LB PMV Comfort Parameters'
 ghenv.Component.NickName = 'PMVPar'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -47,6 +47,11 @@ try:
     from ladybug_comfort.parameter.pmv import PMVParameter
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_comfort:\n\t{}'.format(e))
+try:
+    from ladybug_rhino.grasshopper import turn_off_old_tag
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
 
 
 pmv_par = PMVParameter(_ppd_thresh_, _hr_upper_, _hr_lower_, _still_air_thresh_)

@@ -27,7 +27,7 @@ These parameters can be plugged into any of the components that compute UTCI com
 
 ghenv.Component.Name = 'LB UTCI Comfort Parameters'
 ghenv.Component.NickName = 'UTCIPar'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -36,6 +36,12 @@ try:
     from ladybug_comfort.parameter.utci import UTCIParameter
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_comfort:\n\t{}'.format(e))
+try:
+    from ladybug_rhino.grasshopper import turn_off_old_tag
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)
+
 
 moderate_cold, moderate_heat = None, None
 if _cold_thresh_ and _cold_thresh_ < 0:

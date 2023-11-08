@@ -1,64 +1,64 @@
 {
-  "version": "1.7.0", 
-  "nickname": "PETPar", 
+  "description": "Create a set of parameters that define the body characteristics for the PET model.\n-\nThese parameters can be plugged into any of the components that compute\nPET thermal comfort.\n-", 
   "outputs": [
     [
       {
-        "access": "None", 
+        "type": null, 
         "name": "pet_par", 
         "description": "A PET comfort parameter object that can be plugged into any of the\ncomponents that compute PET thermal comfort.", 
-        "type": null, 
+        "access": "None", 
         "default": null
       }
     ]
   ], 
+  "code": "\ntry:\n    from ladybug_comfort.parameter.pet import PETParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\npet_par = PETParameter(_age_, _sex_, _height_, _body_mass_, _posture_, humid_acclim_)\n", 
+  "name": "LB PET Body Parameters", 
+  "version": "1.7.1", 
+  "category": "Ladybug", 
+  "subcategory": "4 :: Extra", 
+  "nickname": "PETPar", 
   "inputs": [
     {
-      "access": "item", 
+      "type": "double", 
       "name": "_age_", 
       "description": "The age of the human subject in years. (Default: 36 years for middle age\nof the average worldwide life expectancy).", 
-      "type": "double", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "double", 
       "name": "_sex_", 
       "description": "A value between 0 and 1 to indicate the sex of the human subject,\nwhich influences the computation of basal metabolism. 0 indicates male.\n1 indicates female and any number in between denotes a weighted average\nbetween the two. (Default: 0.5).", 
-      "type": "double", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "double", 
       "name": "_height_", 
       "description": "The height of the human subject in meters. Average male height\nis around 1.75m while average female height is 1.55m. (Default: 1.65m\nfor a worldwide average between male and female height).", 
-      "type": "double", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "double", 
       "name": "_body_mass_", 
       "description": "The body mass of the human subject in kilograms. (Default: 62 kg\nfor the worldwide average adult human body mass).", 
-      "type": "double", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "string", 
       "name": "_posture_", 
       "description": "A text string indicating the posture of the body. Letters must\nbe lowercase. Default is \"standing\". Choose from the following:\n_\n* standing\n* seated\n* crouching", 
-      "type": "string", 
+      "access": "item", 
       "default": null
     }, 
     {
-      "access": "item", 
+      "type": "bool", 
       "name": "humid_acclim_", 
       "description": "A boolean to note whether the human subject is acclimated\nto a humid/tropical climate (True) or is acclimated to a temperate\nclimate (False). When True, the categories developed by Lin and\nMatzarakis (2008) will be used to assess comfort instead of the original\ncategories developed by Matzarakis and Mayer (1996).", 
-      "type": "bool", 
+      "access": "item", 
       "default": null
     }
-  ], 
-  "subcategory": "4 :: Extra", 
-  "code": "\ntry:\n    from ladybug_comfort.parameter.pet import PETParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\n\n\npet_par = PETParameter(_age_, _sex_, _height_, _body_mass_, _posture_, humid_acclim_)\n", 
-  "category": "Ladybug", 
-  "name": "LB PET Body Parameters", 
-  "description": "Create a set of parameters that define the body characteristics for the PET model.\n-\nThese parameters can be plugged into any of the components that compute\nPET thermal comfort.\n-"
+  ]
 }
