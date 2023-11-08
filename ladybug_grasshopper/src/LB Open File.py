@@ -22,13 +22,12 @@ an OSM file in the OpenStudio Application).
 
 ghenv.Component.Name = 'LB Open File'
 ghenv.Component.NickName = 'OpenFile'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
 
 import os
-import subprocess
 
 try:
     from ladybug_rhino.grasshopper import all_required_inputs

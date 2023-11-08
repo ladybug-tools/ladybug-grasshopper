@@ -56,7 +56,7 @@ be installed on other's machines.
 
 ghenv.Component.Name = 'LB Export UserObject'
 ghenv.Component.NickName = 'ExportUO'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -66,8 +66,10 @@ try:
         gather_connected_components
     from ladybug_rhino.versioning.diff import validate_change_type
     from ladybug_rhino.versioning.export import export_component, refresh_toolbar
+    from ladybug_rhino.grasshopper import turn_off_old_tag
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
+turn_off_old_tag(ghenv.Component)  # turn off the OLD tag in Rhino 8
 
 
 if _export and _folder and len(_components) != 0:
