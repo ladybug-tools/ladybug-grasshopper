@@ -34,7 +34,7 @@ can be found at: https://github.com/ladybug-tools/lbt-grasshopper/releases
 
 ghenv.Component.Name = 'LB Versioner'
 ghenv.Component.NickName = 'Versioner'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -77,7 +77,9 @@ if all_required_inputs(ghenv.Component) and _update:
     if version_ is not None:
         cmd.extend(['--version', version_])
     use_shell = True if os.name == 'nt' else False
-    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=use_shell)
+    custom_env = os.environ.copy()
+    custom_env['PYTHONHOME'] = ''
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=use_shell, env=custom_env)
     cmd_output = process.communicate()  # ensure that the canvas is frozen
     stdout = cmd_output[0]
     print(stdout)
@@ -86,7 +88,8 @@ if all_required_inputs(ghenv.Component) and _update:
             raise ValueError(stdout)
         else:  # recent Windows permission issue; reinstall ladybug-rhino
             cmd = cmds = [folders.python_exe_path, '-m', 'pip', 'install', 'ladybug-rhino', '-U']
-            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=use_shell)
+            process = subprocess.Popen(
+                cmd, stdout=subprocess.PIPE, shell=use_shell, env=custom_env)
             cmd_output = process.communicate()  # ensure that the canvas is frozen
 
     # give a completion message
