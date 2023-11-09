@@ -58,7 +58,7 @@ radiation for photovoltaic panels, etc.
 
 ghenv.Component.Name = 'LB Mesh Threshold Selector'
 ghenv.Component.NickName = 'MeshSelector'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -101,17 +101,20 @@ if all_required_inputs(ghenv.Component):
             pattern[cnt] = True
 
     # remove the faces or vertices from the mesh and compute the outputs
-    sub_mesh_lb, vf_pattern = lb_mesh.remove_faces(pattern) if face_match else \
-        lb_mesh.remove_vertices(pattern)
     total_value, total_area = 0, 0
-    if face_match:
-        for incl, val, area in zip(pattern, _values, lb_mesh.face_areas):
-            if incl:
-                total_area += area
-                total_value += val * area
-    else:
-        total_area = sub_mesh_lb.area
-
-    # convert everything to Rhino geometry
-    sub_mesh, outline = from_mesh3d_to_outline(sub_mesh_lb)
-    hide_output(ghenv.Component, 3)
+    try:
+        sub_mesh_lb, vf_pattern = lb_mesh.remove_faces(pattern) if face_match else \
+            lb_mesh.remove_vertices(pattern)
+        if face_match:
+            for incl, val, area in zip(pattern, _values, lb_mesh.face_areas):
+                if incl:
+                    total_area += area
+                    total_value += val * area
+        else:
+            total_area = sub_mesh_lb.area
+        # convert everything to Rhino geometry
+        sub_mesh, outline = from_mesh3d_to_outline(sub_mesh_lb)
+        hide_output(ghenv.Component, 3)
+    except AssertionError as e:
+        if not 'Mesh must have at least one face' in str(e):
+            raise AssertionError(e)
