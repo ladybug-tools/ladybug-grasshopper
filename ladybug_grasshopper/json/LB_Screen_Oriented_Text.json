@@ -1,35 +1,42 @@
 {
-  "description": "Generate screen-oriented text that displays in the Rhino scene as a head-up\ndisplay (HUD).\n_\nThis is useful when there are certain summary results or information that should\nalways be displayed on-screen.\n-", 
+  "version": "1.7.1", 
+  "nickname": "Text2D", 
   "outputs": [
     []
   ], 
-  "code": "", 
-  "name": "LB Screen Oriented Text", 
-  "version": "1.7.0", 
-  "category": "Ladybug", 
-  "subcategory": "4 :: Extra", 
-  "nickname": "Text2D", 
   "inputs": [
     {
-      "type": "string", 
+      "access": "list", 
       "name": "_text", 
       "description": "Text string to be displayed in the plane of the screen.", 
-      "access": "list", 
+      "type": "string", 
       "default": null
     }, 
     {
-      "type": "System.Object", 
+      "access": "list", 
       "name": "leg_par2d_", 
       "description": "Optional 2D LegendParameters from the \"LB Legend Parameters 2D\"\ncomponent, which will be used to customize a text in the plane\nof the screen. Note that only the text_height, origin_x and origin_y\ninputs of this component affect the placement of the text.", 
-      "access": "list", 
+      "type": "System.Object", 
       "default": null
     }, 
     {
-      "type": "string", 
+      "access": "item", 
       "name": "_font_", 
       "description": "An optional text string to specify the font to be used for the text.\nExamples include \"Arial\", \"Times New Roman\", \"Courier\" (all without\nquotations). Default is \"Arial\".", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
       "access": "item", 
+      "name": "_color_", 
+      "description": "An optional color to set the color of the text. If unspecified,\nit will be black.", 
+      "type": "System.Drawing.Color", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "", 
+  "category": "Ladybug", 
+  "name": "LB Screen Oriented Text", 
+  "description": "Generate screen-oriented text that displays in the Rhino scene as a head-up\ndisplay (HUD).\n_\nThis is useful when there are certain summary results or information that should\nalways be displayed on-screen.\n-"
 }
