@@ -24,6 +24,8 @@ always be displayed on-screen.
         _font_: An optional text string to specify the font to be used for the text.
             Examples include "Arial", "Times New Roman", "Courier" (all without
             quotations). Default is "Arial".
+        _color_: An optional color to set the color of the text. If unspecified,
+            it will be black.
 """
 
 from ghpythonlib.componentbase import executingcomponent as component
@@ -38,10 +40,10 @@ class MyComponent(component):
         super(MyComponent,self).__init__()
         self.text_2d_args = None
     
-    def RunScript(self, _text, leg_par2d_, _font_):
+    def RunScript(self, _text, leg_par2d_, _font_, _color_):
         ghenv.Component.Name = 'LB Screen Oriented Text'
         ghenv.Component.NickName = 'Text2D'
-        ghenv.Component.Message = '1.7.0'
+        ghenv.Component.Message = '1.7.1'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -67,6 +69,7 @@ class MyComponent(component):
             vw = v_size.Width
             vh = v_size.Height
             _font = 'Arial' if _font_ is None else _font_
+            _color_ = black() if _color_ is None else _color_
             
             # convert the inputs into arguments to be rendered
             self.text_2d_args = []
@@ -79,7 +82,7 @@ class MyComponent(component):
                 or_x = Legend.parse_dim_2d(l_par.origin_x, vw)
                 or_y = Legend.parse_dim_2d(l_par.origin_y, vh)
                 d_args = (
-                    txt, black(), rg.Point2d(or_x,or_y), False, _height, _font)
+                    txt, _color_, rg.Point2d(or_x,or_y), False, _height, _font)
                 self.text_2d_args.append(d_args)
         else:
             self.text_2d_args = None
@@ -94,3 +97,6 @@ class MyComponent(component):
                     display.Draw2dText(*draw_args)
         except Exception, e:
             System.Windows.Forms.MessageBox.Show(str(e), "script error")
+    
+    def get_ClippingBox(self):
+        return Rhino.Geometry.BoundingBox()
