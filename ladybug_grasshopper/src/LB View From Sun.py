@@ -34,10 +34,10 @@ particular hour of the day.
 
 ghenv.Component.Name = 'LB View From Sun'
 ghenv.Component.NickName = 'ViewFromSun'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
-ghenv.Component.AdditionalHelpFromDocStrings = '3'
+ghenv.Component.AdditionalHelpFromDocStrings = '5'
 
 try:
     from ladybug_rhino.viewport import viewport_by_name, open_viewport, \
