@@ -13,26 +13,27 @@ a favorable temerature range.
 _
 The calculation runs by generating solar vectors for a data collection of input
 temperature values. Solar vectors for hours when the temperature is above the
-upper temperature threshold contribute positively to shade desirability
+upper temperature threshold contribute positively to shade desirability (shade_help)
 while solar vectors for hours when the temperature is below the lower temperature
-threshold contribute negatively.
+threshold contribute negatively (shade_harm).
 _
 The component outputs a colored mesh of the shade illustrating the net effect of
-shading each mesh face. A higher saturation of blue indicates that shading the
-cell is desirable. A higher saturation of red indicates that shading the cell is
-harmful (blocking more helpful winter sun than harmful summer sun). Desaturated
-cells indicate that shading the cell will have relatively little effect on
-thermal comfort.
+shading each part of the _shade_geo. A higher saturation of blue indicates that
+shading the cell is desirable to avoid excessively hot temperatures. A higher
+saturation of red indicates that shading the cell is harmful, blocking helpful
+sun in cold conditions that could bring conditions closer to the desired
+temperature range. Desaturated cells indicate that shading the cell will have
+relatively little effect on keeping the _study_region in the desired thermal range.
 _
 The units for shade desirability are degree-days, which are essentially the
 amount of time in days that sun is blocked by a given cell multiplied by the
 degrees above (or below) the temperature thresholds during that time. So, if
-a given square meter of input _geometry has a shade desirability of 10 degree-days,
+a given square meter of input _shade_geo has a shade desirability of 10 degree-days,
 this means that a shade in this location provides 1 day of sun protection
 from conditions 10 degrees Celsius warmer than the _up_threshold_ to 1 square
 meter of _study_region.
 _
-More information on the methods sued by this component can be found in the
+More information on the methods used by this component can be found in the
 following publication:
 Mackey, Christopher; Sadeghipour Roudsari, Mostapha; Samaras, Panagiotis.
 “ComfortCover: A Novel Method for the Design of Outdoor Shades.” In Proceedings
@@ -65,20 +66,21 @@ https://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing
             desirability is being evaluated. This is often the region where a human
             subject will sit (eg. a bench) or it could be the window of a building
             where an occupant might be standing or sitting.
-        _geometry: Rhino Breps and/or Rhino Meshes representing shading to be evaluated in terms
-            of its benefit. Note that, in the case that multiple shading geometries are
-            connected, this component does not account for the interaction
-            between the different shading surfaces.
+        _shade_geo: Rhino Breps and/or Rhino Meshes representing shading to be evaluated
+            in terms of its benefit. Note that, in the case that multiple
+            shading geometries are connected, this component does not account
+            for the interaction between the different shading surfaces and will
+            just evaluate each part of the shade independently.
         context_: Rhino Breps and/or Rhino Meshes representing context geometry that can
             block sunlight to the _study_region, therefore discounting any benefit
             or harm that could come to the region.
         _grid_size: A positive number in Rhino model units for the size of grid cells at
-            which the input _geometry will be subdivided for shade benefit
+            which the input _shade_geo will be subdivided for shade benefit
             analysis. The smaller the grid size, the higher the resolution of
             the analysis and the longer the calculation will take.  So it is
             recommended that one start with a large value here and decrease
             the value as needed. However, the grid size should usually be
-            smaller than the dimensions of the smallest piece of the _geometry
+            smaller than the dimensions of the smallest piece of the _shade_geo
             and context_ in order to yield meaningful results.
         _up_threshold_: A number representing the temperature in Celsius above which
             shade is considered desirable/helpful. The default is 26C, which
@@ -111,14 +113,15 @@ https://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing
         vectors: The sun vectors that were used to evaluate the shade (note that
             these will increase as the _timestep_ increases).
         points: Points across the study region from which sun vectors will be projected.
-        mesh: A colored mesh of the _geometry showing where shading is helpful (in blue),
+        mesh: A colored mesh of the _shade_geo showing where shading is helpful (in blue),
             harmful (in red), or does not make much of a difference (white or
             desaturated colors). Note that the colors can change depending upon
             the input legend_par_.
         legend: Legend showing the numeric values of degree-days that correspond to
             the colors in the shade mesh.
+        title: A text object for the study title.
         shade_help: The cumulative degree-days helped by shading the given cell. If a given
-            square meter of _geometry has a shade helpfulness of 10 degree-days,
+            square meter of _shade_geo has a shade helpfulness of 10 degree-days,
             this means that a shade in this location provides roughly 1 day of
             sun protection from conditions 10 degrees Celsius warmer than the
             _up_threshold_ to 1 square meter of _study_region.
@@ -134,10 +137,10 @@ https://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing
 
 ghenv.Component.Name = 'LB Thermal Shade Benefit'
 ghenv.Component.NickName = 'ThermalShadeBenefit'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
-ghenv.Component.AdditionalHelpFromDocStrings = '4'
+ghenv.Component.AdditionalHelpFromDocStrings = '3'
 
 import math
 
@@ -204,7 +207,7 @@ if all_required_inputs(ghenv.Component) and _run:
     vectors = [from_vector3d(lb_vec) for lb_vec in lb_vecs]
 
     # create the gridded mesh from the geometry
-    analysis_mesh = to_joined_gridded_mesh3d(_geometry, _grid_size)
+    analysis_mesh = to_joined_gridded_mesh3d(_shade_geo, _grid_size)
     mesh = from_mesh3d(analysis_mesh)
     study_mesh = to_joined_gridded_mesh3d(_study_region, _grid_size / 2)
     points = [from_point3d(pt) for pt in study_mesh.face_centroids]
