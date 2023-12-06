@@ -137,10 +137,10 @@ https://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing
 
 ghenv.Component.Name = 'LB Thermal Shade Benefit'
 ghenv.Component.NickName = 'ThermalShadeBenefit'
-ghenv.Component.Message = '1.7.1'
+ghenv.Component.Message = '1.7.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
-ghenv.Component.AdditionalHelpFromDocStrings = '3'
+ghenv.Component.AdditionalHelpFromDocStrings = '4'
 
 import math
 
