@@ -96,7 +96,7 @@ this location blocks an average of 10 hours to each of the _study_points.
 
 ghenv.Component.Name = 'LB Shade Benefit'
 ghenv.Component.NickName = 'ShadeBenefit'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -151,7 +151,7 @@ if all_required_inputs(ghenv.Component) and _run:
         # between cells of different areas.
         # Also, divide the number of study points so people get a sense of
         # the average hours of blocked sun.
-        shd_help = ((len(face_res) / face_area) / _timestep_) * pt_count
+        shd_help = ((len(face_res) / face_area) / _timestep_) / pt_count
         shade_help.append(shd_help)
 
     # create the mesh and legend outputs
