@@ -17,10 +17,11 @@ This can be help coordinate Rhino visualizations with Ladybug analyses.
         _location: A ladybug Location that has been output from the "LB Import EPW"
             component or the "LB Construct Location" component.
         hoys_: A number between 0 and 8760 that represents the hour of the year at
-            which to set the sun position. The "LB Calculate HOY" component
-            can output this number given a month, day and hour. The "LB
-            Analysis Period" component can output a list of HOYs within a
-            certain hour or date range.
+            which to set the sun position. This can also be a list of numbers
+            in which case several Rhino suns will be rendered in the scene.
+            The "LB Calculate HOY" component can output this number given a
+            month, day and hour. The "LB Analysis Period" component can
+            output a list of HOYs within a certain hour or date range.
         north_: A number between -360 and 360 for the counterclockwise
             difference between the North and the positive Y-axis in degrees.
             90 is West and 270 is East. This can also be Vector for the
@@ -33,7 +34,7 @@ This can be help coordinate Rhino visualizations with Ladybug analyses.
 
 ghenv.Component.Name = 'LB Set Rhino Sun'
 ghenv.Component.NickName = 'RhinoSun'
-ghenv.Component.Message = '1.7.1'
+ghenv.Component.Message = '1.7.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
@@ -47,12 +48,14 @@ except ImportError as e:
 
 try:
     from ladybug_rhino.togeometry import to_vector2d
-    from ladybug_rhino.light import set_sun, disable_sun
+    from ladybug_rhino.light import set_sun, disable_sun, set_suns
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
+
 if all_required_inputs(ghenv.Component) and _run:
+    disable_sun()
     if north_ is not None:  # process the north_
         try:
             north_ = math.degrees(
@@ -61,6 +64,9 @@ if all_required_inputs(ghenv.Component) and _run:
             north_ = float(north_)
     else:
         north_ = 0
-    set_sun(_location, _hoy, north_)
+    if len(_hoy) == 1:
+        set_sun(_location, _hoy[0], north_)
+    else:
+        set_suns(_location, _hoy, north_)
 else:
     disable_sun()

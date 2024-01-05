@@ -1,5 +1,5 @@
 {
-  "version": "1.7.1", 
+  "version": "1.7.2", 
   "nickname": "RhinoSun", 
   "outputs": [
     []
@@ -20,7 +20,7 @@
       "default": null
     }, 
     {
-      "access": "item", 
+      "access": "list", 
       "name": "_hoy", 
       "description": "Script variable rhinoSun", 
       "type": "double", 
@@ -35,7 +35,7 @@
     }
   ], 
   "subcategory": "3 :: Analyze Geometry", 
-  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Vector2D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_vector2d\n    from ladybug_{{cad}}.light import set_sun, disable_sun\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\nif all_required_inputs(ghenv.Component) and _run:\n    if north_ is not None:  # process the north_\n        try:\n            north_ = math.degrees(\n                to_vector2d(north_).angle_clockwise(Vector2D(0, 1)))\n        except AttributeError:  # north angle instead of vector\n            north_ = float(north_)\n    else:\n        north_ = 0\n    set_sun(_location, _hoy, north_)\nelse:\n    disable_sun()\n", 
+  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Vector2D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_vector2d\n    from ladybug_{{cad}}.light import set_sun, disable_sun, set_suns\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _run:\n    disable_sun()\n    if north_ is not None:  # process the north_\n        try:\n            north_ = math.degrees(\n                to_vector2d(north_).angle_clockwise(Vector2D(0, 1)))\n        except AttributeError:  # north angle instead of vector\n            north_ = float(north_)\n    else:\n        north_ = 0\n    if len(_hoy) == 1:\n        set_sun(_location, _hoy[0], north_)\n    else:\n        set_suns(_location, _hoy, north_)\nelse:\n    disable_sun()\n", 
   "category": "Ladybug", 
   "name": "LB Set Rhino Sun", 
   "description": "Set the sun in the Rhino scene to correspond to a given location and date/time.\n_\nThis can be help coordinate Rhino visualizations with Ladybug analyses.\n-"
