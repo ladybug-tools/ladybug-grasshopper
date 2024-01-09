@@ -1,0 +1,36 @@
+{
+  "version": "1.7.0", 
+  "nickname": "RadAsymm", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "ppd", 
+        "description": "The percentage of people dissatisfied (PPD) for the input radiant asymmetry.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_radiant_diff", 
+      "description": "A number for the the radiant temperature difference between\ntwo sides of the same plane where an occupant is located [C].\nThis can also be a data collection representing the radiant\ntemperature difference over time [C].", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_asymmetry_type", 
+      "description": "Text or an integer that representing the type of radiant\nasymmetry being evaluated. Occupants are more sensitive to warm\nceilings and cool walls than cool ceilings and warm walls.\nChoose from the following options.\n_\n* 0 = WarmCeiling\n* 1 = CoolWall\n* 2 = CoolCeiling\n* 3 = WarmWall", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug_comfort.local import radiant_asymmetry_ppd\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.datatype.fraction import PercentagePeopleDissatisfied\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\nASYMMETRY_TYPES = {\n    '0': 0,\n    '1': 1,\n    '2': 2,\n    '3': 3,\n    'WarmCeiling': 0,\n    'CoolWall': 1,\n    'CoolCeiling': 2,\n    'WarmWall': 3\n}\n\n\n\nif all_required_inputs(ghenv.Component):\n    ppd = HourlyContinuousCollection.compute_function_aligned(\n        radiant_asymmetry_ppd, [_radiant_diff, ASYMMETRY_TYPES[_asymmetry_type]],\n        PercentagePeopleDissatisfied(), '%')\n", 
+  "category": "Ladybug", 
+  "name": "LB Radiant Asymmetry", 
+  "description": "Calculate the percentage of people dissatisfied from radiant asymmetry.\n_\nThe comfort functions used here come from Figure 5.2.4.1 of ASHRAE 55 2010.\nNote that, if the resulting input results in a PPD beyond what is included\nin this Figure, the maximum PPD will simply be returned.\n-"
+}
