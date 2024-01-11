@@ -25,13 +25,13 @@ sun in cold conditions that could bring conditions closer to the desired
 temperature range. Desaturated cells indicate that shading the cell will have
 relatively little effect on keeping the _study_region in the desired thermal range.
 _
-The units for shade desirability are degree-days, which are essentially the
-amount of time in days that sun is blocked by a given cell multiplied by the
-degrees above (or below) the temperature thresholds during that time. So, if
-a given square meter of input _shade_geo has a shade desirability of 10 degree-days,
-this means that a shade in this location provides 1 day of sun protection
-from conditions 10 degrees Celsius warmer than the _up_threshold_ to 1 square
-meter of _study_region.
+The units for shade desirability are degree-days per unit area of shade, which are
+essentially the amount of time in days that sun is blocked by a given cell
+multiplied by the degrees above (or below) the temperature thresholds during
+that time. So, if a given square meter of input _shade_geo has a shade desirability
+of 10 degree-days per square meter, this means that a shade in this location
+provides roughly 1 day of sun protection from conditions 10 degrees Celsius
+warmer than the _up_threshold_ to the _study_region.
 _
 More information on the methods used by this component can be found in the
 following publication:
@@ -94,9 +94,10 @@ https://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing
             begins). A different value may be desirable for indoor thermal
             comfort studies.
         _timestep_: An integer for the number of timesteps per hour at which
-            sun vectors will be generated for the analysis. Higher value will
-            result in the generation of more vectors, which will make the result
-            mesh smoother and more accurate. However, the calculation will take
+            sun vectors will be generated for the analysis. Higher values will
+            result in the generation of more vectors, which will make the
+            resulting shade mesh smoother and a better representation of shade
+            benefit and harm. However, the calculation will take
             longer as there are more intersection operations to perform. The
             default is 1 timestep per hour, which is the coarsest resolution
             avalable and the fastest calculation.
@@ -112,24 +113,24 @@ https://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing
         report: ...
         vectors: The sun vectors that were used to evaluate the shade (note that
             these will increase as the _timestep_ increases).
-        points: Points across the study region from which sun vectors will be projected.
+        points: Points across the study_region from which sun vectors are projected.
         mesh: A colored mesh of the _shade_geo showing where shading is helpful (in blue),
             harmful (in red), or does not make much of a difference (white or
             desaturated colors). Note that the colors can change depending upon
             the input legend_par_.
-        legend: Legend showing the numeric values of degree-days that correspond to
-            the colors in the shade mesh.
+        legend: Legend showing the numeric values of degree-days per unit are of shade
+            that correspond to the colors in the shade mesh.
         title: A text object for the study title.
-        shade_help: The cumulative degree-days helped by shading the given cell. If a given
-            square meter of _shade_geo has a shade helpfulness of 10 degree-days,
-            this means that a shade in this location provides roughly 1 day of
-            sun protection from conditions 10 degrees Celsius warmer than the
-            _up_threshold_ to 1 square meter of _study_region.
-        shade_harm: The cumulative degree-days harmed by shading the given cell. If a given
-            square meter of _testShade has a shade harmfulness of -10 degree-days,
-            this means that a shade in this location blocks roughly 1 day of sun
-            duirng conditions that are 10 degrees Celsius colder than the
-            _low_threshold_ to 1 square meter of _study_region.
+        shade_help: The cumulative degree-days per square area unit helped by shading each
+            cell of the shade. If a given square meter of _shade_geo has a helpfulness
+            of 10 degree-days/m2, this means that a shade in this location provides
+            1 day of sun protection from conditions 10 degrees warmer than the
+            _up_threshold_ to the _study_region.
+        shade_harm: The cumulative degree-days per square area unit harmed by shading each
+            cell of the shade. If a given square meter of _shade_geo has a harmfulness
+            of -10 degree-days, this means that a shade in this location blocks
+            1 day of sun duirng conditions that are 10 degrees Celsius colder than
+            the _low_threshold_ to the _study_region.
         shade_net: The sum of the helpfulness and harmfulness for each cell. This will be
             negative if shading the cell has a net harmful effect and positive
             if the shade has a net helpful effect.
@@ -137,7 +138,7 @@ https://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing
 
 ghenv.Component.Name = 'LB Thermal Shade Benefit'
 ghenv.Component.NickName = 'ThermalShadeBenefit'
-ghenv.Component.Message = '1.7.2'
+ghenv.Component.Message = '1.7.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -153,6 +154,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
+    from ladybug_rhino.config import units_abbreviation
     from ladybug_rhino.togeometry import to_joined_gridded_mesh3d, to_vector2d
     from ladybug_rhino.fromgeometry import from_mesh3d, from_point3d, from_vector3d
     from ladybug_rhino.fromobjects import legend_objects
@@ -237,8 +239,8 @@ if all_required_inputs(ghenv.Component) and _run:
                 f_harm += t_val - low_thresh
         # Normalize by the area of the cell so there's is a consistent metric
         # between cells of different areas.
-        # Also, divide the value by 24 such that the final unit is in
-        # degree-days/model unit instead of degree-hours/model unit.
+        # Also, divide the value by t_step_per_day such that the final unit is in
+        # degree-days/model unit instead of degree-timesteps/model unit.
         shd_help = ((f_help / face_area) / t_step_per_day) * region_cell_area
         shd_harm = ((f_harm / face_area) / t_step_per_day) * region_cell_area
         shade_help.append(shd_help)
@@ -247,7 +249,7 @@ if all_required_inputs(ghenv.Component) and _run:
 
     # create the mesh and legend outputs
     graphic = GraphicContainer(shade_net, analysis_mesh.min, analysis_mesh.max, legend_par_)
-    graphic.legend_parameters.title = 'degC-days'
+    graphic.legend_parameters.title = 'degC-days/{}2'.format(units_abbreviation())
     if legend_par_ is None or legend_par_.are_colors_default:
         graphic.legend_parameters.colors = reversed(Colorset.shade_benefit_harm())
     if legend_par_ is None or legend_par_.min is None or legend_par_.max is None:
