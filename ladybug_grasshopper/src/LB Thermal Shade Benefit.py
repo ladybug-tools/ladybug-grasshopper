@@ -138,7 +138,7 @@ https://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing
 
 ghenv.Component.Name = 'LB Thermal Shade Benefit'
 ghenv.Component.NickName = 'ThermalShadeBenefit'
-ghenv.Component.Message = '1.7.3'
+ghenv.Component.Message = '1.7.4'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -227,7 +227,7 @@ if all_required_inputs(ghenv.Component) and _run:
         mesh, int_rays, shade_mesh, cpu_count=workers)
 
     # loop through the face intersection result and evaluate the benefit
-    region_cell_area = study_mesh.area / len(points)
+    pt_div = 1 / float(len(points))
     shade_help, shade_harm, shade_net = [], [], []
     for face_res, face_area in zip(face_int, analysis_mesh.face_areas):
         f_help, f_harm = 0, 0
@@ -241,8 +241,8 @@ if all_required_inputs(ghenv.Component) and _run:
         # between cells of different areas.
         # Also, divide the value by t_step_per_day such that the final unit is in
         # degree-days/model unit instead of degree-timesteps/model unit.
-        shd_help = ((f_help / face_area) / t_step_per_day) * region_cell_area
-        shd_harm = ((f_harm / face_area) / t_step_per_day) * region_cell_area
+        shd_help = ((f_help / face_area) / t_step_per_day) * pt_div
+        shd_harm = ((f_harm / face_area) / t_step_per_day) * pt_div
         shade_help.append(shd_help)
         shade_harm.append(shd_harm)
         shade_net.append(shd_help + shd_harm)
