@@ -1,0 +1,85 @@
+{
+  "version": "1.7.0", 
+  "nickname": "DayInfo", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "sunrise", 
+        "description": "The time of sunrise expressed as HH:MM where hours range from 0 to 23.\nNote that this may be None if there is no sunrise or sunset on the\nspecified day. (eg. at the north pole on the winter solstice).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "sunset", 
+        "description": "The time of sunset expressed as HH:MM where hours range from 0 to 23.\nNote that this may be None if there is no sunrise or sunset on the\nspecified day. (eg. at the north pole on the winter solstice).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "solar_noon", 
+        "description": "The time of solar noon when the sun is at its highest point in the\nsky, expressed as HH:MM.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "noon_alt", 
+        "description": "The altitude of the sun at solar noon in degrees. This is the maximum\naltitude that will be expereinced on the input day.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "day_length", 
+        "description": "The length of the input day in hours.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_location", 
+      "description": "A ladybug Location that has been output from the \"LB Import EPW\"\ncomponent or the \"LB Construct Location\" component.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_doy", 
+      "description": "An integer for the day of the year for which solar information is\nbe computed. The \"LB Calculate HOY\" component can be used to compute\nthe day of the year from month and day inputs.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_depression_", 
+      "description": "An angle in degrees indicating the additional period before/after\nthe edge of the sun has passed the horizon where the sun is still\nconsidered up. Setting this value to 0 will compute sunrise/sunset\nas the time when the edge of the sun begins to touch the horizon.\nSetting it to the angular diameter of the sun (0.5334) will compute\nsunrise/sunset as the time when the sun just finishes passing the\nhorizon (actual physical sunset). Setting it to 0.833 will compute\nthe apparent sunrise/sunset, accounting for atmospheric refraction.\nSetting this to 6 will compute sunrise/sunset as the beginning/end\nof civil twilight. Setting this to 12 will compute sunrise/sunset\nas the beginning/end of nautical twilight. Setting this to 18 will\ncompute sunrise/sunset as the beginning/end of astronomical\ntwilight. (Default: 0.5334 for the physical sunset).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "solar_time_", 
+      "description": "A boolean to indicate if the output datetimes for sunrise,\nnoon and sunset should be in solar time as opposed to the time zone\nof the location. (Default: False).", 
+      "type": "bool", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "dl_saving_", 
+      "description": "An optional analysis period for daylight saving time. This will be used\nto adjust the output times by an hour when applicable. If unspecified,\nno daylight saving time will be used", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.sunpath import Sunpath\n    from ladybug.dt import Date\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # set default values\n    solar_time_ = False if solar_time_ is None else solar_time_  # process solar time\n    _depression_ = 0.5334 if _depression_ is None else _depression_\n\n    # initialize sunpath based on location\n    sp = Sunpath.from_location(_location, 0, dl_saving_)\n\n    # for each day of the year, compute the information\n    sunrise, sunset, solar_noon, noon_alt, day_length = [], [], [], [], []\n    for doy in _doy:\n        doy_date = Date.from_doy(doy)\n        solar_info = sp.calculate_sunrise_sunset(\n            doy_date.month, doy_date.day, _depression_, solar_time_)\n        print(solar_info)\n        sr, sn, ss = solar_info['sunrise'], solar_info['noon'], solar_info['sunset']\n        solar_noon.append(sn.time)\n        noon_alt.append(sp.calculate_sun_from_date_time(sn).altitude)\n        if sr is not None:\n            sunrise.append(sr.time)\n        else:\n            sunrise.append(None)\n        if ss is not None:\n            sunset.append(ss.time)\n            day_length.append((ss - sr).total_seconds() / 3600)\n        else:\n            sunset.append(None)\n            day_length.append(None)\n", 
+  "category": "Ladybug", 
+  "name": "LB Day Solar Information", 
+  "description": "Compute solar infomation about a day of the year at a particular location. This includes\nthe time of sunrise, sunset, solar noon, and the length of the day in hours.\n_\nNote that these times are intended to represent a typical year and they will often\nvary by a few minutes depending on where in the leap year cycle a given year falls.\n-"
+}
