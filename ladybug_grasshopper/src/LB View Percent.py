@@ -29,9 +29,9 @@ honeybee-radiance should be used.
                 0 - HorizontalRadial - The percentage of the 360 horizontal view
                     plane that is not blocked by the context geometry.
                 _
-                1 - Horizonta30DegreeOffset - The percentage of the 360 horizontal
+                1 - Horizontal30DegreeOffset - The percentage of the 360 horizontal
                     view band bounded on top and bottom by a 30 degree offset from
-                    the horizontal plane. 30 degress corresponds roughly to the
+                    the horizontal plane. 30 degrees corresponds roughly to the
                     vertical limit of human peripheral vision.
                 _
                 2 - Spherical - The percentage of the sphere surrounding each of
@@ -110,8 +110,8 @@ honeybee-radiance should be used.
             the percentage of the view_vecs that are not blocked by context geometry.
         mesh: A colored mesh of the test _geometry representing the percentage of
             the input _geometry's view that is not blocked by context.
-        legend: A legend showing the number of hours that correspond to the colors
-            of the mesh.
+        legend: A legend that correspond to the colors of the mesh and shows the percentage
+            of the view_vecs that are not blocked by context geometry.
         title: A text object for the study title.
         int_mtx: A Matrix object that can be connected to the "LB Deconstruct Matrix"
             component to obtain detailed vector-by-vector results of the study.
@@ -125,7 +125,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB View Percent"
 ghenv.Component.NickName = 'ViewPercent'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -159,7 +159,7 @@ except ImportError as e:
 # dictionary to record all available view types
 VIEW_TYPES = {
     'HorizontalRadial': 'Horizontal Radial',
-    'Horizonta30DegreeOffset': 'Horizontal 30-Degree Offset',
+    'Horizontal30DegreeOffset': 'Horizontal 30-Degree Offset',
     'Spherical': 'Spherical',
     'SkyExposure': 'Sky Exposure',
     'SkyView': 'Sky View',
