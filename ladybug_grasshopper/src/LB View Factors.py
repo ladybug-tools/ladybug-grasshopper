@@ -71,10 +71,10 @@ temperture (MRT) or discomfort from radiant assymetry.
 
 ghenv.Component.Name = 'LB View Factors'
 ghenv.Component.NickName = 'ViewFactors'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
-ghenv.Component.AdditionalHelpFromDocStrings = '0'
+ghenv.Component.AdditionalHelpFromDocStrings = '2'
 
 try:
     from ladybug.viewsphere import view_sphere

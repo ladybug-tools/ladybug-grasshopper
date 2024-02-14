@@ -1,0 +1,85 @@
+{
+  "version": "1.7.0", 
+  "nickname": "ViewRose", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "view_vecs", 
+        "description": "A list of vectors which are projected from each of the points\nto evaluate view.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "results", 
+        "description": "A list of numbers that aligns with the vertices of the mesh. Each number\nindicates the distance from the _center_pt at which the view is\nblocked from a particular direction.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "mesh", 
+        "description": "A colored mesh representing the visible area from the viewpoint past\nthe _context geometry. Colors indicate how open the view is from a\ngiven direction.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "legend", 
+        "description": "A legend that correspond to the colors of the mesh and shows the distance\nat which vectors are blocked.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_context", 
+      "description": "Rhino Breps or Meshes representing context geometry that can block\nthe view around the center point.", 
+      "type": "GeometryBase", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_center_pt", 
+      "description": "A point for the center of the view rose from which view openness\nwill be evaluated.", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_radius_", 
+      "description": "A number for the radius of the view rose in Rhino model units. This is\nalso used to evaluate the distance at which context is no longer\nable to block the view from the center point. This value should\ntypically be increased if the view rose does not extend past the\n_context geometry. (Default: 100 meters in the current Rhino model\nunits system).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_view_type_", 
+      "description": "Text or an integer representing the type of view analysis to conduct.\nChoose from the following options. (Default: 0 - HorizontalRadial)\n_\n0 - HorizontalRadial - The percentage of the 360 horizontal view\nplane that is not blocked by the context geometry.\n_\n1 - Horizontal30DegreeOffset - The percentage of the 360 horizontal\nview band bounded on top and bottom by a 30 degree offset from\nthe horizontal plane. 30 degrees corresponds roughly to the\nvertical limit of human peripheral vision.\n_\n2 - Spherical - The percentage of the sphere surrounding each of\nthe test points that is not blocked by context geometry. This\nis equivalent to a solid angle and gives equal weight to all\nportions of the sphere.\n_\n3 - SkyExposure - The percentage of the sky that is visible from\neach of the the test points.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_resolution_", 
+      "description": "A positive integer for the number of times that the original\nview vectors are subdivided. For a circle, 1 indicates that 72\nevenly-spaced vectors are used to describe a circle, 2 indicates\nthat 144 vectors describe a circle, and each successive value will\nroughly double the number of view vectors used. For a dome, 1 indicates\nthat 1225 are used to describe the dome, 2 indicates that 5040\nview vectors describe the some and each successive value will\nroughly quadruple the number of view vectors used. Setting this to\na high value will result in a more accurate analysis but will take\nlonger to run. (Default: 1).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "legend_par_", 
+      "description": "Optional legend parameters from the \"LB Legend Parameters\"\nthat will be used to customize the display of the results.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "3 :: Analyze Geometry", 
+  "code": "\ntry:\n    from ladybug_geometry.geometry3d import Mesh3D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug.viewsphere import view_sphere\n    from ladybug.color import Colorset\n    from ladybug.graphic import GraphicContainer\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters, units_abbreviation\n    from ladybug_{{cad}}.togeometry import to_point3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_vector3d\n    from ladybug_{{cad}}.fromobjects import legend_objects\n    from ladybug_{{cad}}.intersect import join_geometry_to_mesh, \\\n        intersect_mesh_rays_distance\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\n# dictionary to record all available view types\nVIEW_TYPES = {\n    None: (0, view_sphere.horizontal_circle_view_mesh),\n    'HorizontalRadial': (0, view_sphere.horizontal_circle_view_mesh),\n    'Horizontal30DegreeOffset': (1, view_sphere.horizontal_radial_view_mesh),\n    'Spherical': (2, view_sphere.sphere_view_mesh),\n    'SkyExposure': (3, view_sphere.dome_view_mesh),\n    '0': (0, view_sphere.horizontal_circle_view_mesh),\n    '1': (1, view_sphere.horizontal_radial_view_mesh),\n    '2': (2, view_sphere.sphere_view_mesh),\n    '3': (3, view_sphere.dome_view_mesh)\n}\n\n\nif all_required_inputs(ghenv.Component):\n    # process the view_type_ and set the default values\n    vt_int, view_method = VIEW_TYPES[_view_type_]\n    _radius_ = int(100 / conversion_to_meters()) if _radius_ is None else _radius_\n    resolution_ = _resolution_ if _resolution_ is not None else 1\n    az_count = 72 * resolution_\n    alt_count = 6 * resolution_ if vt_int == 1 else 18 * resolution_\n\n    # get the view vectors and mesh based on the inputs\n    lb_point = to_point3d(_center_pt)\n    if vt_int == 0:\n        study_mesh, lb_vecs = view_method(\n            center_point=lb_point, radius=_radius_, azimuth_count=az_count)\n    else:\n        study_mesh, lb_vecs = view_method(\n            center_point=lb_point, radius=_radius_,\n            azimuth_count=az_count, altitude_count=alt_count)\n    view_vecs = [from_vector3d(pt) for pt in lb_vecs]\n\n    # process the input geometry\n    shade_mesh = join_geometry_to_mesh(_context)\n\n    # intersect the rays with the mesh\n    results = intersect_mesh_rays_distance(shade_mesh, _center_pt, view_vecs, _radius_)\n\n    # adjust the mesh based on the distance\n    move_vecs = [vec * -(_radius_ - dist) for vec, dist, in zip(lb_vecs, results)]\n    new_verts = [lb_point] if vt_int in (0, 1) else []\n    iter_verts = study_mesh.vertices[1:] if  vt_int in (0, 1) else study_mesh.vertices\n    for pt, mv in zip(iter_verts, move_vecs):\n        new_verts.append(pt.move(mv))\n    study_mesh = Mesh3D(new_verts, study_mesh.faces)\n\n    # add a value at the start to align with the vertices\n    if vt_int in (0, 1):\n        avg_val = sum(results) / len(results)\n        results.insert(0, avg_val)\n\n    # create the mesh and legend outputs\n    graphic = GraphicContainer(results, study_mesh.min, study_mesh.max, legend_par_)\n    graphic.legend_parameters.title = units_abbreviation()\n    if legend_par_ is None or legend_par_.are_colors_default:\n        graphic.legend_parameters.colors = Colorset.view_study()\n\n    # create all of the visual outputs\n    study_mesh.colors = graphic.value_colors\n    mesh = from_mesh3d(study_mesh)\n    legend = legend_objects(graphic.legend)\n", 
+  "category": "Ladybug", 
+  "name": "LB View Rose", 
+  "description": "Visualize the view openness around a given point as a colored mesh that fills a\ncircle, sphere, or hemisphere (depending on the specified view type).\n_\nThe input context will block the view, resulting in a decresed view rose size\nand a change in the view rose color.\n-"
+}
