@@ -1,0 +1,36 @@
+{
+  "version": "1.7.0", 
+  "nickname": "AnkleDraft", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "ppd", 
+        "description": "The percentage of people dissatisfied (PPD) from cold drafts at ankle level.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_full_body_pmv", 
+      "description": "The full-body predicted mean vote (PMV) of the subject.\nAnkle draft depends on full-body PMV because subjects are more likely\nto feel uncomfortably cold at their extremities when their whole body\nis already feeling colder than neutral. The \"LB PMV Comfort\"\ncomponent can be used to obatin this input here.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_draft_velocity", 
+      "description": "The velocity of the draft in m/s at ankle level\n(10cm above the floor).", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug_comfort.local import ankle_draft_ppd\n    from ladybug.datacollection import HourlyContinuousCollection\n    from ladybug.datatype.fraction import PercentagePeopleDissatisfied\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    ppd = HourlyContinuousCollection.compute_function_aligned(\n        ankle_draft_ppd, [_full_body_pmv, _draft_velocity],\n        PercentagePeopleDissatisfied(), '%')\n", 
+  "category": "Ladybug", 
+  "name": "LB Ankle Draft", 
+  "description": "Calculate the percentage of people dissatisfied from cold drafts at ankle-level.\n_\nThe original tests used to create the model involved blowing cold air on\nsubject's ankles at a height of 10 cm off of the ground.\nThe formula was officially incorporated in the ASHRAE 55 standard in 2020\nwith a recommendation that PPD from ankle draft not exceed 20%.\n_\nFor more information on the methods used to create this model see the following:\nLiu, S., S. Schiavon, A. Kabanshi, W. Nazaroff. 2016. \"Predicted\npercentage of dissatisfied with ankle draft.\" Accepted Author Manuscript.\nIndoor Environmental Quality. http://escholarship.org/uc/item/9076254n\n-"
+}
