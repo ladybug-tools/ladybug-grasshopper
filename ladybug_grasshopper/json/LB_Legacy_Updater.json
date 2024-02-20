@@ -1,0 +1,21 @@
+{
+  "version": "1.7.0", 
+  "nickname": "Legacy", 
+  "outputs": [
+    []
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_update", 
+      "description": "Set to \"True\" to have this component to search through the current\nGrasshopper file and drop suggested Ladybug Tools components\nfor every Legacy Ladybug + Honeybee component on the canvas.", 
+      "type": "System.Object", 
+      "default": null
+    }
+  ], 
+  "subcategory": "5 :: Version", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.versioning.gather import gather_canvas_components\n    from ladybug_{{cad}}.versioning.legacy import suggest_new_component\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, give_warning\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _update:\n    # load all of the {{PLGN}}Python userobjects and update the versions\n    components = gather_canvas_components(ghenv.Component)\n    report_init = []\n    for comp in components:\n        try:\n            report_init.append(suggest_new_component(comp, ghenv.Component))\n        except Exception:\n            if hasattr(comp, 'Name'):\n                msg = 'Failed to Update \"{}\"'.format(comp.Name)\n                print(msg)\n                give_warning(ghenv.Component, msg)\n    print('\\n'.join(r for r in report_init if r))\n", 
+  "category": "Ladybug", 
+  "name": "LB Legacy Updater", 
+  "description": "Drop suggested Ladybug Tools components into a Grasshopper file for every\nLegacy Ladybug + Honeybee component on the canvas.\n-\nAll existing LBT and native Grasshopper components will be left as they are and\nonly the Legacy components will be circled in Red and have the suggested LBT\ncomponent placed next to them (if applicable). Note that, after this component\nruns, you must then connect the new LBT components to the others and delete the\nLegacy components.\n-\nWhere applicable, each red circle will have a message about how the LBT component\ndiffers from the Legacy one or if there may be a more appropirate LBT component\nin the future. Also note that some Legacy workflows have been heavily refactored\nsince Legacy, meaning a different number of components may be necessary to achieve\nthe same thing (typically fewer in LBT than Legacy, meaning some LEgacy components\nshould be deleted without replacement).\n-"
+}
