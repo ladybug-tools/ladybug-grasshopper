@@ -1,0 +1,64 @@
+{
+  "version": "1.7.0", 
+  "nickname": "TrueNorth", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "mag_declination", 
+        "description": "The magnetic declination in degrees. Magnetic declination is the\ndifference between magnetic North and true North at a given location on\nthe globe (expressed in terms of degrees).", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "true_north", 
+        "description": "A number between -360 and 360 for the True North angle in degrees.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "true_north_vec", 
+        "description": "A vector for the True North direction. This can be plugged into\nany of the north_ inputs of the other LAdybug Tools components.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_location", 
+      "description": "A ladybug Location that has been output from the \"LB Import EPW\"\ncomponent or the \"LB Construct Location\" component. This is used\nto determine the difference between magnetic and true North.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_mag_north", 
+      "description": "A number between -360 and 360 for the counterclockwise difference\nbetween Magnetic North and the positive Y-axis in degrees. Counterclockwise\nmeans \"90 is West and 270 is East\". This can also be Vector for the\nmagnetic North direction.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_year_", 
+      "description": "A number for the year in which the Magnetic North was evaluated. Decimal\nvalues are accepted. This is needed as the location of Magnetic\nNorth has been moving at a rate of roughly 50 km/year for the\npast couple of decades. (Default: 2025).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "cof_file_", 
+      "description": "An optional path to a .COF file containing the coefficients that form the\ninputs for the World Magnetic Model (WMM). A new set of coefficients\nis published roughly every 5 years as the magnetic poles continue to\nmove. If unspecified, coefficients will be taken from the most\nrecent model. COF files with the most recent coefficients and\nhistorical values are available at:", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Vector2D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug.north import WorldMagneticModel\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_vector2d\n    from ladybug_{{cad}}.fromgeometry import from_vector2d\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # process the _magn_north and the year\n    try:\n        _mag_north = math.degrees(to_vector2d(_mag_north).angle_clockwise(Vector2D(0, 1)))\n    except AttributeError:  # north angle instead of vector\n        _mag_north = float(_mag_north)\n    _year_ = _year_ if _year_ is not None else 2025\n\n    # initialize the WorldMagneticModel and convert the north angle\n    wmm_obj = WorldMagneticModel(cof_file_)\n    true_north = wmm_obj.magnetic_to_true_north(_location, _mag_north, _year_)\n    mag_declination = true_north - _mag_north\n\n    # convert the true north angle to a vector\n    st_north = Vector2D(0, 1).rotate(math.radians(_mag_north))\n    true_north_vec = st_north.rotate(math.radians(true_north))\n    true_north_vec = from_vector2d(true_north_vec)\n", 
+  "category": "Ladybug", 
+  "name": "LB Magnetic to True North", 
+  "description": "Compute a True North angle and vector from Magnetic North at a given location.\n_\nThis component uses then World Magnetic Model (WMM) developed and maintained by NOAA.\nhttps://www.ncei.noaa.gov/products/world-magnetic-model\n-"
+}
