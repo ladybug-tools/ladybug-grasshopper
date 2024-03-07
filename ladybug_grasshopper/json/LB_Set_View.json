@@ -1,0 +1,63 @@
+{
+  "version": "1.7.0", 
+  "nickname": "SetView", 
+  "outputs": [
+    []
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "_direction", 
+      "description": "A sun vector from which the the Rhino view will be generated.\nUse the \"LB SunPath\" component to generate sun vectors.", 
+      "type": "Vector3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_position_", 
+      "description": "The target point of the camera for the Rhino view that will be\ngenerated.  This point should be close to the Rhino geometry that\nyou are interested in viewing from the sun. If no point is provided,\nthe Rhino origin will be used (0, 0, 0).", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "look_around_", 
+      "description": "An optional interger for the width (in pixels) of the Rhino\nviewport that will be generated.", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "width_", 
+      "description": "An optional interger for the width (in pixels) of the Rhino\nviewport that will be generated.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "height_", 
+      "description": "An optional interger for the height (in pixels) of the Rhino\nviewport that will be generated.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "lens_len_", 
+      "description": "An optional interger for the height (in pixels) of the Rhino\nviewport that will be generated.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "mode_", 
+      "description": "An optional text input for the display mode of the Rhino viewport\nthat will be generated. For example: Wireframe, Shaded, Rendered, etc.", 
+      "type": "string", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry3d import Vector3D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_vector3d, to_point2d\n    from ladybug_{{cad}}.fromgeometry import from_vector3d\n    from ladybug_{{cad}}.viewport import open_viewport, viewport_by_name, \\\n        set_view_direction, set_view_display_mode\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, component_guid, \\\n        get_sticky_variable, set_sticky_variable\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # get the name of the view and the previous width/height\n    view_name = 'SetView_{}'.format(component_guid(ghenv.Component))\n    print(view_name)  # print so that the user has the name if needed\n    vw = get_sticky_variable('set_view_width')\n    vh = get_sticky_variable('set_view_height')\n\n    # if there are look-around coordinates, rotate the direction\n    if look_around_ is not None:\n        uv_pt = to_point2d(look_around_)\n        dir_vec = to_vector3d(_direction)\n        v = (uv_pt.y - 0.5) * math.pi\n        dir_vec = dir_vec.rotate(dir_vec.cross(Vector3D(0, 0, 1)), v)\n        u = -(uv_pt.x - 0.5) * math.pi\n        dir_vec = dir_vec.rotate_xy(u)\n        _direction = from_vector3d(dir_vec)\n\n    # get the viewport from which the direction will be set\n    view_port = None\n    if width_ == vw and height_ == vh:  # no need to generate new view; get existing one\n        try:\n            view_port = viewport_by_name(view_name)\n        except ValueError:  # the viewport does not yet exist\n            pass\n    if view_port is None:\n        view_port = open_viewport(view_name, width_, height_)\n    set_sticky_variable('set_view_width', width_)\n    set_sticky_variable('set_view_height', height_)\n\n    # set the direction of the viewport camera\n    set_view_direction(view_port, _direction, _position_, lens_len_)\n\n    # set the display mode if requested\n    if mode_:\n        set_view_display_mode(view_port, mode_)\n", 
+  "category": "Ladybug", 
+  "name": "LB Set View", 
+  "description": "Open a new viewport in Rhino that shows the parallel-projected view from the sun.\n_\nThis is useful for understanding what parts of Rhino geometry are shaded at a\nparticular hour of the day.\n-"
+}
