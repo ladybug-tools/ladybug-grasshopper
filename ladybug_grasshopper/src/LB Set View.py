@@ -32,16 +32,25 @@ particular hour of the day.
         report: The name of the viewport that was opened.
 """
 
-ghenv.Component.Name = 'LB View From Sun'
-ghenv.Component.NickName = 'ViewFromSun'
-ghenv.Component.Message = '1.7.2'
+ghenv.Component.Name = 'LB Set View'
+ghenv.Component.NickName = 'SetView'
+ghenv.Component.Message = '1.7.0'
 ghenv.Component.Category = 'Ladybug'
-ghenv.Component.SubCategory = '3 :: Analyze Geometry'
-ghenv.Component.AdditionalHelpFromDocStrings = '5'
+ghenv.Component.SubCategory = '4 :: Extra'
+ghenv.Component.AdditionalHelpFromDocStrings = '2'
+
+import math
 
 try:
-    from ladybug_rhino.viewport import viewport_by_name, open_viewport, \
-        set_iso_view_direction, set_view_display_mode
+    from ladybug_geometry.geometry3d import Vector3D
+except ImportError as e:
+    raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
+
+try:
+    from ladybug_rhino.togeometry import to_vector3d, to_point2d
+    from ladybug_rhino.fromgeometry import from_vector3d
+    from ladybug_rhino.viewport import open_viewport, viewport_by_name, \
+        set_view_direction, set_view_display_mode
     from ladybug_rhino.grasshopper import all_required_inputs, component_guid, \
         get_sticky_variable, set_sticky_variable
 except ImportError as e:
@@ -50,10 +59,20 @@ except ImportError as e:
 
 if all_required_inputs(ghenv.Component):
     # get the name of the view and the previous width/height
-    view_name = 'ViewFromSun_{}'.format(component_guid(ghenv.Component))
+    view_name = 'SetView_{}'.format(component_guid(ghenv.Component))
     print(view_name)  # print so that the user has the name if needed
-    vw = get_sticky_variable('sun_view_width')
-    vh = get_sticky_variable('sun_view_height')
+    vw = get_sticky_variable('set_view_width')
+    vh = get_sticky_variable('set_view_height')
+
+    # if there are look-around coordinates, rotate the direction
+    if look_around_ is not None:
+        uv_pt = to_point2d(look_around_)
+        dir_vec = to_vector3d(_direction)
+        v = (uv_pt.y - 0.5) * math.pi
+        dir_vec = dir_vec.rotate(dir_vec.cross(Vector3D(0, 0, 1)), v)
+        u = -(uv_pt.x - 0.5) * math.pi
+        dir_vec = dir_vec.rotate_xy(u)
+        _direction = from_vector3d(dir_vec)
 
     # get the viewport from which the direction will be set
     view_port = None
@@ -64,11 +83,11 @@ if all_required_inputs(ghenv.Component):
             pass
     if view_port is None:
         view_port = open_viewport(view_name, width_, height_)
-    set_sticky_variable('sun_view_width', width_)
-    set_sticky_variable('sun_view_height', height_)
+    set_sticky_variable('set_view_width', width_)
+    set_sticky_variable('set_view_height', height_)
 
     # set the direction of the viewport camera
-    set_iso_view_direction(view_port, _vector, _center_pt_)
+    set_view_direction(view_port, _direction, _position_, lens_len_)
 
     # set the display mode if requested
     if mode_:

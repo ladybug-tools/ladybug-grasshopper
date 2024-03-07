@@ -1,5 +1,5 @@
 {
-  "version": "1.7.1", 
+  "version": "1.7.2", 
   "nickname": "ViewFromSun", 
   "outputs": [
     []
@@ -42,7 +42,7 @@
     }
   ], 
   "subcategory": "3 :: Analyze Geometry", 
-  "code": "\ntry:\n    from ladybug_{{cad}}.viewport import viewport_by_name, open_viewport, \\\n        set_iso_view_direction, set_view_display_mode\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, component_guid\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    view_name = 'ViewFromSun_{}'.format(component_guid(ghenv.Component))\n    print(view_name)  # print so that the user has the name if needed\n\n    # get the viewport from which the direction will be set\n    view_port = None\n    if not width_ and not height_:  # no need to generate new view; get existing one\n        try:\n            view_port = viewport_by_name(view_name)\n        except ValueError:  # the viewport does not yet exist\n            pass\n    if view_port is None:\n        view_port = open_viewport(view_name, width_, height_)\n\n    # set the direction of the viewport camera\n    set_iso_view_direction(view_port, _vector, _center_pt_)\n\n    # set the display mode if requested\n    if mode_:\n        set_view_display_mode(view_port, mode_)\n", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.viewport import viewport_by_name, open_viewport, \\\n        set_iso_view_direction, set_view_display_mode\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, component_guid, \\\n        get_sticky_variable, set_sticky_variable\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # get the name of the view and the previous width/height\n    view_name = 'ViewFromSun_{}'.format(component_guid(ghenv.Component))\n    print(view_name)  # print so that the user has the name if needed\n    vw = get_sticky_variable('sun_view_width')\n    vh = get_sticky_variable('sun_view_height')\n\n    # get the viewport from which the direction will be set\n    view_port = None\n    if width_ == vw and height_ == vh:  # no need to generate new view; get existing one\n        try:\n            view_port = viewport_by_name(view_name)\n        except ValueError:  # the viewport does not yet exist\n            pass\n    if view_port is None:\n        view_port = open_viewport(view_name, width_, height_)\n    set_sticky_variable('sun_view_width', width_)\n    set_sticky_variable('sun_view_height', height_)\n\n    # set the direction of the viewport camera\n    set_iso_view_direction(view_port, _vector, _center_pt_)\n\n    # set the display mode if requested\n    if mode_:\n        set_view_display_mode(view_port, mode_)\n", 
   "category": "Ladybug", 
   "name": "LB View From Sun", 
   "description": "Open a new viewport in Rhino that shows the parallel-projected view from the sun.\n_\nThis is useful for understanding what parts of Rhino geometry are shaded at a\nparticular hour of the day.\n-"
