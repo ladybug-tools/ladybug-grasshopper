@@ -1,5 +1,5 @@
 {
-  "version": "1.7.0", 
+  "version": "1.7.1", 
   "nickname": "SetView", 
   "outputs": [
     []
@@ -8,21 +8,21 @@
     {
       "access": "item", 
       "name": "_direction", 
-      "description": "A sun vector from which the the Rhino view will be generated.\nUse the \"LB SunPath\" component to generate sun vectors.", 
+      "description": "A vector for the direction that the viewport camera faces.", 
       "type": "Vector3d", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_position_", 
-      "description": "The target point of the camera for the Rhino view that will be\ngenerated.  This point should be close to the Rhino geometry that\nyou are interested in viewing from the sun. If no point is provided,\nthe Rhino origin will be used (0, 0, 0).", 
+      "description": "A point for the position of the vieport camera in 3D space.\nIf no point is provided, the Rhino origin will be used (0, 0, 0).", 
       "type": "Point3d", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "look_around_", 
-      "description": "An optional interger for the width (in pixels) of the Rhino\nviewport that will be generated.", 
+      "description": "Optional 2D point (aka. UV coordinates) to tilt the viewport\ncamera off from from the input _direction. Values for UV\ncoordinates must be between 0 and 1 and these correspond to a\ntilt of 90 degrees in either direction (with 0.5, 0.5 being\ncentered on the _direction). Inputting a native Grasshopper\nSlider MD component will allow the most control of view offsetting.", 
       "type": "Point3d", 
       "default": null
     }, 
@@ -43,14 +43,14 @@
     {
       "access": "item", 
       "name": "lens_len_", 
-      "description": "An optional interger for the height (in pixels) of the Rhino\nviewport that will be generated.", 
+      "description": "An optional number that sets the lens length of the viewport\ncamera in mm. Typical values are around 20-50mm but wider angle\nviews can be achieved by lowering this number to 10 or less.\nIf unspecified, the lens length of the currently active Rhino\nviewport will be used.", 
       "type": "double", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "mode_", 
-      "description": "An optional text input for the display mode of the Rhino viewport\nthat will be generated. For example: Wireframe, Shaded, Rendered, etc.", 
+      "description": "An optional text input for the display mode of the Rhino viewport\nthat will be generated. For example: Wireframe, Shaded, Rendered, etc.\nIf unspecified, the mode of the currenlty active Rhino viewport\nwill be used", 
       "type": "string", 
       "default": null
     }

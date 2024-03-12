@@ -15,18 +15,28 @@ particular hour of the day.
 -
 
     Args:
-        _vector: A sun vector from which the the Rhino view will be generated.
-            Use the "LB SunPath" component to generate sun vectors.
-        _center_pt_: The target point of the camera for the Rhino view that will be
-            generated.  This point should be close to the Rhino geometry that
-            you are interested in viewing from the sun. If no point is provided,
-            the Rhino origin will be used (0, 0, 0).
+        _direction: A vector for the direction that the viewport camera faces.
+        _position_: A point for the position of the vieport camera in 3D space.
+            If no point is provided, the Rhino origin will be used (0, 0, 0).
+        look_around_: Optional 2D point (aka. UV coordinates) to tilt the viewport
+            camera off from from the input _direction. Values for UV
+            coordinates must be between 0 and 1 and these correspond to a
+            tilt of 90 degrees in either direction (with 0.5, 0.5 being
+            centered on the _direction). Inputting a native Grasshopper
+            Slider MD component will allow the most control of view offsetting.
         width_: An optional interger for the width (in pixels) of the Rhino
             viewport that will be generated.
         height_: An optional interger for the height (in pixels) of the Rhino
             viewport that will be generated.
+        lens_len_: An optional number that sets the lens length of the viewport
+            camera in mm. Typical values are around 20-50mm but wider angle
+            views can be achieved by lowering this number to 10 or less.
+            If unspecified, the lens length of the currently active Rhino
+            viewport will be used.
         mode_: An optional text input for the display mode of the Rhino viewport
             that will be generated. For example: Wireframe, Shaded, Rendered, etc.
+            If unspecified, the mode of the currenlty active Rhino viewport
+            will be used
 
     Returns:
         report: The name of the viewport that was opened.
@@ -34,7 +44,7 @@ particular hour of the day.
 
 ghenv.Component.Name = 'LB Set View'
 ghenv.Component.NickName = 'SetView'
-ghenv.Component.Message = '1.7.0'
+ghenv.Component.Message = '1.7.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
