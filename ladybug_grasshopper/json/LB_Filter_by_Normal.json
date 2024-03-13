@@ -1,0 +1,64 @@
+{
+  "version": "1.7.0", 
+  "nickname": "FilterNormal", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "sel_geo", 
+        "description": "Selected faces of the input geometry that are facing the direction\ncorresponding to the input criteria.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "item", 
+      "name": "north_", 
+      "description": "A number between -360 and 360 for the counterclockwise difference between\nthe North and the positive Y-axis in degrees. 90 is West and 270\nis East. This can also be Vector for the direction to North. (Default: 0)", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_geometry", 
+      "description": "Rhino Breps and/or Rhino Meshes which will be broken down into individual\nplanar faces and filtered based on the direction they face.", 
+      "type": "Brep", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_orientation", 
+      "description": "Text for the direction that the geometry is facing. This can also be\na number between 0 and 360 for the azimuth (clockwise horizontal\ndegrees from North) that the geometry should face. Choose from\nthe following:\n_\n* N = North\n* NE = Northeast\n* E = East\n* SE = Southeast\n* S = South\n* SW = Southwest\n* W = West\n* NW = Northwest\n* Up = Upwards\n* Down = Downwards", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_up_angle_", 
+      "description": "A number in degrees for the maximum declination angle from the positive\nZ Axis that is considerd up. This should be between 0 and 90 for\nthe results to be practical. (Default: 30).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_down_angle_", 
+      "description": "A number in degrees for the maximum angle difference from the newative\nZ Axis that is considerd down. This should be between 0 and 90 for\nthe results to be practical. (Default: 30).", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_horiz_angle_", 
+      "description": "Angle in degrees for the horizontal deviation from _orientation\nthat is still considered to face that orientation. This should be\nbetween 0 and 90 for the results to be practical. Note that this input\nhas no effect when the input orientation is \"Up\" or \"Down\". (Default: 23).", 
+      "type": "double", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry2d import Vector2D\n    from ladybug_geometry.geometry3d import Vector3D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_face3d, to_vector2d\n    from ladybug_{{cad}}.fromgeometry import from_face3d\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\nORIENT_MAP = {\n    'N': 0,\n    'NE': 45,\n    'E': 90,\n    'SE': 135,\n    'S': 180,\n    'SW': 225,\n    'W': 270,\n    'NW': 315,\n    'NORTH': 0,\n    'NORTHEAST': 45,\n    'EAST': 90,\n    'SOUTHEAST': 135,\n    'SOUTH': 180,\n    'SOUTHWEST': 225,\n    'WEST': 270,\n    'NORTHWEST': 315,\n    'UP': 'UP',\n    'DOWN': 'DOWN',\n    'UPWARDS': 'UP',\n    'DOWNWARDS': 'DOWN'\n}\n\n\nif all_required_inputs(ghenv.Component):\n    # process all of the global inputs\n    if north_ is not None:  # process the north_\n        try:\n            north_ = to_vector2d(north_).angle_clockwise(Vector2D(0, 1))\n        except AttributeError:  # north angle instead of vector\n            north_ = math.radians(float(north_))\n    else:\n        north_ = 0\n    up_angle = math.radians(_up_angle_) if _up_angle_ is not None else math.radians(30)\n    down_angle = math.radians(_down_angle_) if _down_angle_ is not None else math.radians(30)\n    horiz_angle =  math.radians(_horiz_angle_) if _horiz_angle_ is not None else math.radians(23)\n    up_vec, down_vec = Vector3D(0, 0, 1), Vector3D(0, 0, -1)\n\n    # process the geometry and the orientation\n    all_geo = [f for geo in _geometry for f in to_face3d(geo)]\n    try:\n        orient = ORIENT_MAP[_orientation.upper()]\n    except KeyError:\n        try:\n            orient = float(_orientation)\n        except Exception:\n            msg = 'Orientation must be text (eg. N, E, S W) or a number for the\\n' \\\n                'azimuth of the geometry. Got {}.'.format(_orientation)\n            raise TypeError(msg)\n\n    # filter the geometry by the orientation\n    if orient == 'UP':\n        sel_geo = [f for f in all_geo if f.normal.angle(up_vec) < up_angle]\n    elif orient == 'DOWN':\n        sel_geo = [f for f in all_geo if f.normal.angle(down_vec) < down_angle]\n    else:\n        sel_geo = []\n        dir_vec = Vector2D(0, 1).rotate(north_).rotate(-math.radians(orient))\n        full_down_ang = math.pi - down_angle\n        for f in all_geo:\n            if up_angle <= f.normal.angle(up_vec) <= full_down_ang:\n                norm_2d = Vector2D(f.normal.x, f.normal.y)\n                if -horiz_angle <= norm_2d.angle(dir_vec) <= horiz_angle:\n                    sel_geo.append(f)\n\n    # translate the Face3D back to {{Cad}} geometry\n    sel_geo = [from_face3d(f) for f in sel_geo]\n", 
+  "category": "Ladybug", 
+  "name": "LB Filter by Normal", 
+  "description": "Filter or select faces of geometry based on their orientation."
+}
