@@ -1,64 +1,64 @@
 {
-  "description": "Calculate hour of the year from month, day, hour, minute.\n-", 
+  "version": "1.8.0", 
+  "nickname": "HOY", 
   "outputs": [
     [
       {
-        "type": null, 
+        "access": "None", 
         "name": "hoy", 
         "description": "Hour of the year.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "doy", 
         "description": "Day of the year.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "date", 
         "description": "Human readable date time.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }
     ]
   ], 
-  "code": "\ntry:\n    from ladybug.dt import DateTime\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\nmonth = _month_ or 9\nday = _day_ or 21\nhour = _hour_ if _hour_ is not None else 12\nminute = _minute_ or 0\n\ndatetime = DateTime(month, day, hour, minute)\nhoy = datetime.hoy\ndoy = datetime.doy\ndate = datetime\n", 
-  "name": "LB Calculate HOY", 
-  "version": "1.7.1", 
-  "category": "Ladybug", 
-  "subcategory": "1 :: Analyze Data", 
-  "nickname": "HOY", 
   "inputs": [
     {
-      "type": "int", 
+      "access": "item", 
       "name": "_month_", 
       "description": "Integer for month (1-12).", 
-      "access": "item", 
+      "type": "int", 
       "default": null
     }, 
     {
-      "type": "int", 
+      "access": "item", 
       "name": "_day_", 
       "description": "Integer for day (1-31).", 
-      "access": "item", 
+      "type": "int", 
       "default": null
     }, 
     {
-      "type": "int", 
+      "access": "item", 
       "name": "_hour_", 
       "description": "Integer for hour (0-23).", 
-      "access": "item", 
+      "type": "int", 
       "default": null
     }, 
     {
-      "type": "int", 
+      "access": "item", 
       "name": "_minute_", 
       "description": "Integer for minute (0-59).", 
-      "access": "item", 
+      "type": "int", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.dt import DateTime\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\nmonth = _month_ or 9\nday = _day_ or 21\nhour = _hour_ if _hour_ is not None else 12\nminute = _minute_ or 0\n\ndatetime = DateTime(month, day, hour, minute)\nhoy = datetime.hoy\ndoy = datetime.doy\ndate = datetime\n", 
+  "category": "Ladybug", 
+  "name": "LB Calculate HOY", 
+  "description": "Calculate hour of the year from month, day, hour, minute.\n-"
 }

@@ -1,64 +1,64 @@
 {
-  "description": "Create a set of parameters that define the acceptable conditions of the\nAdaptive thermal comfort model.\n-\nThese parameters can be plugged into any of the components that compute\nAdaptive thermal comfort.\n-", 
+  "version": "1.8.0", 
+  "nickname": "AdaptPar", 
   "outputs": [
     [
       {
-        "type": null, 
+        "access": "None", 
         "name": "adapt_par", 
         "description": "An Adaptive comfort parameter object that can be plugged into\nany of the components that compute Adaptive thermal comfort.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }
     ]
   ], 
-  "code": "\ntry:\n    from ladybug_comfort.parameter.adaptive import AdaptiveParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\nadapt_par = AdaptiveParameter(_ashrae_or_en_, _neutral_offset_,\n                              _avgm_or_runmean_, _discr_or_cont_vel_,\n                              _cold_prevail_limit_, _conditioning_)\n", 
-  "name": "LB Adaptive Comfort Parameters", 
-  "version": "1.7.1", 
-  "category": "Ladybug", 
-  "subcategory": "4 :: Extra", 
-  "nickname": "AdaptPar", 
   "inputs": [
     {
-      "type": "bool", 
+      "access": "item", 
       "name": "_ashrae_or_en_", 
       "description": "A boolean to note whether to use the ASHRAE-55 neutral\ntemperature function (True) or the european neutral function (False),\nwhich is consistent with both EN-15251 and EN-16798. Note that this\ninput will also determine default values for many of the other\nproperties of this object.", 
-      "access": "item", 
+      "type": "bool", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_neutral_offset_", 
       "description": "The number of degrees Celcius from the neutral temperature\nwhere the input operative temperature is considered acceptable.\nThe default is 2.5C when the neutral temperature function is ASHRAE-55\n(consistent with 90% PPD) and 3C when the neutral temperature\nfunction is EN (consistent with comfort class II).\n_\nFor ASHRAE-55, the following neutral offsets apply.\n* 90 PPD - 2.5C\n* 80 PPD - 3.5C\n_\nFor the EN standard, the following neutral offsets apply.\n* Class I - 2C\n* Class II - 3C\n* Class III - 4C", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "bool", 
+      "access": "item", 
       "name": "_avgm_or_runmean_", 
       "description": "A boolean to note whether the prevailing outdoor\ntemperature is computed from the average monthly temperature (True) or\na weighted running mean of the last week (False).  The default is True\nwhen the neutral temperature function is ASHRAE-55 and False when the\nneutral temperature function is EN.", 
-      "access": "item", 
+      "type": "bool", 
       "default": null
     }, 
     {
-      "type": "bool", 
+      "access": "item", 
       "name": "_discr_or_cont_vel_", 
       "description": "A boolean to note whether discrete categories should be\nused to assess the effect of elevated air speed (True) or whether\na continuous function should be used (False). Note that continuous\nair speeds were only used in the older EN-15251 standard and are\nnot a part of the more recent EN-16798 standard.\nWhen unassigned, this will be True for discrete air speeds.", 
-      "access": "item", 
+      "type": "bool", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_cold_prevail_limit_", 
       "description": "A number indicating the prevailing outdoor temperature\nbelow which acceptable indoor operative temperatures flat line.\nThe default is 10C, which is consistent with both ASHRAE-55 and\nEN-16798. However, 15C was used for the older EN-15251 standard.\nThis number cannot be greater than 22C and cannot be less than 10C.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_conditioning_", 
       "description": "A number between 0 and 1 that represents how \"conditioned\"\nvs. \"free-running\" the building is.\n0 = free-running (completely passive with no air conditioning)\n1 = conditioned (no operable windows and fully air conditioned)\nThe default is 0 since both the ASHRAE-55 and the EN standards prohibit\nthe use of adaptive comfort methods when a heating/cooling system is active.\nWhen set to a non-zero number, a neutral temperature function for\nheated/cooled operation derived from the SCATs database will be used.\nFor more information on how adaptive comfort methods can be applied to\nconditioned buildings, see the neutral_temperature_conditioned function\nin the ladybug_comfort documentation.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_comfort.parameter.adaptive import AdaptiveParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\nadapt_par = AdaptiveParameter(_ashrae_or_en_, _neutral_offset_,\n                              _avgm_or_runmean_, _discr_or_cont_vel_,\n                              _cold_prevail_limit_, _conditioning_)\n", 
+  "category": "Ladybug", 
+  "name": "LB Adaptive Comfort Parameters", 
+  "description": "Create a set of parameters that define the acceptable conditions of the\nAdaptive thermal comfort model.\n-\nThese parameters can be plugged into any of the components that compute\nAdaptive thermal comfort.\n-"
 }

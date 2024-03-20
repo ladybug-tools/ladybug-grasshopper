@@ -1,21 +1,21 @@
 {
-  "name": "LB Open File", 
-  "subcategory": "4 :: Extra", 
-  "version": "1.7.1", 
-  "description": "Open a file in whatever program is associated with the file extension.\nThis can be used to open simulation files in particular applications (eg. opening\nan OSM file in the OpenStudio Application).\n-", 
-  "code": "\nimport os\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # check that the file exists\n    assert os.path.exists(_file_path), \\\n        'No file was found at: {}'.format(_file_path)\n    _file_path = _file_path.replace('/', '\\\\') if os.name == 'nt' else _file_path\n    os.startfile(_file_path)\n", 
+  "version": "1.8.0", 
+  "nickname": "OpenFile", 
   "outputs": [
     []
   ], 
-  "category": "Ladybug", 
-  "nickname": "OpenFile", 
   "inputs": [
     {
-      "name": "_file_path", 
       "access": "item", 
-      "type": "string", 
+      "name": "_file_path", 
       "description": "Full path to a file to be opened.", 
+      "type": "string", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\nimport os\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    # check that the file exists\n    assert os.path.exists(_file_path), \\\n        'No file was found at: {}'.format(_file_path)\n    _file_path = _file_path.replace('/', '\\\\') if os.name == 'nt' else _file_path\n    os.startfile(_file_path)\n", 
+  "category": "Ladybug", 
+  "name": "LB Open File", 
+  "description": "Open a file in whatever program is associated with the file extension.\nThis can be used to open simulation files in particular applications (eg. opening\nan OSM file in the OpenStudio Application).\n-"
 }

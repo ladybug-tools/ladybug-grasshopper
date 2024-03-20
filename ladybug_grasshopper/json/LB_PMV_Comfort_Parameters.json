@@ -1,50 +1,50 @@
 {
-  "description": "Create a set of parameters that define the acceptable conditions of the\nPredicted Mean Vote (PMV) thermal comfort model.\n-\nThese parameters can be plugged into any of the components that compute\nPMV thermal comfort.\n-", 
+  "version": "1.8.0", 
+  "nickname": "PMVPar", 
   "outputs": [
     [
       {
-        "type": null, 
+        "access": "None", 
         "name": "pmv_par", 
         "description": "A PMV comfort parameter object that can be plugged into\nany of the components that compute PMV thermal comfort.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }
     ]
   ], 
-  "code": "\ntry:\n    from ladybug_comfort.parameter.pmv import PMVParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\npmv_par = PMVParameter(_ppd_thresh_, _hr_upper_, _hr_lower_, _still_air_thresh_)\n", 
-  "name": "LB PMV Comfort Parameters", 
-  "version": "1.7.1", 
-  "category": "Ladybug", 
-  "subcategory": "4 :: Extra", 
-  "nickname": "PMVPar", 
   "inputs": [
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_ppd_thresh_", 
       "description": "A number between 5 and 100 that represents the upper\nthreshold of PPD that is considered acceptable.\nDefault is 10, which charcterizes most buildings in the\nASHRAE-55 and EN-15251 standards.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_hr_upper_", 
       "description": "A number between 0 and 1 indicating the upper limit of\nhumidity ratio that is considered acceptable.\nDefault is 1 for essentially no limit.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_hr_lower_", 
       "description": "A number between 0 and 1 indicating the lower limit of\nhumidity ratio considered acceptable.\nDefault is 0 for essentially no limit.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_still_air_thresh_", 
       "description": "The air speed threshold in m/s at which the standard\neffective temperature (SET) model will be used to correct for the\ncooling effect of elevated air speeds.\nDefault is 0.1 m/s, which is the limit according to ASHRAE-55.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_comfort.parameter.pmv import PMVParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\npmv_par = PMVParameter(_ppd_thresh_, _hr_upper_, _hr_lower_, _still_air_thresh_)\n", 
+  "category": "Ladybug", 
+  "name": "LB PMV Comfort Parameters", 
+  "description": "Create a set of parameters that define the acceptable conditions of the\nPredicted Mean Vote (PMV) thermal comfort model.\n-\nThese parameters can be plugged into any of the components that compute\nPMV thermal comfort.\n-"
 }

@@ -1,85 +1,85 @@
 {
-  "description": "Create a custom legend for any set of data or range. Creating a legend with this\ncomponent allows for a bit more flexibility than what can be achieved by working\nwith the legends automatically output from different studies.\n-", 
+  "version": "1.7.0", 
+  "nickname": "CreateLegend", 
   "outputs": [
     [
       {
-        "type": null, 
+        "access": "None", 
         "name": "mesh", 
         "description": "A colored mesh for the legend colors.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "title_obj", 
         "description": "A text object for the  legend title.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "label_objs", 
         "description": "An array of text objects for the label text.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "label_text", 
         "description": "An array of text strings for the label text.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "colors", 
         "description": "An array of colors that align with the input _values. This can\nbe used to color geometry that aligns with the values.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }
     ]
   ], 
-  "code": "", 
-  "name": "LB Create Legend", 
-  "version": "1.7.0", 
-  "category": "Ladybug", 
-  "subcategory": "4 :: Extra", 
-  "nickname": "CreateLegend", 
   "inputs": [
     {
-      "type": "System.Object", 
+      "access": "list", 
       "name": "_values", 
       "description": "A list of numerical values or data collections that the legend refers\nto. This can also be the minimum and maximum numerical values of the\ndata. The legend's maximum and minimum values will be set by the max\nand min of the data set.", 
-      "access": "list", 
+      "type": "System.Object", 
       "default": null
     }, 
     {
-      "type": "Plane", 
+      "access": "item", 
       "name": "_base_plane_", 
       "description": "An optional plane or point to set the location of the\nlegend. (Default: Rhino origin - (0, 0, 0))", 
-      "access": "item", 
+      "type": "Plane", 
       "default": null
     }, 
     {
-      "type": "string", 
+      "access": "item", 
       "name": "title_", 
       "description": "A text string representing a legend title. Legends are usually\ntitled with the units of the data.", 
-      "access": "item", 
+      "type": "string", 
       "default": null
     }, 
     {
-      "type": "System.Object", 
+      "access": "item", 
       "name": "legend_par_", 
       "description": "Optional legend parameters from the \"LB Legend Parameters\" component.", 
-      "access": "item", 
+      "type": "System.Object", 
       "default": null
     }, 
     {
-      "type": "System.Object", 
+      "access": "item", 
       "name": "leg_par2d_", 
       "description": "Optional 2D LegendParameters from the \"LB Legend Parameters 2D\"\ncomponent, which will be used to customize a legend in the plane\nof the screen so that it functions like a head-up display (HUD).\nIf unspecified, the VisualizationSet will be rendered with 3D\nlegends in the Rhino scene much like the other native Ladybug\nTools components.", 
-      "access": "item", 
+      "type": "System.Object", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "", 
+  "category": "Ladybug", 
+  "name": "LB Create Legend", 
+  "description": "Create a custom legend for any set of data or range. Creating a legend with this\ncomponent allows for a bit more flexibility than what can be achieved by working\nwith the legends automatically output from different studies.\n-"
 }
