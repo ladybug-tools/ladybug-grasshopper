@@ -1,113 +1,113 @@
 {
-  "code": "\n\ntry:\n    from ladybug.color import Colorset\n    from ladybug.graphic import GraphicContainer\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import units_abbreviation\n    from ladybug_{{cad}}.togeometry import to_joined_gridded_mesh3d, to_vector3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_point3d, from_vector3d\n    from ladybug_{{cad}}.fromobjects import legend_objects\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.intersect import join_geometry_to_mesh, generate_intersection_rays, \\\n        intersect_rays_with_mesh_faces\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, recommended_processor_count\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _run:\n    # set the defaults and process all of the inputs\n    workers = _cpu_count_ if _cpu_count_ is not None else recommended_processor_count()\n    _timestep_ = 1 if _timestep_ is None else _timestep_\n    study_directs_ = None if len(study_directs_) == 0 else study_directs_\n\n    # create the gridded mesh from the geometry\n    analysis_mesh = to_joined_gridded_mesh3d(_shade_geo, _grid_size)\n    mesh = from_mesh3d(analysis_mesh)\n\n    # create a series of rays that represent the sun projected through the shade\n    rev_vec = [from_vector3d(to_vector3d(vec).reverse()) for vec in _vectors]\n    int_rays = generate_intersection_rays(_study_points, rev_vec)\n\n    # if there is context, remove any rays that are blocked by the context\n    shade_mesh = join_geometry_to_mesh(context_) \\\n        if len(context_) != 0 and context_[0] is not None else None\n\n    # intersect the sun rays with the shade mesh\n    face_int = intersect_rays_with_mesh_faces(\n        mesh, int_rays, shade_mesh, study_directs_, cpu_count=workers)\n\n    # loop through the face intersection result and evaluate the benefit\n    pt_count = len(_study_points)\n    shade_help = []\n    for face_res, face_area in zip(face_int, analysis_mesh.face_areas):\n        # Normalize by the area of the cell so there's is a consistent metric\n        # between cells of different areas.\n        # Also, divide the number of study points so people get a sense of\n        # the average hours of blocked sun.\n        shd_help = ((len(face_res) / face_area) / _timestep_) / pt_count\n        shade_help.append(shd_help)\n\n    # create the mesh and legend outputs\n    graphic = GraphicContainer(shade_help, analysis_mesh.min, analysis_mesh.max, legend_par_)\n    graphic.legend_parameters.title = 'hrs/{}2'.format(units_abbreviation())\n    if legend_par_ is None or legend_par_.are_colors_default:\n        graphic.legend_parameters.colors = Colorset.shade_benefit()\n    if legend_par_ is None or legend_par_.min is None:\n        graphic.legend_parameters.min = 0\n    title = text_objects('Shade Benefit', graphic.lower_title_location,\n                         graphic.legend_parameters.text_height * 1.5,\n                         graphic.legend_parameters.font)\n\n    # create all of the visual outputs\n    analysis_mesh.colors = graphic.value_colors\n    mesh = from_mesh3d(analysis_mesh)\n    legend = legend_objects(graphic.legend)\n", 
-  "subcategory": "3 :: Analyze Geometry", 
-  "description": "Visualize the desirability of shade in terms of the time period of blocked\nsun vectors for each part of a shade geometry.\n_\nThe calculation assumes that all input _vectors represent sun to be blocked, which\nis often the case when evaluating shade in terms of its benefit for glare reduction\nand occupant visual comfort. It can also be the case when sun vectors have been\nfiltered to account for times of peak cooling demand or for the heat stress of\nhuman subjects.\n_\nThe component outputs a colored mesh of the shade illustrating the helpfulness of\nshading each part of the _shade_geo. A higher saturation of blue indicates that\nshading the cell blocks more hours of sun and is therefore more desirable.\n_\nThe units for shade desirability are hrs/square Rhino unit, which note the amount\nof time that sun is blocked by a given cell. So, if a given square meter of input\n_shade_geo has a shade desirability of 10 hrs/m2, this means that a shade in\nthis location blocks an average of 10 hours to each of the _study_points.\n-", 
-  "version": "1.7.1", 
+  "version": "1.8.0", 
   "nickname": "ShadeBenefit", 
-  "name": "LB Shade Benefit", 
-  "category": "Ladybug", 
-  "inputs": [
-    {
-      "type": "System.Object", 
-      "access": "list", 
-      "name": "_vectors", 
-      "description": "Sun vectors from the \"LB SunPath\" component, which will be used\nto determine the number of hours of sun blocked by the _shade_geo.\nWhen evaluating shade benefit in terms of glare reduction, these\nvectors are typically for any sun-up hour of the year since looking\ninto the sun at practically any hour is likely to induce glare.\nWhen using this component to approximate reductions to cooling\ndemand or human heat stress, it's more appropriate to filter\nsun vectors using a conditional statement or use other types of\nshade benefit analysis like the \"LB Thermal Shade Benefit\"\ncomponent or the \"HB Energy Shade Benefit\" component.", 
-      "default": null
-    }, 
-    {
-      "type": "Point3d", 
-      "access": "list", 
-      "name": "_study_points", 
-      "description": "Points representing an location in space for which shading\ndesirability is being evaluated. For a study of shade desirability for\nreducing glare, this is often the location of the human subject's\nview. For a study of shade desirability over a surface like a desk\nor a window, the \"LB Generate Point Grid\" component can be used to\ncreate a set of points over the surface to input here.", 
-      "default": null
-    }, 
-    {
-      "type": "Vector3d", 
-      "access": "list", 
-      "name": "study_directs_", 
-      "description": "Optional Vectors that align with the _study_points and represent\nthe direction in which shade desirability is being evaluated. For a\nstudy of shade desirability for reducing glare, this is the direction\nin which human subject is looking. For a study of shade desirability\nover a surface like a desk or a window, the vectors output of the\n\"LB Generate Point Grid\" component should be input here. If not\nsupplied, sun vectors coming from any direction will be used to\nevualuate shade desirability.", 
-      "default": null
-    }, 
-    {
-      "type": "GeometryBase", 
-      "access": "list", 
-      "name": "_shade_geo", 
-      "description": "Rhino Breps and/or Rhino Meshes representing shading to be evaluated\nin terms of its benefit. Note that, in the case that multiple\nshading geometries are connected, this component does not account\nfor the interaction between the different shading surfaces and will\njust evaluate each part of the shade independently.", 
-      "default": null
-    }, 
-    {
-      "type": "GeometryBase", 
-      "access": "list", 
-      "name": "context_", 
-      "description": "Rhino Breps and/or Rhino Meshes representing context geometry that can\nblock sunlight to the _study_points, therefore discounting any benefit\nor harm that could come to the region.", 
-      "default": null
-    }, 
-    {
-      "type": "double", 
-      "access": "item", 
-      "name": "_grid_size", 
-      "description": "A positive number in Rhino model units for the size of grid cells at\nwhich the input _shade_geo will be subdivided for shade benefit\nanalysis. The smaller the grid size, the higher the resolution of\nthe analysis and the longer the calculation will take.  So it is\nrecommended that one start with a large value here and decrease\nthe value as needed. However, the grid size should usually be\nsmaller than the dimensions of the smallest piece of the _shade_geo\nand context_ in order to yield meaningful results.", 
-      "default": null
-    }, 
-    {
-      "type": "int", 
-      "access": "item", 
-      "name": "_timestep_", 
-      "description": "A positive integer for the number of timesteps per hour at which\nthe \"LB SunPath\" component generated sun vectors. This is used\nto correctly interpret the time duration represented by each of\nthe input sun vectors. (Default: 1 for 1 vector per hour).", 
-      "default": null
-    }, 
-    {
-      "type": "System.Object", 
-      "access": "item", 
-      "name": "legend_par_", 
-      "description": "Optional legend parameters from the \"LB Legend Parameters\"\nthat will be used to customize the display of the results.", 
-      "default": null
-    }, 
-    {
-      "type": "int", 
-      "access": "item", 
-      "name": "_cpu_count_", 
-      "description": "An integer to set the number of CPUs used in the execution of the\nintersection calculation. If unspecified, it will automatically default\nto one less than the number of CPUs currently available on the\nmachine or 1 if only one processor is available.", 
-      "default": null
-    }, 
-    {
-      "type": "bool", 
-      "access": "item", 
-      "name": "_run", 
-      "description": "Set to \"True\" to run the component and perform shade benefit analysis.", 
-      "default": null
-    }
-  ], 
   "outputs": [
     [
       {
-        "type": null, 
         "access": "None", 
         "name": "mesh", 
         "description": "A colored mesh of the _shade_geo showing where shading is helpful (in blue),\nand where it does not make much of a difference (white or desaturated\ncolors). Note that the colors can change depending upon the input legend_par_.", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
         "access": "None", 
         "name": "legend", 
         "description": "Legend showing the numeric values of hrs / square unit that correspond to\nthe colors in the shade mesh.", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
         "access": "None", 
         "name": "title", 
         "description": "A text object for the study title.", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
         "access": "None", 
         "name": "shade_help", 
         "description": "The cumulative hrs / square unit helped by shading the given cell. If a given\nsquare meter of _shade_geo has a shade helpfulness of 10 hrs/m2,\nthis means that a shade in this location blocks an average of 10 hours\nto each of the _study_points.", 
+        "type": null, 
         "default": null
       }
     ]
-  ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_vectors", 
+      "description": "Sun vectors from the \"LB SunPath\" component, which will be used\nto determine the number of hours of sun blocked by the _shade_geo.\nWhen evaluating shade benefit in terms of glare reduction, these\nvectors are typically for any sun-up hour of the year since looking\ninto the sun at practically any hour is likely to induce glare.\nWhen using this component to approximate reductions to cooling\ndemand or human heat stress, it's more appropriate to filter\nsun vectors using a conditional statement or use other types of\nshade benefit analysis like the \"LB Thermal Shade Benefit\"\ncomponent or the \"HB Energy Shade Benefit\" component.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_study_points", 
+      "description": "Points representing an location in space for which shading\ndesirability is being evaluated. For a study of shade desirability for\nreducing glare, this is often the location of the human subject's\nview. For a study of shade desirability over a surface like a desk\nor a window, the \"LB Generate Point Grid\" component can be used to\ncreate a set of points over the surface to input here.", 
+      "type": "Point3d", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "study_directs_", 
+      "description": "Optional Vectors that align with the _study_points and represent\nthe direction in which shade desirability is being evaluated. For a\nstudy of shade desirability for reducing glare, this is the direction\nin which human subject is looking. For a study of shade desirability\nover a surface like a desk or a window, the vectors output of the\n\"LB Generate Point Grid\" component should be input here. If not\nsupplied, sun vectors coming from any direction will be used to\nevualuate shade desirability.", 
+      "type": "Vector3d", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_shade_geo", 
+      "description": "Rhino Breps and/or Rhino Meshes representing shading to be evaluated\nin terms of its benefit. Note that, in the case that multiple\nshading geometries are connected, this component does not account\nfor the interaction between the different shading surfaces and will\njust evaluate each part of the shade independently.", 
+      "type": "GeometryBase", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "context_", 
+      "description": "Rhino Breps and/or Rhino Meshes representing context geometry that can\nblock sunlight to the _study_points, therefore discounting any benefit\nor harm that could come to the region.", 
+      "type": "GeometryBase", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_grid_size", 
+      "description": "A positive number in Rhino model units for the size of grid cells at\nwhich the input _shade_geo will be subdivided for shade benefit\nanalysis. The smaller the grid size, the higher the resolution of\nthe analysis and the longer the calculation will take.  So it is\nrecommended that one start with a large value here and decrease\nthe value as needed. However, the grid size should usually be\nsmaller than the dimensions of the smallest piece of the _shade_geo\nand context_ in order to yield meaningful results.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_timestep_", 
+      "description": "A positive integer for the number of timesteps per hour at which\nthe \"LB SunPath\" component generated sun vectors. This is used\nto correctly interpret the time duration represented by each of\nthe input sun vectors. (Default: 1 for 1 vector per hour).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "legend_par_", 
+      "description": "Optional legend parameters from the \"LB Legend Parameters\"\nthat will be used to customize the display of the results.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_cpu_count_", 
+      "description": "An integer to set the number of CPUs used in the execution of the\nintersection calculation. If unspecified, it will automatically default\nto one less than the number of CPUs currently available on the\nmachine or 1 if only one processor is available.", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_run", 
+      "description": "Set to \"True\" to run the component and perform shade benefit analysis.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "3 :: Analyze Geometry", 
+  "code": "\n\ntry:\n    from ladybug.color import Colorset\n    from ladybug.graphic import GraphicContainer\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import units_abbreviation\n    from ladybug_{{cad}}.togeometry import to_joined_gridded_mesh3d, to_vector3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_point3d, from_vector3d\n    from ladybug_{{cad}}.fromobjects import legend_objects\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.intersect import join_geometry_to_mesh, generate_intersection_rays, \\\n        intersect_rays_with_mesh_faces\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, recommended_processor_count\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _run:\n    # set the defaults and process all of the inputs\n    workers = _cpu_count_ if _cpu_count_ is not None else recommended_processor_count()\n    _timestep_ = 1 if _timestep_ is None else _timestep_\n    study_directs_ = None if len(study_directs_) == 0 else study_directs_\n\n    # create the gridded mesh from the geometry\n    analysis_mesh = to_joined_gridded_mesh3d(_shade_geo, _grid_size)\n    mesh = from_mesh3d(analysis_mesh)\n\n    # create a series of rays that represent the sun projected through the shade\n    rev_vec = [from_vector3d(to_vector3d(vec).reverse()) for vec in _vectors]\n    int_rays = generate_intersection_rays(_study_points, rev_vec)\n\n    # if there is context, remove any rays that are blocked by the context\n    shade_mesh = join_geometry_to_mesh(context_) \\\n        if len(context_) != 0 and context_[0] is not None else None\n\n    # intersect the sun rays with the shade mesh\n    face_int = intersect_rays_with_mesh_faces(\n        mesh, int_rays, shade_mesh, study_directs_, cpu_count=workers)\n\n    # loop through the face intersection result and evaluate the benefit\n    pt_count = len(_study_points)\n    shade_help = []\n    for face_res, face_area in zip(face_int, analysis_mesh.face_areas):\n        # Normalize by the area of the cell so there's is a consistent metric\n        # between cells of different areas.\n        # Also, divide the number of study points so people get a sense of\n        # the average hours of blocked sun.\n        shd_help = ((len(face_res) / face_area) / _timestep_) / pt_count\n        shade_help.append(shd_help)\n\n    # create the mesh and legend outputs\n    graphic = GraphicContainer(shade_help, analysis_mesh.min, analysis_mesh.max, legend_par_)\n    graphic.legend_parameters.title = 'hrs/{}2'.format(units_abbreviation())\n    if legend_par_ is None or legend_par_.are_colors_default:\n        graphic.legend_parameters.colors = Colorset.shade_benefit()\n    if legend_par_ is None or legend_par_.min is None:\n        graphic.legend_parameters.min = 0\n    title = text_objects('Shade Benefit', graphic.lower_title_location,\n                         graphic.legend_parameters.text_height * 1.5,\n                         graphic.legend_parameters.font)\n\n    # create all of the visual outputs\n    analysis_mesh.colors = graphic.value_colors\n    mesh = from_mesh3d(analysis_mesh)\n    legend = legend_objects(graphic.legend)\n", 
+  "category": "Ladybug", 
+  "name": "LB Shade Benefit", 
+  "description": "Visualize the desirability of shade in terms of the time period of blocked\nsun vectors for each part of a shade geometry.\n_\nThe calculation assumes that all input _vectors represent sun to be blocked, which\nis often the case when evaluating shade in terms of its benefit for glare reduction\nand occupant visual comfort. It can also be the case when sun vectors have been\nfiltered to account for times of peak cooling demand or for the heat stress of\nhuman subjects.\n_\nThe component outputs a colored mesh of the shade illustrating the helpfulness of\nshading each part of the _shade_geo. A higher saturation of blue indicates that\nshading the cell blocks more hours of sun and is therefore more desirable.\n_\nThe units for shade desirability are hrs/square Rhino unit, which note the amount\nof time that sun is blocked by a given cell. So, if a given square meter of input\n_shade_geo has a shade desirability of 10 hrs/m2, this means that a shade in\nthis location blocks an average of 10 hours to each of the _study_points.\n-"
 }

@@ -1,57 +1,57 @@
 {
-  "description": "Create a set of parameters that define the characteristics of a human\nin relation to the sun that falls on them.\n-\nThese parameters can be plugged into any of the components that estimate\nmean radiant temperature (MRT) deltas as a result of being in the sun.\n-", 
+  "version": "1.8.0", 
+  "nickname": "SolarBodyPar", 
   "outputs": [
     [
       {
-        "type": null, 
+        "access": "None", 
         "name": "sol_body_par", 
         "description": "A solar body parameter object that can be plugged into\nany of the components that estimate mean radiant temperature (MRT)\ndeltas as a result of being in the sun.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }
     ]
   ], 
-  "code": "\ntry:\n    from ladybug_comfort.parameter.solarcal import SolarCalParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\nsol_body_par = SolarCalParameter(_posture_, _sharp_, _body_az_,\n                                _absorptivity_, _emissivity_)", 
-  "name": "LB Solar Body Parameters", 
-  "version": "1.7.1", 
-  "category": "Ladybug", 
-  "subcategory": "4 :: Extra", 
-  "nickname": "SolarBodyPar", 
   "inputs": [
     {
-      "type": "string", 
+      "access": "item", 
       "name": "_posture_", 
       "description": "A text string indicating the posture of the body. Letters must\nbe lowercase. Default is \"standing\". Choose from the following:\n- standing\n- seated\n- supine", 
-      "access": "item", 
+      "type": "string", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_sharp_", 
       "description": "A number between 0 and 180 representing the solar horizontal\nangle relative to front of person (SHARP). 0 signifies sun that is\nshining directly into the person's face and 180 signifies sun that\nis shining at the person's back. Default is 135, asuming that a person\ntypically faces their side or back to the sun to avoid glare.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_body_az_", 
       "description": "A number between 0 and 360 representing the direction that\nthe human is facing in degrees (0=North, 90=East, 180=South, 270=West).\nDefault is None, which will assume that the sharp input dictates the\ndegrees the human is facing from the sun.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_absorptivity_", 
       "description": "A number between 0 and 1 representing the average\nshortwave absorptivity of the body (including clothing and skin color).\nTypical clothing values - white: 0.2, khaki: 0.57, black: 0.88\nTypical skin values - white: 0.57, brown: 0.65, black: 0.84\nDefault is 0.7 for average (brown) skin and medium clothing.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_emissivity_", 
       "description": "A number between 0 and 1 representing the average\nlongwave emissivity of the body.  Default is 0.95, which is almost\nalways the case except in rare situations of wearing metalic clothing.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_comfort.parameter.solarcal import SolarCalParameter\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_comfort:\\n\\t{}'.format(e))\ntry:\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\nsol_body_par = SolarCalParameter(_posture_, _sharp_, _body_az_,\n                                _absorptivity_, _emissivity_)", 
+  "category": "Ladybug", 
+  "name": "LB Solar Body Parameters", 
+  "description": "Create a set of parameters that define the characteristics of a human\nin relation to the sun that falls on them.\n-\nThese parameters can be plugged into any of the components that estimate\nmean radiant temperature (MRT) deltas as a result of being in the sun.\n-"
 }

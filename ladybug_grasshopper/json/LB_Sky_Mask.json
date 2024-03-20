@@ -1,134 +1,134 @@
 {
-  "description": "Visualize the portion of the sky dome that is masked by context geometry or shading\nstrategies around a given point.\n_\nSeparate meshs will be generated for the portions of the sky dome that are masked\nvs visible. The percentage of the sky that is masked by the context geometry and\nis visible will also be computed.\n-", 
+  "version": "1.8.0", 
+  "nickname": "SyMask", 
   "outputs": [
     [
       {
-        "type": null, 
+        "access": "None", 
         "name": "context_mask", 
         "description": "A mesh for the portion of the sky dome masked by the context_\ngeometry.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "orient_mask", 
         "description": "A mesh for the portion of the sky dome that is not visible from\na surface is facing a given orientation.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "strategy_mask", 
         "description": "A mesh of the portion of the sky dome masked by the overhang,\nleft fin, and right fin projections.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "sky_mask", 
         "description": "A mesh of the portion of the sky dome visible by the _center_\nthrough the strategies and context_ geometry.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "context_view", 
         "description": "The percentage of the sky dome masked by the context_ geometry.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "orient_view", 
         "description": "The percentage of the sky dome that is not visible from a\nsurface is facing a given orientation.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "strategy_view", 
         "description": "The percentage of the sky dome viewed by the overhang, left\nfin, and right fin projections.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }, 
       {
-        "type": null, 
+        "access": "None", 
         "name": "sky_view", 
         "description": "The percentage of the sky dome visible by the _center_ through\nthe strategies and context_ geometry.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }
     ]
   ], 
-  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Point2D\n    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D\n    from ladybug_geometry.geometry3d.mesh import Mesh3D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug.viewsphere import view_sphere\n    from ladybug.compass import Compass\n    from ladybug.color import Color\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.togeometry import to_point3d, to_plane\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_point3d, from_vector3d\n    from ladybug_{{cad}}.intersect import join_geometry_to_mesh, intersect_mesh_rays\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\ndef apply_mask_to_sky(sky_pattern, mask_pattern):\n    \"\"\"Apply a pattern of a mask to a pattern of visible sky.\"\"\"\n    for i, val in enumerate(mask_pattern):\n        if val:\n            sky_pattern[i] = False\n\n\ndef apply_mask_to_base_mask(base_pattern, mask_pattern, ignore_pattern):\n    \"\"\"Apply a pattern of a mask to a base pattern with the option to ignore elements.\"\"\"\n    for i, (val, ig_val) in enumerate(zip(mask_pattern, ignore_pattern)):\n        if val and not ig_val:\n            base_pattern[i] = True\n\n\ndef mask_mesh_from_pattern(base_mask, mask_pattern, color):\n    \"\"\"Get a {{Cad}} mesh of a mask from a pattern aligned to the faces of a base mesh.\"\"\"\n    try:\n        mask_mesh = base_mask.remove_faces_only(mask_pattern)\n    except AssertionError:  # all mesh faces have been removed\n        return None\n    mask_mesh.colors = [color] * len(mask_mesh.faces)\n    return from_mesh3d(mask_mesh)\n\n\n\n# process the inputs and set defaults for global variables\n_scale_ = 1 if _scale_ is None else _scale_\nradius = (100 * _scale_) / conversion_to_meters()\nif _center_ is not None:  # process the center point into a Point2D\n    try:  # assume that it is a point\n        center_pt3d, direction = to_point3d(_center_), None\n    except AttributeError:\n        plane, is_orient = to_plane(_center_), True\n        center_pt3d, direction = plane.o, plane.n\nelse:\n    center_pt3d, direction = Point3D(), None\naz_count, alt_count = 72, 18\nif _density_:\n    az_count = az_count * _density_\n    alt_count = alt_count * _density_\nif orientation_ is not None:  # process the orientation to a number\n    ori_dict = {'north': 0, 'east': 90, 'south': 180, 'west': 270}\n    try:  # first check if it's text for the direction\n        orientation_ = ori_dict[orientation_.lower()]\n    except KeyError:  # it's a number for the orientation\n        orientation_ = float(orientation_)\n    direction = Vector3D(0, 1, 0).rotate_xy(-math.radians(orientation_))\n\n\n# create the dome mesh of the sky and position/project it correctly\nsky_mask, view_vecs = view_sphere.dome_radial_patches(az_count, alt_count)\nsky_mask = sky_mask.scale(radius)\nif center_pt3d != Point3D():\n    m_vec = Vector3D(center_pt3d.x, center_pt3d.y, center_pt3d.z)\n    sky_mask = sky_mask.move(m_vec)\nif projection_ is not None:\n    if projection_.title() == 'Orthographic':\n        pts = (Compass.point3d_to_orthographic(pt) for pt in sky_mask.vertices)\n    elif projection_.title() == 'Stereographic':\n        pts = (Compass.point3d_to_stereographic(pt, radius, center_pt3d)\n               for pt in sky_mask.vertices)\n    else:\n        raise ValueError(\n            'Projection type \"{}\" is not recognized.'.format(projection_))\n    pts3d = tuple(Point3D(pt.x, pt.y, center_pt3d.z) for pt in pts)\n    sky_mask = Mesh3D(pts3d, sky_mask.faces)\nsky_pattern = [True] * len(view_vecs)  # pattern to be adjusted by the various masks\n\n\n# account for the orientation and any of the projection strategies\norient_pattern, strategy_pattern = None, None\nif direction is not None:\n    orient_pattern, dir_angles = view_sphere.orientation_pattern(direction, view_vecs)\n    apply_mask_to_sky(sky_pattern, orient_pattern)\n    if overhang_proj_ or left_fin_proj_ or right_fin_proj_:\n        strategy_pattern = [False] * len(view_vecs)\n        if overhang_proj_:\n            over_pattern = view_sphere.overhang_pattern(direction, overhang_proj_, view_vecs)\n            apply_mask_to_base_mask(strategy_pattern, over_pattern, orient_pattern)\n            apply_mask_to_sky(sky_pattern, over_pattern)\n        if left_fin_proj_ or right_fin_proj_:\n            f_pattern = view_sphere.fin_pattern(direction, left_fin_proj_, right_fin_proj_, view_vecs)\n            apply_mask_to_base_mask(strategy_pattern, f_pattern, orient_pattern)\n            apply_mask_to_sky(sky_pattern, f_pattern)\n\n\n# account for any input context\ncontext_pattern = None\nif len(context_) != 0:\n    shade_mesh = join_geometry_to_mesh(context_)  # mesh the context\n    points = [from_point3d(center_pt3d)]\n    view_vecs = [from_vector3d(pt) for pt in view_vecs]\n    int_matrix, angles = intersect_mesh_rays(shade_mesh, points, view_vecs)\n    context_pattern = [val == 0 for val in int_matrix[0]]\n    apply_mask_to_sky(sky_pattern, context_pattern)\n\n\n# get the weights for each patch to be used in view factor calculation\nweights = view_sphere.dome_radial_patch_weights(az_count, alt_count)\nif direction is not None:\n    weights = [wgt * abs(math.cos(ang)) * 2 for wgt, ang in zip(weights, dir_angles)]\n\n\n# create meshes for the masks and compute any necessary view factors\ngray, black = Color(230, 230, 230), Color(0, 0, 0)\ncontext_view, orient_view, strategy_view = 0, 0, 0\nif context_pattern is not None:\n    context_mask = mask_mesh_from_pattern(sky_mask, context_pattern, black)\n    context_view = sum(wgt for wgt, is_viz in zip(weights, context_pattern) if is_viz)\nif orient_pattern is not None:\n    orient_mask = mask_mesh_from_pattern(sky_mask, orient_pattern, black)\n    orient_view = sum(wgt for wgt, is_viz in zip(weights, orient_pattern) if is_viz)\nif strategy_pattern is not None:\n    strategy_mask = mask_mesh_from_pattern(sky_mask, strategy_pattern, black)\n    strategy_view = sum(wgt for wgt, is_viz in zip(weights, strategy_pattern) if is_viz)\nsky_mask = mask_mesh_from_pattern(sky_mask, sky_pattern, gray)\nsky_view = sum(wgt for wgt, is_viz in zip(weights, sky_pattern) if is_viz)\n", 
-  "name": "LB Sky Mask", 
-  "version": "1.7.1", 
-  "category": "Ladybug", 
-  "subcategory": "3 :: Analyze Geometry", 
-  "nickname": "SyMask", 
   "inputs": [
     {
-      "type": "GeometryBase", 
+      "access": "list", 
       "name": "context_", 
       "description": "Rhino Breps and/or Rhino Meshes representing context geometry that\ncan block the sky to the center of the sky mask.", 
-      "access": "list", 
+      "type": "GeometryBase", 
       "default": null
     }, 
     {
-      "type": "string", 
+      "access": "item", 
       "name": "orientation_", 
       "description": "A number between 0 and 360 that sets the direction of a vertically-\noriented surface for which the sky view will be visualized and\ncomputed. Alternatively, this input can be the words \"north\",\n\"east\", \"south\" or \"west.\" An input here will result in the output\nof an orient_mask, which blocks the portion of the sky that is not\nvisible from a vertical surface with this orientation. Furthermore,\nall of the view-related outputs will be computed for a surface with\nthe specified orientation (overriding any plane input for the _center_).", 
-      "access": "item", 
+      "type": "string", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "overhang_proj_", 
       "description": "A number between 0 and 90 that sets the angle between the _center_\nand the edge of an imagined horizontal overhang projecting past\nthe point. Note that this option is only available when there is\nan input for orientation_ above. An input here will result in the\noutput of a strategy_mask, which blocks the portion of the sky\ntaken up by an overhang with the input projection angle.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "left_fin_proj_", 
       "description": "A number between 0 and 180 that sets the angle between the _center_\nand the edge of an imagined vertical fin projecting past the left\nside of the point. Note that this option is only available when\nthere is an input for orientation_ above. An input here will result\nin the output of a strategy_mask, which blocks the portion of the\nsky taken up by a vertical fin with the input projection angle.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "right_fin_proj_", 
       "description": "A number between 0 and 180 that sets the angle between the _center_\nand the edge of an imagined vertical fin projecting past the right\nside of the point. Note that this option is only available when\nthere is an input for orientation_ above. An input here will result\nin the output of a strategy_mask, which blocks the portion of the\nsky taken up by a vertical fin with the input projection angle.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "int", 
+      "access": "item", 
       "name": "_density_", 
       "description": "An integer that is greater than or equal to 1, which to sets the\nnumber of times that the sky patches are split. Higher numbers\ninput here will ensure a greater accuracy but will also take\nlonger to run. A value of 3 should result in sky view factors\nwith less than 1% error from the true value. (Default: 1).", 
-      "access": "item", 
+      "type": "int", 
       "default": null
     }, 
     {
-      "type": "System.Object", 
+      "access": "item", 
       "name": "_center_", 
       "description": "A point or plane for which the visible portion of the sky will\nbe evaluated. If a point is input here, the view-related outputs\nwill be indiferent to orientation and the sky_view outut will\ntechnically be Sky Exposure (or the fraction of the sky hemisphere\nthat is visible from the point). If a plane is input here (or an\norientation_ is connected), the view-related outputs will be\nsensitive to orientation and the sky_view output will be true\nSky View (or the fraction of the sky visible from a surface in\na plane). If no value is input here, the center will be a point\n(Sky Exposure) at the Rhino origin (0, 0, 0).", 
-      "access": "item", 
+      "type": "System.Object", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "_scale_", 
       "description": "A number to set the scale of the sky mask. The default is 1,\nwhich corresponds to a radius of 100 meters in the current Rhino\nmodel's unit system.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "string", 
+      "access": "item", 
       "name": "projection_", 
       "description": "Optional text for the name of a projection to use from the sky\ndome hemisphere to the 2D plane. If None, a 3D dome will be drawn\ninstead of a 2D one. Choose from the following:\n* Orthographic\n* Stereographic", 
-      "access": "item", 
+      "type": "string", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "3 :: Analyze Geometry", 
+  "code": "\nimport math\n\ntry:\n    from ladybug_geometry.geometry2d.pointvector import Point2D\n    from ladybug_geometry.geometry3d.pointvector import Point3D, Vector3D\n    from ladybug_geometry.geometry3d.mesh import Mesh3D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug.viewsphere import view_sphere\n    from ladybug.compass import Compass\n    from ladybug.color import Color\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.togeometry import to_point3d, to_plane\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_point3d, from_vector3d\n    from ladybug_{{cad}}.intersect import join_geometry_to_mesh, intersect_mesh_rays\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\ndef apply_mask_to_sky(sky_pattern, mask_pattern):\n    \"\"\"Apply a pattern of a mask to a pattern of visible sky.\"\"\"\n    for i, val in enumerate(mask_pattern):\n        if val:\n            sky_pattern[i] = False\n\n\ndef apply_mask_to_base_mask(base_pattern, mask_pattern, ignore_pattern):\n    \"\"\"Apply a pattern of a mask to a base pattern with the option to ignore elements.\"\"\"\n    for i, (val, ig_val) in enumerate(zip(mask_pattern, ignore_pattern)):\n        if val and not ig_val:\n            base_pattern[i] = True\n\n\ndef mask_mesh_from_pattern(base_mask, mask_pattern, color):\n    \"\"\"Get a {{Cad}} mesh of a mask from a pattern aligned to the faces of a base mesh.\"\"\"\n    try:\n        mask_mesh = base_mask.remove_faces_only(mask_pattern)\n    except AssertionError:  # all mesh faces have been removed\n        return None\n    mask_mesh.colors = [color] * len(mask_mesh.faces)\n    return from_mesh3d(mask_mesh)\n\n\n\n# process the inputs and set defaults for global variables\n_scale_ = 1 if _scale_ is None else _scale_\nradius = (100 * _scale_) / conversion_to_meters()\nif _center_ is not None:  # process the center point into a Point2D\n    try:  # assume that it is a point\n        center_pt3d, direction = to_point3d(_center_), None\n    except AttributeError:\n        plane, is_orient = to_plane(_center_), True\n        center_pt3d, direction = plane.o, plane.n\nelse:\n    center_pt3d, direction = Point3D(), None\naz_count, alt_count = 72, 18\nif _density_:\n    az_count = az_count * _density_\n    alt_count = alt_count * _density_\nif orientation_ is not None:  # process the orientation to a number\n    ori_dict = {'north': 0, 'east': 90, 'south': 180, 'west': 270}\n    try:  # first check if it's text for the direction\n        orientation_ = ori_dict[orientation_.lower()]\n    except KeyError:  # it's a number for the orientation\n        orientation_ = float(orientation_)\n    direction = Vector3D(0, 1, 0).rotate_xy(-math.radians(orientation_))\n\n\n# create the dome mesh of the sky and position/project it correctly\nsky_mask, view_vecs = view_sphere.dome_radial_patches(az_count, alt_count)\nsky_mask = sky_mask.scale(radius)\nif center_pt3d != Point3D():\n    m_vec = Vector3D(center_pt3d.x, center_pt3d.y, center_pt3d.z)\n    sky_mask = sky_mask.move(m_vec)\nif projection_ is not None:\n    if projection_.title() == 'Orthographic':\n        pts = (Compass.point3d_to_orthographic(pt) for pt in sky_mask.vertices)\n    elif projection_.title() == 'Stereographic':\n        pts = (Compass.point3d_to_stereographic(pt, radius, center_pt3d)\n               for pt in sky_mask.vertices)\n    else:\n        raise ValueError(\n            'Projection type \"{}\" is not recognized.'.format(projection_))\n    pts3d = tuple(Point3D(pt.x, pt.y, center_pt3d.z) for pt in pts)\n    sky_mask = Mesh3D(pts3d, sky_mask.faces)\nsky_pattern = [True] * len(view_vecs)  # pattern to be adjusted by the various masks\n\n\n# account for the orientation and any of the projection strategies\norient_pattern, strategy_pattern = None, None\nif direction is not None:\n    orient_pattern, dir_angles = view_sphere.orientation_pattern(direction, view_vecs)\n    apply_mask_to_sky(sky_pattern, orient_pattern)\n    if overhang_proj_ or left_fin_proj_ or right_fin_proj_:\n        strategy_pattern = [False] * len(view_vecs)\n        if overhang_proj_:\n            over_pattern = view_sphere.overhang_pattern(direction, overhang_proj_, view_vecs)\n            apply_mask_to_base_mask(strategy_pattern, over_pattern, orient_pattern)\n            apply_mask_to_sky(sky_pattern, over_pattern)\n        if left_fin_proj_ or right_fin_proj_:\n            f_pattern = view_sphere.fin_pattern(direction, left_fin_proj_, right_fin_proj_, view_vecs)\n            apply_mask_to_base_mask(strategy_pattern, f_pattern, orient_pattern)\n            apply_mask_to_sky(sky_pattern, f_pattern)\n\n\n# account for any input context\ncontext_pattern = None\nif len(context_) != 0:\n    shade_mesh = join_geometry_to_mesh(context_)  # mesh the context\n    points = [from_point3d(center_pt3d)]\n    view_vecs = [from_vector3d(pt) for pt in view_vecs]\n    int_matrix, angles = intersect_mesh_rays(shade_mesh, points, view_vecs)\n    context_pattern = [val == 0 for val in int_matrix[0]]\n    apply_mask_to_sky(sky_pattern, context_pattern)\n\n\n# get the weights for each patch to be used in view factor calculation\nweights = view_sphere.dome_radial_patch_weights(az_count, alt_count)\nif direction is not None:\n    weights = [wgt * abs(math.cos(ang)) * 2 for wgt, ang in zip(weights, dir_angles)]\n\n\n# create meshes for the masks and compute any necessary view factors\ngray, black = Color(230, 230, 230), Color(0, 0, 0)\ncontext_view, orient_view, strategy_view = 0, 0, 0\nif context_pattern is not None:\n    context_mask = mask_mesh_from_pattern(sky_mask, context_pattern, black)\n    context_view = sum(wgt for wgt, is_viz in zip(weights, context_pattern) if is_viz)\nif orient_pattern is not None:\n    orient_mask = mask_mesh_from_pattern(sky_mask, orient_pattern, black)\n    orient_view = sum(wgt for wgt, is_viz in zip(weights, orient_pattern) if is_viz)\nif strategy_pattern is not None:\n    strategy_mask = mask_mesh_from_pattern(sky_mask, strategy_pattern, black)\n    strategy_view = sum(wgt for wgt, is_viz in zip(weights, strategy_pattern) if is_viz)\nsky_mask = mask_mesh_from_pattern(sky_mask, sky_pattern, gray)\nsky_view = sum(wgt for wgt, is_viz in zip(weights, sky_pattern) if is_viz)\n", 
+  "category": "Ladybug", 
+  "name": "LB Sky Mask", 
+  "description": "Visualize the portion of the sky dome that is masked by context geometry or shading\nstrategies around a given point.\n_\nSeparate meshs will be generated for the portions of the sky dome that are masked\nvs visible. The percentage of the sky that is masked by the context geometry and\nis visible will also be computed.\n-"
 }

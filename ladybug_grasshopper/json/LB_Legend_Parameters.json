@@ -1,113 +1,113 @@
 {
-  "description": "Use this component to change the colors, numerical range, and/or number of divisions\nof any Ladybug legend along with the corresponding colored mesh that the legend refers to.\n-\nAny Ladybug component that outputs a colored mesh and a legend will have an input\nthat can accept Legend Parameters from this component.\n-", 
+  "version": "1.8.0", 
+  "nickname": "LegendPar", 
   "outputs": [
     [
       {
-        "type": null, 
+        "access": "None", 
         "name": "leg_par", 
         "description": "A legend parameter object that can be plugged into any of the\nLadybug components with a legend.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }
     ]
   ], 
-  "code": "\n\ntry:\n    from ladybug.legend import LegendParameters\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_plane\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\nif colors_ == []:\n    colors_ = None\nif base_plane_:\n    base_plane_ = to_plane(base_plane_)\n\nleg_par = LegendParameters(min=min_, max=max_, segment_count=seg_count_,\n                           colors=colors_, base_plane=base_plane_)\n\nleg_par.continuous_legend = continuous_leg_\nleg_par.decimal_count = num_decimals_\nleg_par.include_larger_smaller = larger_smaller_\nleg_par.vertical = vert_or_horiz_\nleg_par.segment_height = seg_height_\nleg_par.segment_width = seg_width_\nleg_par.text_height = text_height_\nleg_par.font = font_\n", 
-  "name": "LB Legend Parameters", 
-  "version": "1.7.1", 
-  "category": "Ladybug", 
-  "subcategory": "4 :: Extra", 
-  "nickname": "LegendPar", 
   "inputs": [
     {
-      "type": "double", 
+      "access": "item", 
       "name": "min_", 
       "description": "A number to set the lower boundary of the legend. If None, the\nminimum of the values associated with the legend will be used.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "max_", 
       "description": "A number to set the upper boundary of the legend. If None, the\nmaximum of the values associated with the legend will be used.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "int", 
+      "access": "item", 
       "name": "seg_count_", 
       "description": "An interger representing the number of steps between\nthe high and low boundary of the legend. The default is set to 11\nand any custom values input in here should always be greater than or\nequal to 2.", 
-      "access": "item", 
+      "type": "int", 
       "default": null
     }, 
     {
-      "type": "System.Drawing.Color", 
+      "access": "list", 
       "name": "colors_", 
       "description": "An list of color objects. Default is Ladybug's original colorset.", 
-      "access": "list", 
+      "type": "System.Drawing.Color", 
       "default": null
     }, 
     {
-      "type": "bool", 
+      "access": "item", 
       "name": "continuous_leg_", 
       "description": "Boolean. If True, the colors along the legend will be in\na continuous gradient. If False, they will be categorized in\nincremental groups according to the number_of_segments.\nDefault is False for depicting discrete categories.", 
-      "access": "item", 
+      "type": "bool", 
       "default": null
     }, 
     {
-      "type": "int", 
+      "access": "item", 
       "name": "num_decimals_", 
       "description": "An optional integer to set the number of decimal\nplaces for the numbers in the legend text. Default is 2.", 
-      "access": "item", 
+      "type": "int", 
       "default": null
     }, 
     {
-      "type": "bool", 
+      "access": "item", 
       "name": "larger_smaller_", 
       "description": "Boolean noting whether to include larger than and\nsmaller than (> and <) values after the upper and lower legend segment\ntext. Default is False.", 
-      "access": "item", 
+      "type": "bool", 
       "default": null
     }, 
     {
-      "type": "bool", 
+      "access": "item", 
       "name": "vert_or_horiz_", 
       "description": "Boolean. If True, the legend mesh and text points\nwill be generated vertically.  If False, they will genrate a\nhorizontal legend. Default is True for a vertically-oriented legend.", 
-      "access": "item", 
+      "type": "bool", 
       "default": null
     }, 
     {
-      "type": "Plane", 
+      "access": "item", 
       "name": "base_plane_", 
       "description": "A Plane to note the starting point and orientation from\nwhere the legend will be genrated. The default is the world XY plane\nat origin (0, 0, 0).", 
-      "access": "item", 
+      "type": "Plane", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "seg_height_", 
       "description": "An optional number to set the height of each of the legend\nsegments. Default is 1.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "seg_width_", 
       "description": "An optional number to set the width of each of the legend\nsegments. Default is 1 when legend is vertical. When horizontal, the\ndefault is (text_height * (number_decimal_places + 2)).", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "double", 
+      "access": "item", 
       "name": "text_height_", 
       "description": "An optional number to set the size of the text in model units.\nDefault is half of the segment_height.", 
-      "access": "item", 
+      "type": "double", 
       "default": null
     }, 
     {
-      "type": "string", 
+      "access": "item", 
       "name": "font_", 
       "description": "An optional text string to specify the font to be used for the text.\nExamples include \"Arial\", \"Times New Roman\", \"Courier\" (all without\nquotations). Default is \"Arial\".", 
-      "access": "item", 
+      "type": "string", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\n\ntry:\n    from ladybug.legend import LegendParameters\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.togeometry import to_plane\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\nif colors_ == []:\n    colors_ = None\nif base_plane_:\n    base_plane_ = to_plane(base_plane_)\n\nleg_par = LegendParameters(min=min_, max=max_, segment_count=seg_count_,\n                           colors=colors_, base_plane=base_plane_)\n\nleg_par.continuous_legend = continuous_leg_\nleg_par.decimal_count = num_decimals_\nleg_par.include_larger_smaller = larger_smaller_\nleg_par.vertical = vert_or_horiz_\nleg_par.segment_height = seg_height_\nleg_par.segment_width = seg_width_\nleg_par.text_height = text_height_\nleg_par.font = font_\n", 
+  "category": "Ladybug", 
+  "name": "LB Legend Parameters", 
+  "description": "Use this component to change the colors, numerical range, and/or number of divisions\nof any Ladybug legend along with the corresponding colored mesh that the legend refers to.\n-\nAny Ladybug component that outputs a colored mesh and a legend will have an input\nthat can accept Legend Parameters from this component.\n-"
 }

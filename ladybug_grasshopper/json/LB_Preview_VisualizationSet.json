@@ -1,50 +1,50 @@
 {
-  "description": "Preview a VisualizationSet from any component with a vis_set output.\n_\nThe VisualizationSet is often a much more detailed view of the geometry that\nthe component typically generates and includes features like recommended line\nweights/types, display modes (eg. wireframe vs. shaded), transparency, and more.\n-", 
+  "version": "1.7.0", 
+  "nickname": "VisSet", 
   "outputs": [
     [
       {
-        "type": null, 
+        "access": "None", 
         "name": "vs", 
         "description": "A VisualizationSet object that can be baked into the Rhino document by\nrunning \"Bake\" on this component or written to a standalone file\nusing the \"LB Dump VisualizationSet\" component.", 
-        "access": "None", 
+        "type": null, 
         "default": null
       }
     ]
   ], 
-  "code": "", 
-  "name": "LB Preview VisualizationSet", 
-  "version": "1.7.0", 
-  "category": "Ladybug", 
-  "subcategory": "4 :: Extra", 
-  "nickname": "VisSet", 
   "inputs": [
     {
-      "type": "System.Object", 
+      "access": "list", 
       "name": "_vis_set", 
       "description": "VisualizationSet arguments from any Ladybug Tools component with a vis_set\noutput. This can also be the path to a .vsf file that exists on this\nmachine (these files are often written with the \"LB Dump VisualizationSet\"\ncomponent). Lastly, this input can be a custom VisualizationSet that\nhas been created with the Ladybug Tools SDK.", 
-      "access": "list", 
+      "type": "System.Object", 
       "default": null
     }, 
     {
-      "type": "System.Object", 
+      "access": "item", 
       "name": "leg_par_", 
       "description": "Script variable VisSet", 
-      "access": "item", 
+      "type": "System.Object", 
       "default": null
     }, 
     {
-      "type": "System.Object", 
+      "access": "item", 
       "name": "leg_par2d_", 
       "description": "Optional 2D LegendParameters from the \"LB Legend Parameters 2D\"\ncomponent, which will be used to customize a legend in the plane\nof the screen so that it functions like a head-up display (HUD).\nIf unspecified, the VisualizationSet will be rendered with 3D\nlegends in the Rhino scene much like the other native Ladybug\nTools components.", 
-      "access": "item", 
+      "type": "System.Object", 
       "default": null
     }, 
     {
-      "type": "string", 
+      "access": "item", 
       "name": "data_set_", 
       "description": "Optional text or an integer to select a specific data set from analysis\ngeometries within the Visualization Set. Note that this input only has\nmeaning for Visualization Sets that contain multiple data sets assigned\nto the same geometry. When using an integer, this will refer to the\nindex of the data set to be visualized (starting with 0). When using\ntext, this will refer to the name of the data type for the data set\nto be displayed.", 
-      "access": "item", 
+      "type": "string", 
       "default": null
     }
-  ]
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "", 
+  "category": "Ladybug", 
+  "name": "LB Preview VisualizationSet", 
+  "description": "Preview a VisualizationSet from any component with a vis_set output.\n_\nThe VisualizationSet is often a much more detailed view of the geometry that\nthe component typically generates and includes features like recommended line\nweights/types, display modes (eg. wireframe vs. shaded), transparency, and more.\n-"
 }
