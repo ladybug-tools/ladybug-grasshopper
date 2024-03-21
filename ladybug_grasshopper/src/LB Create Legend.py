@@ -57,7 +57,7 @@ class MyComponent(component):
     def RunScript(self, _values, _base_plane_, title_, legend_par_, leg_par2d_):
         ghenv.Component.Name = "LB Create Legend"
         ghenv.Component.NickName = 'CreateLegend'
-        ghenv.Component.Message = '1.7.0'
+        ghenv.Component.Message = '1.8.0'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '0'
