@@ -60,7 +60,7 @@ class MyComponent(component):
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.7.0'
+        ghenv.Component.Message = '1.8.0'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
