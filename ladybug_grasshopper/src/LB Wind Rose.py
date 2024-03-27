@@ -105,7 +105,7 @@ Create a plot of any hourly data by wind directions.
 
 ghenv.Component.Name = 'LB Wind Rose'
 ghenv.Component.NickName = 'WindRose'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
@@ -228,14 +228,13 @@ if all_required_inputs(ghenv.Component):
         _max_freq_lines_ = max(max_freqs)
 
     # plot the windroses
-    first_windrose = None
+    all_windroses = []
     for i, speed_data in enumerate(_data):
         # make the windrose
         win_dir = _wind_direction if isinstance(speed_data.header.data_type, Speed) \
             else filt_wind_dir
         windrose = WindRose(win_dir, speed_data, _dir_count_)
-        if i == 0:
-            first_windrose = windrose
+        all_windroses.append(windrose)
 
         # set the wind rose properties
         if len(legend_par_) > 0:
@@ -313,5 +312,6 @@ if all_required_inputs(ghenv.Component):
     theta = 180.0 / _dir_count_
     angles = [(angle + theta) % 360.0 for angle in windrose.angles[:-1]]
     prevailing = windrose.prevailing_direction
-    vis_set = objectify_output(
-        'VisualizationSet Aruments [Sunpath]', [first_windrose, _center_pt_.z])
+    vis_set = []
+    for wr in all_windroses:
+        vis_set.append(objectify_output('VisualizationSet Aruments [WindRose]', [wr, _center_pt_.z]))

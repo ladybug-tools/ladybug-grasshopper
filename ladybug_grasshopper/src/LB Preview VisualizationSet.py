@@ -60,7 +60,7 @@ class MyComponent(component):
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.8.0'
+        ghenv.Component.Message = '1.8.1'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -84,8 +84,14 @@ class MyComponent(component):
                 vis_set = _vis_set[0]
             else:
                 if hasattr(_vis_set[0], 'data'):
-                    vis_set = objectify_output(
-                        'Multiple Vis Set Args', [obj.data for obj in _vis_set])
+                    arr_type = (list, tuple)
+                    if isinstance(_vis_set[0].data, arr_type) and \
+                            isinstance(_vis_set[0].data[0], arr_type):
+                        vis_set = objectify_output(
+                            'Multiple Vis Set Args', [obj.data[0] for obj in _vis_set])
+                    else:
+                        vis_set = objectify_output(
+                            'Multiple Vis Set Args', [obj.data for obj in _vis_set])
                 else:
                     vis_set = objectify_output(
                         'Multiple Vis Sets', [[obj] for obj in _vis_set])
