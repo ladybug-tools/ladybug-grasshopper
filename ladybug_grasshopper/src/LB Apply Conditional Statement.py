@@ -8,13 +8,7 @@
 # @license AGPL-3.0-or-later <https://spdx.org/licenses/AGPL-3.0-or-later>
 
 """
-Convert a hourly Ladybug data collection to a continuous collection at a
-specific timestep.
-_
-This will be done either through linear interpolation or by culling out values
-that do not fit the timestep.  It can also be used to convert a discontinous
-data collection to a continuous one by linearly interpolating over holes in
-the data set.
+Apply a conditional statement to a data collection.
 -
 
     Args:
@@ -39,7 +33,7 @@ the data set.
 
 ghenv.Component.Name = 'LB Apply Conditional Statement'
 ghenv.Component.NickName = 'Statement'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

@@ -1,5 +1,5 @@
 {
-  "version": "1.8.0", 
+  "version": "1.8.1", 
   "nickname": "Statement", 
   "outputs": [
     [
@@ -32,5 +32,5 @@
   "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    for dat in _data:\n        assert isinstance(dat, BaseCollection), '_data must be a data' \\\n            ' collection. Got {}.'.format(type(dat))\n\n    data = BaseCollection.filter_collections_by_statement(\n        _data, _statement)", 
   "category": "Ladybug", 
   "name": "LB Apply Conditional Statement", 
-  "description": "Convert a hourly Ladybug data collection to a continuous collection at a\nspecific timestep.\n_\nThis will be done either through linear interpolation or by culling out values\nthat do not fit the timestep.  It can also be used to convert a discontinous\ndata collection to a continuous one by linearly interpolating over holes in\nthe data set.\n-"
+  "description": "Apply a conditional statement to a data collection.\n-"
 }
