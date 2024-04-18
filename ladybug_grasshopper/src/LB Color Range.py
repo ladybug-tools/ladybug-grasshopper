@@ -12,6 +12,13 @@ Use this component to access a library of typical gradients useful throughout La
 The output from this component should be plugged into the colors_ input of the
 "Legend Parameters" component.
 -
+Note that the colorblind friendly schemes have prioritized readability for red-green
+colorblindness (deuteranomaly, protanomaly, protanopia, and deuteranopia), which
+is by far more common than blue-yellow colorblindness. However, they are not
+necessarily ideal for all types of color blindness, though they are monotonic
+and perceptually uniform to all forms of color vision. This means that they should
+be readable as a dark-to-light scale by anyone.
+-
 For an image of each of the gardients in the library, check here:
 https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
 -
@@ -45,6 +52,9 @@ https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
             24 - Multicolored 2
             25 - Multicolored 3
             26 - OpenStudio Palette
+            27 - Cividis (colorblind friendly)
+            28 - Viridis (colorblind friendly)
+            29 - Parula (colorblind friendly)
 
     Returns:
         colors: A series of colors to be plugged into the "LB Legend Parameters"
@@ -53,7 +63,7 @@ https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
 
 ghenv.Component.Name = 'LB Color Range'
 ghenv.Component.NickName = 'ColRange'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'

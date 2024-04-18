@@ -1,5 +1,5 @@
 {
-  "version": "1.8.0", 
+  "version": "1.8.1", 
   "nickname": "ColRange", 
   "outputs": [
     [
@@ -16,7 +16,7 @@
     {
       "access": "item", 
       "name": "_index_", 
-      "description": "An index refering to one of the following possible gradients:\n0 - Original Ladybug\n1 - Nuanced Ladybug\n2 - Multi-colored Ladybug\n3 - Ecotect\n4 - View Study\n5 - Shadow Study\n6 - Glare Study\n7 - Annual Comfort\n8 - Thermal Comfort\n9 - Peak Load Balance\n10 - Heat Sensation\n11 - Cold Sensation\n12 - Benefit/Harm\n13 - Harm\n14 - Benefit\n15 - Shade Benefit/Harm\n16 - Shade Harm\n17 - Shade Benefit\n18 - Energy Balance\n19 - Energy Balance w/ Storage\n20 - THERM\n21 - Cloud Cover\n22 - Black to White\n23 - Blue, Green, Red\n24 - Multicolored 2\n25 - Multicolored 3\n26 - OpenStudio Palette", 
+      "description": "An index refering to one of the following possible gradients:\n0 - Original Ladybug\n1 - Nuanced Ladybug\n2 - Multi-colored Ladybug\n3 - Ecotect\n4 - View Study\n5 - Shadow Study\n6 - Glare Study\n7 - Annual Comfort\n8 - Thermal Comfort\n9 - Peak Load Balance\n10 - Heat Sensation\n11 - Cold Sensation\n12 - Benefit/Harm\n13 - Harm\n14 - Benefit\n15 - Shade Benefit/Harm\n16 - Shade Harm\n17 - Shade Benefit\n18 - Energy Balance\n19 - Energy Balance w/ Storage\n20 - THERM\n21 - Cloud Cover\n22 - Black to White\n23 - Blue, Green, Red\n24 - Multicolored 2\n25 - Multicolored 3\n26 - OpenStudio Palette\n27 - Cividis (colorblind friendly)\n28 - Viridis (colorblind friendly)\n29 - Parula (colorblind friendly)", 
       "type": "int", 
       "default": null
     }
@@ -25,5 +25,5 @@
   "code": "\ntry:\n    from ladybug.color import Colorset\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.color import color_to_color\n    from ladybug_{{cad}}.{{plugin}} import turn_off_old_tag\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\nturn_off_old_tag(ghenv.Component)\n\n\n_index_ = _index_ or 0\ncs = Colorset()\ncolors = [color_to_color(col) for col in cs[_index_]]\n", 
   "category": "Ladybug", 
   "name": "LB Color Range", 
-  "description": "Use this component to access a library of typical gradients useful throughout Ladybug. \nThe output from this component should be plugged into the colors_ input of the\n\"Legend Parameters\" component.\n-\nFor an image of each of the gardients in the library, check here:\nhttps://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png\n-"
+  "description": "Use this component to access a library of typical gradients useful throughout Ladybug. \nThe output from this component should be plugged into the colors_ input of the\n\"Legend Parameters\" component.\n-\nNote that the colorblind friendly schemes have prioritized readability for red-green\ncolorblindness (deuteranomaly, protanomaly, protanopia, and deuteranopia), which\nis by far more common than blue-yellow colorblindness. However, they are not\nnecessarily ideal for all types of color blindness, though they are monotonic\nand perceptually uniform to all forms of color vision. This means that they should\nbe readable as a dark-to-light scale by anyone.\n-\nFor an image of each of the gardients in the library, check here:\nhttps://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png\n-"
 }
