@@ -28,12 +28,12 @@ Apply a conditional statement to a data collection.
             than 80 and the third collection is greater than 2.
 
     Returns:
-        data: A list of Data Collections that have been filtered by the statement_.
+        data: A list of Data Collections that have been filtered by the _statement.
 """
 
 ghenv.Component.Name = 'LB Apply Conditional Statement'
 ghenv.Component.NickName = 'Statement'
-ghenv.Component.Message = '1.8.1'
+ghenv.Component.Message = '1.8.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
