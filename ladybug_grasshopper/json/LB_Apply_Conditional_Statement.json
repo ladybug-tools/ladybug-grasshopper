@@ -1,12 +1,12 @@
 {
-  "version": "1.8.1", 
+  "version": "1.8.2", 
   "nickname": "Statement", 
   "outputs": [
     [
       {
         "access": "None", 
         "name": "data", 
-        "description": "A list of Data Collections that have been filtered by the statement_.", 
+        "description": "A list of Data Collections that have been filtered by the _statement.", 
         "type": null, 
         "default": null
       }

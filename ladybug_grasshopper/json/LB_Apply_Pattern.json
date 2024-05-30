@@ -1,0 +1,36 @@
+{
+  "version": "1.8.0", 
+  "nickname": "Pattern", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "data", 
+        "description": "A list of Data Collections that have been filtered by the _pattern.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_data", 
+      "description": "A Data Collection or list of aligned Data Collections to be filtered\nby a pattern.", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "_pattern", 
+      "description": "A list of True/False values. Typically, list has a length matching\nthe length of the Data Collection(s)'s values. However, it can also\nbe a pattern to be repeated over the Data Collection(s)'s values.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "1 :: Analyze Data", 
+  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    data = []\n    for dat in _data:\n        assert isinstance(dat, BaseCollection), '_data must be a data' \\\n            ' collection. Got {}.'.format(type(dat))\n        data.append(dat.filter_by_pattern(_pattern))", 
+  "category": "Ladybug", 
+  "name": "LB Apply Pattern", 
+  "description": "Filter a data collection or list of data collections by a pattern of True/False\nvalues. True values will be kept while False values will be filtered out.\n-"
+}
