@@ -20,7 +20,7 @@ Deconstruct a Ladybug DataCollection into a header and values.
 
 ghenv.Component.Name = "LB Deconstruct Data"
 ghenv.Component.NickName = 'XData'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -31,7 +31,8 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.grasshopper import all_required_inputs
+    from ladybug_rhino.grasshopper import all_required_inputs, \
+        wrap_output_to_number
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
@@ -40,4 +41,4 @@ if all_required_inputs(ghenv.Component):
     assert isinstance(_data, BaseCollection), \
         '_data must be a Data Collection. Got {}.'.format(type(_data))
     header = _data.header
-    values = _data.values
+    values = wrap_output_to_number(_data.values)
