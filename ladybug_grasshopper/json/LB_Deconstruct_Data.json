@@ -1,5 +1,5 @@
 {
-  "version": "1.8.0", 
+  "version": "1.8.1", 
   "nickname": "XData", 
   "outputs": [
     [
@@ -29,7 +29,7 @@
     }
   ], 
   "subcategory": "1 :: Analyze Data", 
-  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_data, BaseCollection), \\\n        '_data must be a Data Collection. Got {}.'.format(type(_data))\n    header = _data.header\n    values = _data.values", 
+  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, \\\n        wrap_output_to_number\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    assert isinstance(_data, BaseCollection), \\\n        '_data must be a Data Collection. Got {}.'.format(type(_data))\n    header = _data.header\n    values = wrap_output_to_number(_data.values)", 
   "category": "Ladybug", 
   "name": "LB Deconstruct Data", 
   "description": "Deconstruct a Ladybug DataCollection into a header and values.\n-"
