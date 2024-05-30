@@ -39,7 +39,7 @@ will accept.
 
 ghenv.Component.Name = "LB Generate Point Grid"
 ghenv.Component.NickName = 'GenPts'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -86,10 +86,10 @@ if all_required_inputs(ghenv.Component):
     else:  # use Rhino's default meshing
         try:  # assume it's a Rhino Brep
             lb_mesh = to_gridded_mesh3d(_geometry, _grid_size, _offset_dist_)
-        except TypeError:  # assume it's a Rhino Mesh
+        except Exception:  # assume it's a Rhino Mesh
             try:
                 lb_mesh = to_mesh3d(_geometry)
-            except TypeError:  # unidientified geometry type
+            except Exception:  # unidientified geometry type
                 raise TypeError(
                     '_geometry must be a Brep or a Mesh. Got {}.'.format(type(_geometry)))
 
