@@ -1,5 +1,5 @@
 {
-  "version": "1.8.0", 
+  "version": "1.8.1", 
   "nickname": "AdaptPar", 
   "outputs": [
     [
@@ -16,14 +16,14 @@
     {
       "access": "item", 
       "name": "_ashrae_or_en_", 
-      "description": "A boolean to note whether to use the ASHRAE-55 neutral\ntemperature function (True) or the european neutral function (False),\nwhich is consistent with both EN-15251 and EN-16798. Note that this\ninput will also determine default values for many of the other\nproperties of this object.", 
+      "description": "A boolean to note whether to use the ASHRAE-55 neutral\ntemperature function (True) or the european neutral function (False),\nwhich is consistent with EN-16798 (and the older EN-15251).\nPreference is given to EN-16798 in places where EN-16798 and\nEN-15251 differ (eg. the 1C lower cold threshold in EN-16798).\nNote that this input will also determine default values for\nmany of the other properties of this object.", 
       "type": "bool", 
       "default": null
     }, 
     {
       "access": "item", 
       "name": "_neutral_offset_", 
-      "description": "The number of degrees Celcius from the neutral temperature\nwhere the input operative temperature is considered acceptable.\nThe default is 2.5C when the neutral temperature function is ASHRAE-55\n(consistent with 90% PPD) and 3C when the neutral temperature\nfunction is EN (consistent with comfort class II).\n_\nFor ASHRAE-55, the following neutral offsets apply.\n* 90 PPD - 2.5C\n* 80 PPD - 3.5C\n_\nFor the EN standard, the following neutral offsets apply.\n* Class I - 2C\n* Class II - 3C\n* Class III - 4C", 
+      "description": "The number of degrees Celcius from the neutral temperature\nwhere the input operative temperature is considered acceptable.\nThe default is 2.5C when the neutral temperature function is ASHRAE-55\n(consistent with 90% PPD) and 3C when the neutral temperature\nfunction is EN-16798 (consistent with comfort class II). Note that,\nwhen the neutral temperature function is EN-16798, one degree\nCelsius is automatically added to the offset value input here to\nget the lower temperature threshold. This accounts for the fact that\nEN-16798 does not interpret the neutral offset symmetically.\n_\nFor ASHRAE-55, the following neutral offsets apply.\n* 90 PPD - 2.5C\n* 80 PPD - 3.5C\n_\nFor the EN standard, the following neutral offsets apply.\n* Class I - 2C\n* Class II - 3C\n* Class III - 4C", 
       "type": "double", 
       "default": null
     }, 

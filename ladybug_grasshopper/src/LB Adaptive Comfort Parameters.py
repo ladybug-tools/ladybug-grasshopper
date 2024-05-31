@@ -19,14 +19,20 @@ Adaptive thermal comfort.
     Args:
         _ashrae_or_en_: A boolean to note whether to use the ASHRAE-55 neutral
             temperature function (True) or the european neutral function (False),
-            which is consistent with both EN-15251 and EN-16798. Note that this
-            input will also determine default values for many of the other
-            properties of this object.
+            which is consistent with EN-16798 (and the older EN-15251).
+            Preference is given to EN-16798 in places where EN-16798 and
+            EN-15251 differ (eg. the 1C lower cold threshold in EN-16798).
+            Note that this input will also determine default values for
+            many of the other properties of this object.
         _neutral_offset_:  The number of degrees Celcius from the neutral temperature
             where the input operative temperature is considered acceptable.
             The default is 2.5C when the neutral temperature function is ASHRAE-55
             (consistent with 90% PPD) and 3C when the neutral temperature
-            function is EN (consistent with comfort class II).
+            function is EN-16798 (consistent with comfort class II). Note that,
+            when the neutral temperature function is EN-16798, one degree
+            Celsius is automatically added to the offset value input here to
+            get the lower temperature threshold. This accounts for the fact that
+            EN-16798 does not interpret the neutral offset symmetically.
             _
             For ASHRAE-55, the following neutral offsets apply.
                 * 90 PPD - 2.5C
@@ -71,7 +77,7 @@ Adaptive thermal comfort.
 
 ghenv.Component.Name = 'LB Adaptive Comfort Parameters'
 ghenv.Component.NickName = 'AdaptPar'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
