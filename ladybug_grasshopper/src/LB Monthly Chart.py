@@ -77,7 +77,7 @@ mesh that shows the range of the data within specific percentiles.
 
 ghenv.Component.Name = 'LB Monthly Chart'
 ghenv.Component.NickName = 'MonthlyChart'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -137,8 +137,9 @@ if all_required_inputs(ghenv.Component) and None not in _data:
         if month_chart.time_interval == 'Monthly':
             data_lines += [l for msh in d_meshes for l in
                            from_mesh2d_to_outline(msh, z_val_tol)]
-    d_lines = month_chart.data_polylines
-    if d_lines is not None:
+    line_results = month_chart.data_polylines_with_colors
+    if line_results is not None:
+        d_lines, d_cols = line_results
         data_lines += [from_polyline2d(lin, z_val_tol) for lin in d_lines]
     borders = [from_polyline2d(month_chart.chart_border, z_val)] + \
             [from_linesegment2d(line, z_val) for line in month_chart.y_axis_lines] + \
@@ -192,11 +193,11 @@ if all_required_inputs(ghenv.Component) and None not in _data:
 
     # if there are colored lines, then process them to be output from the component
     if month_chart.time_interval == 'MonthlyPerHour':
-        cols = [color_to_color(col) for col in month_chart.colors]
-        col_lines, month_count = [], len(data_lines) / len(_data)
-        for i, pline in enumerate(data_lines):
+        cols = [color_to_color(col) for col in d_cols]
+        col_lines = []
+        for pline, line_col in zip(data_lines, cols):
             col_line = ColoredPolyline(pline)
-            col_line.color = cols[int(i / month_count)]
+            col_line.color = line_col
             col_line.thickness = 3
             col_lines.append(col_line)
         # CWM: I don't know why we have to re-schedule the solution but this is the
