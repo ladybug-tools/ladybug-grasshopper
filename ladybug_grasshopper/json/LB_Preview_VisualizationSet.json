@@ -1,5 +1,5 @@
 {
-  "version": "1.8.1", 
+  "version": "1.8.2", 
   "nickname": "VisSet", 
   "outputs": [
     [
@@ -38,6 +38,13 @@
       "access": "item", 
       "name": "data_set_", 
       "description": "Optional text or an integer to select a specific data set from analysis\ngeometries within the Visualization Set. Note that this input only has\nmeaning for Visualization Sets that contain multiple data sets assigned\nto the same geometry. When using an integer, this will refer to the\nindex of the data set to be visualized (starting with 0). When using\ntext, this will refer to the name of the data type for the data set\nto be displayed.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "viewport_", 
+      "description": "Text for the name of the Rhino viewport to which the 2D screen-oriented\nlegend will be rendered. If unspecified, the 2D legend will be rendered\nin all viewports. Acceptable inputs include:\n-\nPerspective\nTop\nBottom\nLeft\nRight\nFront\nBack\nany view name that has been saved within the Rhino file", 
       "type": "string", 
       "default": null
     }
