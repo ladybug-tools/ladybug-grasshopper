@@ -37,6 +37,18 @@ weights/types, display modes (eg. wireframe vs. shaded), transparency, and more.
             index of the data set to be visualized (starting with 0). When using
             text, this will refer to the name of the data type for the data set
             to be displayed.
+        viewport_: Text for the name of the Rhino viewport to which the 2D screen-oriented
+            legend will be rendered. If unspecified, the 2D legend will be rendered
+            in all viewports. Acceptable inputs include:
+                -
+                Perspective
+                Top
+                Bottom
+                Left
+                Right
+                Front
+                Back
+                any view name that has been saved within the Rhino file
 
     Returns:
         vs: A VisualizationSet object that can be baked into the Rhino document by
@@ -56,11 +68,12 @@ class MyComponent(component):
         super(MyComponent,self).__init__()
         self.vis_con = None
         self.vs_goo = None
+        self.viewport = None
     
-    def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_):
+    def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_, viewport_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.8.1'
+        ghenv.Component.Message = '1.8.2'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -165,9 +178,11 @@ class MyComponent(component):
                                     geo.active_data = i
             self.vis_con = VisualizationSetConverter(vis_set_obj, leg3d, leg2d)
             self.vs_goo = VisSetGoo(vis_set_obj)
+            self.viewport = viewport_
         else:
             self.vis_con = None
             self.vs_goo = None
+            self.viewport = None
         
         # return the bake-able version of the visualization set 
         return self.vs_goo
@@ -209,10 +224,12 @@ class MyComponent(component):
                     display.DrawCone(*draw_args)
                 for draw_args in self.vis_con.draw_cylinder:
                     display.DrawCylinder(*draw_args)
-                for draw_args in self.vis_con.draw_2d_text:
-                    display.Draw2dText(*draw_args)
-                for draw_args in self.vis_con.draw_sprite:
-                    display.DrawSprite(*draw_args)
+                if self.viewport is None or \
+                        self.viewport.lower() == args.Viewport.Name.lower():
+                    for draw_args in self.vis_con.draw_2d_text:
+                        display.Draw2dText(*draw_args)
+                    for draw_args in self.vis_con.draw_sprite:
+                        display.DrawSprite(*draw_args)
         except Exception, e:
             System.Windows.Forms.MessageBox.Show(str(e), "script error")
     
