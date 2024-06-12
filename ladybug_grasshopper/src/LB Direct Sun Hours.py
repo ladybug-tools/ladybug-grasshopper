@@ -47,6 +47,9 @@ honeybee-radiance should be used.
             of the input _geometry.  Typically, this should be a small positive
             number to ensure points are not blocked by the mesh. (Default: 10 cm
             in the equivalent Rhino Model units).
+        geo_block_: Set to "True" to count the input _geometry as opaque and
+            set to "False" to discount the _geometry from the calculation and
+            only look at context_ that blocks the view. (Default: False).
         legend_par_: Optional legend parameters from the "LB Legend Parameters"
             that will be used to customize the display of the results.
         _cpu_count_: An integer to set the number of CPUs used in the execution of the
@@ -80,7 +83,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB Direct Sun Hours"
 ghenv.Component.NickName = 'DirectSunHours'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -117,11 +120,13 @@ if all_required_inputs(ghenv.Component) and _run:
     hide_output(ghenv.Component, 1)
 
     # mesh the geometry and context
-    shade_mesh = join_geometry_to_mesh(_geometry + context_)
+    shade_mesh = join_geometry_to_mesh(context_) if geo_block_ else \
+        join_geometry_to_mesh(_geometry + context_)
 
     # get the study points and reverse the sun vectors (for backward ray-tracting)
     rev_vec = [from_vector3d(to_vector3d(vec).reverse()) for vec in _vectors]
-    normals = [from_vector3d(vec) for vec in study_mesh.face_normals]
+    normals = None if geo_block_ else \
+        [from_vector3d(vec) for vec in study_mesh.face_normals]
 
     # intersect the rays with the mesh
     int_matrix, angles = intersect_mesh_rays(
