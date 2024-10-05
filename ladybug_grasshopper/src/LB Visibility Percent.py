@@ -85,7 +85,7 @@ point of interest.
 
 ghenv.Component.Name = "LB Visibility Percent"
 ghenv.Component.NickName = 'VisibilityPercent'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -126,8 +126,8 @@ if all_required_inputs(ghenv.Component) and _run:
         hide_output(ghenv.Component, 1)
 
         # mesh the geometry and context
-        shade_mesh = join_geometry_to_mesh(_geometry + context_) if _geo_block_ \
-            or _geo_block_ is None else join_geometry_to_mesh(context_)
+        shade_mesh = join_geometry_to_mesh([from_mesh3d(study_mesh)] + context_) \
+            if _geo_block_ or _geo_block_ is None else join_geometry_to_mesh(context_)
 
         # intersect the lines with the mesh
         int_matrix = intersect_mesh_lines(

@@ -84,7 +84,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB Direct Sun Hours"
 ghenv.Component.NickName = 'DirectSunHours'
-ghenv.Component.Message = '1.8.2'
+ghenv.Component.Message = '1.8.3'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -122,7 +122,7 @@ if all_required_inputs(ghenv.Component) and _run:
     hide_output(ghenv.Component, 1)
 
     # mesh the geometry and context
-    shade_mesh = join_geometry_to_mesh(_geometry + context_) \
+    shade_mesh = join_geometry_to_mesh([from_mesh3d(study_mesh)] + context_) \
         if geo_block_ or geo_block_ is None else join_geometry_to_mesh(context_)
 
     # get the study points and reverse the sun vectors (for backward ray-tracting)

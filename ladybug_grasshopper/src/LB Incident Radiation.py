@@ -102,7 +102,7 @@ where relfection of solar energy are important, honeybee-radiance should be used
 
 ghenv.Component.Name = "LB Incident Radiation"
 ghenv.Component.NickName = 'IncidentRadiation'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -147,7 +147,7 @@ if all_required_inputs(ghenv.Component) and _run:
     hide_output(ghenv.Component, 1)
 
     # mesh the geometry and context
-    shade_mesh = join_geometry_to_mesh(_geometry + context_)
+    shade_mesh = join_geometry_to_mesh([from_mesh3d(study_mesh)] + context_)
 
     # deconstruct the matrix and get the sky dome vectors
     mtx = de_objectify_output(_sky_mtx)
