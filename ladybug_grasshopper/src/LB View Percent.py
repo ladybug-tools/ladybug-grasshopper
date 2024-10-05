@@ -125,7 +125,7 @@ honeybee-radiance should be used.
 
 ghenv.Component.Name = "LB View Percent"
 ghenv.Component.NickName = 'ViewPercent'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -203,8 +203,8 @@ if all_required_inputs(ghenv.Component) and _run:
     view_vecs = [from_vector3d(pt) for pt in lb_vecs]
 
     # mesh the geometry and context
-    shade_mesh = join_geometry_to_mesh(_geometry + context_) if _geo_block_ \
-        else join_geometry_to_mesh(context_)
+    shade_mesh = join_geometry_to_mesh([from_mesh3d(study_mesh)] + context_) \
+        if _geo_block_ else join_geometry_to_mesh(context_)
 
     # intersect the rays with the mesh
     if vt_str == 'Sky View':  # account for the normals of the surface
