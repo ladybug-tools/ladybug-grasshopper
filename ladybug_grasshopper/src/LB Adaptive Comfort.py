@@ -75,7 +75,7 @@ be used.
 
 ghenv.Component.Name = 'LB Adaptive Comfort'
 ghenv.Component.NickName = 'Adaptive'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '5'
@@ -91,7 +91,7 @@ try:
     from ladybug_comfort.parameter.adaptive import AdaptiveParameter
     from ladybug_comfort.adaptive import t_operative, \
         adaptive_comfort_ashrae55, adaptive_comfort_en15251, \
-        cooling_effect_ashrae55, cooling_effect_en15251, \
+        cooling_effect_ashrae55, cooling_effect_en16798, \
         adaptive_comfort_conditioned
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_comfort:\n\t{}'.format(e))
@@ -134,7 +134,7 @@ if all_required_inputs(ghenv.Component) and _run is True:
         if adapt_par.conditioning != 0:
             comf_result = adaptive_comfort_conditioned(prevail_temp, to,
                 adapt_par.conditioning, adapt_par.standard)
-        elif adapt_par.ashrae55_or_en15251 is True:
+        elif adapt_par.ashrae_or_en is True:
             comf_result = adaptive_comfort_ashrae55(prevail_temp, to)
         else:
             comf_result = adaptive_comfort_en15251(prevail_temp, to)
@@ -143,7 +143,7 @@ if all_required_inputs(ghenv.Component) and _run is True:
         if adapt_par.discrete_or_continuous_air_speed is True:
             ce = cooling_effect_ashrae55(input[3], to)
         else:
-            ce = cooling_effect_en15251(input[3], to)
+            ce = cooling_effect_en16798(input[3], to)
         
         # Output results
         neutral_temp = comf_result['t_comf']
