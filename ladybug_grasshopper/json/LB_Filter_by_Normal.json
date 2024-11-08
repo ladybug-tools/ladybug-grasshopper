@@ -1,5 +1,5 @@
 {
-  "version": "1.8.0", 
+  "version": "1.8.1", 
   "nickname": "FilterNormal", 
   "outputs": [
     [
@@ -24,7 +24,7 @@
       "access": "list", 
       "name": "_geometry", 
       "description": "Rhino Breps and/or Rhino Meshes which will be broken down into individual\nplanar faces and filtered based on the direction they face.", 
-      "type": "Brep", 
+      "type": "GeometryBase", 
       "default": null
     }, 
     {

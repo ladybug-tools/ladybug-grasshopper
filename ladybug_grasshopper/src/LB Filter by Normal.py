@@ -50,7 +50,7 @@ Filter or select faces of geometry based on their orientation.
 
 ghenv.Component.Name = 'LB Filter by Normal'
 ghenv.Component.NickName = 'FilterNormal'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
