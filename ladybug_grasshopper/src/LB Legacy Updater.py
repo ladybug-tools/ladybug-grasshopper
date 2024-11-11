@@ -36,10 +36,10 @@ should be deleted without replacement).
 
 ghenv.Component.Name = 'LB Legacy Updater'
 ghenv.Component.NickName = 'Legacy'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '5 :: Version'
-ghenv.Component.AdditionalHelpFromDocStrings = '0'
+ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
     from ladybug_rhino.versioning.gather import gather_canvas_components

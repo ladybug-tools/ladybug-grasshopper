@@ -73,13 +73,13 @@ class MyComponent(component):
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_, viewport_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.8.2'
+        ghenv.Component.Message = '1.8.3'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
         
         try:
-            from ladybug_display.visualization import AnalysisGeometry
+            from ladybug_display.visualization import VisualizationSet, AnalysisGeometry
         except ImportError as e:
             raise ImportError('\nFailed to import ladybug_display:\n\t{}'.format(e))
         
@@ -96,18 +96,19 @@ class MyComponent(component):
             if len(_vis_set) == 1:
                 vis_set = _vis_set[0]
             else:
-                if hasattr(_vis_set[0], 'data'):
-                    arr_type = (list, tuple)
-                    if isinstance(_vis_set[0].data, arr_type) and \
-                            isinstance(_vis_set[0].data[0], arr_type):
-                        vis_set = objectify_output(
-                            'Multiple Vis Set Args', [obj.data[0] for obj in _vis_set])
-                    else:
-                        vis_set = objectify_output(
-                            'Multiple Vis Set Args', [obj.data for obj in _vis_set])
-                else:
-                    vis_set = objectify_output(
-                        'Multiple Vis Sets', [[obj] for obj in _vis_set])
+                vis_objs = []
+                for vis_obj in _vis_set:
+                    if isinstance(vis_obj, VisualizationSet):
+                        vis_objs.append([vis_obj])
+                    elif hasattr(vis_obj, 'data'):
+                        arr_type = (list, tuple)
+                        if isinstance(vis_obj.data, arr_type) and \
+                                isinstance(vis_obj.data[0], arr_type):
+                            for v_obj in vis_obj.data:
+                                vis_objs.append(v_obj)
+                        else:
+                            vis_objs.append(vis_obj.data)
+                vis_set = objectify_output('Multiple Vis Sets', vis_objs)
             vis_set_obj = process_vis_set(vis_set)
             
             # process the connected legend parameters
