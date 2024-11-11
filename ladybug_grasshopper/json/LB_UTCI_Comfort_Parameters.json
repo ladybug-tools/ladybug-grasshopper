@@ -1,5 +1,5 @@
 {
-  "version": "1.8.0", 
+  "version": "1.8.1", 
   "nickname": "UTCIPar", 
   "outputs": [
     [
@@ -23,7 +23,7 @@
     {
       "access": "item", 
       "name": "_heat_thresh_", 
-      "description": "A number between 0 and 1 indicating the upper limit of\nhumidity ratio that is considered acceptable.\nDefault is 1 for essentially no limit.", 
+      "description": "Temperature in Celsius above which the UTCI represents\nheat stress. (Default: 26C).", 
       "type": "double", 
       "default": null
     }
