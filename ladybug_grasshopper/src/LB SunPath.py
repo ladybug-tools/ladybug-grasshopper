@@ -98,7 +98,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '1.8.0'
+ghenv.Component.Message = '1.8.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -256,6 +256,7 @@ if all_required_inputs(ghenv.Component):
             vectors.append(from_vector3d(sun.sun_vector))
             suns.append(sun)
 
+    vis_l_pars = []
     if len(data_) > 0 and data_[0] is not None and len(hoys_) > 0:  # build a sunpath for each data collection
         title, all_sun_pts, all_analemma, all_daily, all_compass, all_col_pts, all_legends = \
             [], [], [], [], [], [], []
@@ -282,6 +283,7 @@ if all_required_inputs(ghenv.Component):
             title.append(text_objects(
                 title_text(n_data), graphic.lower_title_location,
                 graphic.legend_parameters.text_height, graphic.legend_parameters.font))
+            vis_l_pars.append(graphic.legend_parameters)
 
             # create points, analemmas, daily arcs, and compass geometry
             sun_pts_init = draw_sun_positions(suns, radius, center_pt3d_i)
@@ -331,6 +333,9 @@ if all_required_inputs(ghenv.Component):
     # create the output VisualizationSet arguments
     l_par = None
     if len(legend_par_) != 0:
-        l_par = legend_par_[0] if len(legend_par_) == 1 else legend_par_
+        if len(vis_l_pars) != 0:
+            l_par = vis_l_pars
+        else:
+            l_par = legend_par_[0] if len(legend_par_) == 1 else legend_par_
     vis_set = [sp, hoys_, data_, l_par, radius, center_pt3d, solar_time_, daily_, projection_]
     vis_set = objectify_output('VisualizationSet Aruments [Sunpath]', vis_set)
