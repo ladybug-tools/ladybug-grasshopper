@@ -50,7 +50,7 @@ Filter or select faces of geometry based on their orientation.
 
 ghenv.Component.Name = 'LB Filter by Normal'
 ghenv.Component.NickName = 'FilterNormal'
-ghenv.Component.Message = '1.8.1'
+ghenv.Component.Message = '1.8.2'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -64,7 +64,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.togeometry import to_face3d, to_vector2d
+    from ladybug_rhino.togeometry import to_face3d, to_vector2d, to_point3d
     from ladybug_rhino.fromgeometry import from_face3d
     from ladybug_rhino.grasshopper import all_required_inputs
 except ImportError as e:
@@ -109,7 +109,10 @@ if all_required_inputs(ghenv.Component):
     up_vec, down_vec = Vector3D(0, 0, 1), Vector3D(0, 0, -1)
 
     # process the geometry and the orientation
-    all_geo = [f for geo in _geometry for f in to_face3d(geo)]
+    try:
+        all_geo = [f for geo in _geometry for f in to_face3d(geo, non_planar_quads=True)]
+    except TypeError:  # older version of the core libraries
+        all_geo = [f for geo in _geometry for f in to_face3d(geo)]
     try:
         orient = ORIENT_MAP[_orientation.upper()]
     except KeyError:
