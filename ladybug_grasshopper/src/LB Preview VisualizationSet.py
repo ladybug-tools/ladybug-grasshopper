@@ -68,12 +68,12 @@ class MyComponent(component):
         super(MyComponent,self).__init__()
         self.vis_con = None
         self.vs_goo = None
-        self.viewport = None
+        self.viewport = ()
     
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_, viewport_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.9.0'
+        ghenv.Component.Message = '1.9.1'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -179,11 +179,11 @@ class MyComponent(component):
                                     geo.active_data = i
             self.vis_con = VisualizationSetConverter(vis_set_obj, leg3d, leg2d)
             self.vs_goo = VisSetGoo(vis_set_obj)
-            self.viewport = viewport_
+            self.viewport = tuple(vp.lower() for vp in viewport_)
         else:
             self.vis_con = None
             self.vs_goo = None
-            self.viewport = None
+            self.viewport = ()
         
         # return the bake-able version of the visualization set 
         return self.vs_goo
@@ -225,8 +225,7 @@ class MyComponent(component):
                     display.DrawCone(*draw_args)
                 for draw_args in self.vis_con.draw_cylinder:
                     display.DrawCylinder(*draw_args)
-                if self.viewport is None or \
-                        self.viewport.lower() == args.Viewport.Name.lower():
+                if len(self.viewport)== 0 or args.Viewport.Name.lower() in self.viewport:
                     for draw_args in self.vis_con.draw_2d_text:
                         display.Draw2dText(*draw_args)
                     for draw_args in self.vis_con.draw_sprite:
