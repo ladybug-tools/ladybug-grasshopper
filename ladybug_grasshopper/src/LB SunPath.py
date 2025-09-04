@@ -98,7 +98,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '1.9.0'
+ghenv.Component.Message = '1.9.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -150,7 +150,9 @@ def draw_analemma_and_arcs(sp, datetimes, radius, center_pt3d):
         analemma: List of Rhino curves for the analemmas
         daily: List of Rhino curves for the daily arcs.
     """
-    sp.daylight_saving_period = None  # set here so analemmas aren't messed up
+    # reset daylight savings so analemmas aren't messed up
+    original_dls = sp.daylight_saving_period
+    sp.daylight_saving_period = None
 
     center_pt, z = Point2D(center_pt3d.x, center_pt3d.y), center_pt3d.z
     if not daily_:
@@ -175,6 +177,9 @@ def draw_analemma_and_arcs(sp, datetimes, radius, center_pt3d):
             for dat in dates:
                 pline = sp.day_polyline2d(dat.month, dat.day, projection_, center_pt, radius)
                 daily.append(from_polyline2d(pline, z))
+    
+    # put back the daylight savings time
+    sp.daylight_saving_period = original_dls
     return analemma, daily
 
 
