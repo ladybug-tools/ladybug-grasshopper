@@ -1,5 +1,5 @@
 {
-  "version": "1.9.0", 
+  "version": "1.9.1", 
   "nickname": "VisSet", 
   "outputs": [
     [
@@ -42,7 +42,7 @@
       "default": null
     }, 
     {
-      "access": "item", 
+      "access": "list", 
       "name": "viewport_", 
       "description": "Text for the name of the Rhino viewport to which the 2D screen-oriented\nlegend will be rendered. If unspecified, the 2D legend will be rendered\nin all viewports. Acceptable inputs include:\n-\nPerspective\nTop\nBottom\nLeft\nRight\nFront\nBack\nany view name that has been saved within the Rhino file", 
       "type": "string", 
