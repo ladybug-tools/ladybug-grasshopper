@@ -1,5 +1,5 @@
 {
-  "version": "1.9.0", 
+  "version": "1.9.1", 
   "nickname": "Heatmap", 
   "outputs": [
     [
@@ -41,7 +41,7 @@
       {
         "access": "None", 
         "name": "vis_set", 
-        "description": "Script variable Heatmap", 
+        "description": "A VisualizationSet object for drawing a detailed version of the\nheatmap in the Rhino scene. This can be connected to\nthe \"LB Preview Visualization Set\" component to display this\nversion of the heatmap in Rhino.", 
         "type": null, 
         "default": null
       }
