@@ -51,10 +51,10 @@ Customize the properties of a screen-oreinted 2D legend displaying with the
 
 ghenv.Component.Name = 'LB Legend 2D Parameters'
 ghenv.Component.NickName = 'Legend2D'
-ghenv.Component.Message = '1.9.0'
+ghenv.Component.Message = '1.9.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
-ghenv.Component.AdditionalHelpFromDocStrings = '2'
+ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 
 try:
