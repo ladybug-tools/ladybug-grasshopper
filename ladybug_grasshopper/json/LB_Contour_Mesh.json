@@ -1,0 +1,64 @@
+{
+  "version": "1.9.0", 
+  "nickname": "ContourMesh", 
+  "outputs": [
+    [
+      {
+        "access": "None", 
+        "name": "contours", 
+        "description": "A data tree (aka. list of lists) where each sub-list represents\ncontours associated with a specific threshold. Contours are\ncomposed of Rhino Polyline and Line objects.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "labels", 
+        "description": "A data tree of of text objects that denote the numerical value associated\nwith each contour. The sub-lists of this data tree match the contours.", 
+        "type": null, 
+        "default": null
+      }
+    ]
+  ], 
+  "inputs": [
+    {
+      "access": "list", 
+      "name": "_values", 
+      "description": "A list of numbers that correspond to either the number of faces\nor vertices of the _mesh.", 
+      "type": "double", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_mesh", 
+      "description": "A Mesh for which contours will be derived.", 
+      "type": "Mesh", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "legend_par_", 
+      "description": "Ladybug LegendParameters to be used to customize the min/max and\nquantity of contours to draw. These can also be used to customize\nthe text height and decimal count of the contours. If None, default\nlegend parameters are used. (DefaultL None).", 
+      "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "_smooth_iter_", 
+      "description": "The number of times that the contours will be smoothed.\nSmoothing can make the contours more visually appealing but excessive\nsmoothing can cause contours to be far from the real threshold\nin the mesh. Set to zero to not perform any smoothing. (Default: 1).", 
+      "type": "int", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "no_labels_", 
+      "description": "Set to True to produce a set of contours with no breaks for\ntext labels.", 
+      "type": "bool", 
+      "default": null
+    }
+  ], 
+  "subcategory": "4 :: Extra", 
+  "code": "\ntry:\n    from ladybug_{{cad}}.fromobjects import mesh_to_contours, label_countours\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, list_to_data_tree\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    smooth_iter = _smooth_iter_ if _smooth_iter_ is not None else 3\n    contours, thresholds = mesh_to_contours(_mesh, _values, legend_par_, smooth_iter)\n    if not no_labels_:\n        contours, labels = label_countours(contours, thresholds, legend_par_)\n        labels = list_to_data_tree(labels)\n    contours = list_to_data_tree(contours)\n", 
+  "category": "Ladybug", 
+  "name": "LB Contour Mesh", 
+  "description": "Create a contoured visualization of any mesh and corresponding numerical dataset.\n_\nThis component works similar in principle to the \"LB Mesh Threshold Selector\"\nexcept that it is intended to produce multiple contours (instead of one\ncontour defined by a single threshold). It includes options for lableing\neach contour with its threshold value and smoothing the contours for a\nmore appealing visualization.\n-"
+}
