@@ -64,7 +64,7 @@ scattering, the Honeybee Radiance components should be used.
 
 ghenv.Component.Name = 'LB Surface Ray Tracing'
 ghenv.Component.NickName = 'SrfRayTrace'
-ghenv.Component.Message = '1.9.0'
+ghenv.Component.Message = '1.9.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -78,7 +78,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_geometry:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.config import tolerance
+    from ladybug_rhino.config import current_tolerance
     from ladybug_rhino.togeometry import to_joined_gridded_mesh3d, to_point3d, \
         to_vector3d
     from ladybug_rhino.fromgeometry import from_point3d, from_vector3d, from_ray3d, \
@@ -165,6 +165,7 @@ if all_required_inputs(ghenv.Component) and _run:
                 int_pts.append([from_point3d(p) for p in all_pts])
 
     # if a receiver is specified, filter the output rays for intersection
+    tolerance = current_tolerance()
     if len(receiver_) != 0:
         rec_mesh = join_geometry_to_mesh(receiver_)
         new_rays, new_int_pts = [], []

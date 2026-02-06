@@ -77,7 +77,7 @@ mesh that shows the range of the data within specific percentiles.
 
 ghenv.Component.Name = 'LB Monthly Chart'
 ghenv.Component.NickName = 'MonthlyChart'
-ghenv.Component.Message = '1.9.0'
+ghenv.Component.Message = '1.9.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -95,7 +95,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.config import conversion_to_meters, tolerance
+    from ladybug_rhino.config import conversion_to_meters, current_tolerance
     from ladybug_rhino.color import color_to_color
     from ladybug_rhino.togeometry import to_point2d
     from ladybug_rhino.fromgeometry import from_mesh2d, from_mesh2d_to_outline, \
@@ -112,7 +112,7 @@ except ImportError as e:
 if all_required_inputs(ghenv.Component) and None not in _data:
     # set default values for the chart dimensions
     z_val = _base_pt_.Z if _base_pt_ is not None else 0
-    z_val_tol = z_val + tolerance
+    z_val_tol = z_val + current_tolerance()
     _base_pt_ = to_point2d(_base_pt_) if _base_pt_ is not None else Point2D()
     _x_dim_ = _x_dim_ if _x_dim_ is not None else 10.0 / conversion_to_meters()
     _y_dim_ = _y_dim_ if _y_dim_ is not None else 40.0 / conversion_to_meters()
