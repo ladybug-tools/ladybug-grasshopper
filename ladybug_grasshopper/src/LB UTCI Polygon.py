@@ -72,7 +72,7 @@ thermal comfort model.
 
 ghenv.Component.Name = 'LB UTCI Polygon'
 ghenv.Component.NickName = 'UTCI Polygon'
-ghenv.Component.Message = '1.9.0'
+ghenv.Component.Message = '1.9.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -89,7 +89,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_comfort:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.config import tolerance
+    from ladybug_rhino.config import current_tolerance
     from ladybug_rhino.fromgeometry import from_polyline2d_to_offset_brep
     from ladybug_rhino.grasshopper import all_required_inputs, \
         list_to_data_tree, give_warning
@@ -111,7 +111,7 @@ def process_polygon(polygon_name, polygon):
     if polygon is not None:
         polygon_names.append(polygon_name)
         strategy_poly.append(from_polyline2d_to_offset_brep(polygon, offset, z))
-        dat = poly_obj.evaluate_polygon(polygon, tolerance)
+        dat = poly_obj.evaluate_polygon(polygon, current_tolerance())
         dat = dat[0] if len(dat) == 1 else poly_obj.create_collection(dat, polygon_name)
         polygon_data.append(dat)
     else:

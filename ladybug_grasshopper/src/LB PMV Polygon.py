@@ -99,7 +99,7 @@ polygons.
 
 ghenv.Component.Name = 'LB PMV Polygon'
 ghenv.Component.NickName = 'PMV Polygon'
-ghenv.Component.Message = '1.9.0'
+ghenv.Component.Message = '1.9.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -116,7 +116,7 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_comfort:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.config import tolerance
+    from ladybug_rhino.config import current_tolerance
     from ladybug_rhino.fromgeometry import from_polyline2d_to_offset_brep
     from ladybug_rhino.grasshopper import all_required_inputs, \
         list_to_data_tree, give_warning, de_objectify_output
@@ -138,7 +138,7 @@ def process_polygon(polygon_name, polygon):
     if polygon is not None:
         polygon_names.append(polygon_name)
         strategy_poly.append(from_polyline2d_to_offset_brep(polygon, offset, z))
-        dat = poly_obj.evaluate_polygon(polygon, tolerance)
+        dat = poly_obj.evaluate_polygon(polygon, current_tolerance())
         dat = dat[0] if len(dat) == 1 else poly_obj.create_collection(dat, polygon_name)
         polygon_data.append(dat)
     else:
@@ -208,7 +208,8 @@ if all_required_inputs(ghenv.Component):
                 polygon_names.append(p_name)
                 strategy_poly.append(from_polyline2d_to_offset_brep(nf_poly, offset, z))
                 dat = poly_obj.evaluate_night_flush_polygon(
-                    nf_poly, _psych_chart.original_temperature, night_below, tim_c, tolerance)
+                    nf_poly, _psych_chart.original_temperature, night_below, tim_c,
+                    current_tolerance())
                 dat = dat[0] if len(dat) == 1 else poly_obj.create_collection(dat, p_name)
                 polygon_data.append(dat)
             else:
