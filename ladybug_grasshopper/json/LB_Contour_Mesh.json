@@ -1,5 +1,5 @@
 {
-  "version": "1.9.0", 
+  "version": "1.9.1", 
   "nickname": "ContourMesh", 
   "outputs": [
     [
@@ -14,6 +14,34 @@
         "access": "None", 
         "name": "labels", 
         "description": "A data tree of of text objects that denote the numerical value associated\nwith each contour. The sub-lists of this data tree match the contours.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "mesh", 
+        "description": "The input _mesh that has been colored with results.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "legend", 
+        "description": "Geometry representing the legend for the mesh.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "title", 
+        "description": "A text object for the global_title.", 
+        "type": null, 
+        "default": null
+      }, 
+      {
+        "access": "None", 
+        "name": "vis_set", 
+        "description": "A VisualizationSet object for drawing a detailed version of the\nheatmap in the Rhino scene. This can be connected to\nthe \"LB Preview Visualization Set\" component to display this\nversion of the heatmap in Rhino.", 
         "type": null, 
         "default": null
       }
@@ -37,28 +65,42 @@
     {
       "access": "item", 
       "name": "legend_par_", 
-      "description": "Ladybug LegendParameters to be used to customize the min/max and\nquantity of contours to draw. These can also be used to customize\nthe text height and decimal count of the contours. If None, default\nlegend parameters are used. (DefaultL None).", 
+      "description": "Ladybug LegendParameters to be used to customize the min/max and\nquantity of contours to draw. These can also be used to customize\nthe decimal count of the contours. If None, default legend parameters\nare used. (DefaultL None).", 
       "type": "System.Object", 
       "default": null
     }, 
     {
       "access": "item", 
+      "name": "legend_title_", 
+      "description": "A text string for Legend title. Typically, the units\nof the data are used here but the type of data might also be used.\nDefault is an empty string.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
+      "name": "global_title_", 
+      "description": "A text string to label the entire mesh.  It will be\ndisplayed in the lower left of the result mesh. Default is for no\ntitle.", 
+      "type": "string", 
+      "default": null
+    }, 
+    {
+      "access": "item", 
       "name": "_smooth_iter_", 
-      "description": "The number of times that the contours will be smoothed.\nSmoothing can make the contours more visually appealing but excessive\nsmoothing can cause contours to be far from the real threshold\nin the mesh. Set to zero to not perform any smoothing. (Default: 1).", 
+      "description": "The number of times that the contours will be smoothed.\nSmoothing can make the contours more visually appealing but excessive\nsmoothing can cause contours to be far from the real threshold\nin the mesh. Set to zero to not perform any smoothing. (Default: 0).", 
       "type": "int", 
       "default": null
     }, 
     {
       "access": "item", 
-      "name": "no_labels_", 
-      "description": "Set to True to produce a set of contours with no breaks for\ntext labels.", 
-      "type": "bool", 
+      "name": "label_text_hgt_", 
+      "description": "An optional number to set the size of the contour text labeld\nin model units. Set to zero to completely remove labels from the\nresulting output. Default is set to a fraction of the average\ncontour length.", 
+      "type": "double", 
       "default": null
     }
   ], 
   "subcategory": "4 :: Extra", 
-  "code": "\ntry:\n    from ladybug_{{cad}}.fromobjects import mesh_to_contours, label_countours\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, list_to_data_tree\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component):\n    smooth_iter = _smooth_iter_ if _smooth_iter_ is not None else 3\n    contours, thresholds = mesh_to_contours(_mesh, _values, legend_par_, smooth_iter)\n    if not no_labels_:\n        contours, labels = label_countours(contours, thresholds, legend_par_)\n        labels = list_to_data_tree(labels)\n    contours = list_to_data_tree(contours)\n", 
+  "code": "\ntry:\n    from ladybug_geometry.util import coordinates_hash_3d\n    from ladybug_geometry.geometry3d import Polyline3D\n    from ladybug.legend import LegendParameters, LegendParametersCategorized\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_display.visualization import VisualizationSet\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import current_tolerance\n    from ladybug_{{cad}}.togeometry import to_mesh3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_polyline3d\n    from ladybug_{{cad}}.fromobjects import mesh_to_contours, label_countours, legend_objects\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.color import color_to_color\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, list_to_data_tree\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\ntol = current_tolerance()\n\n\nif all_required_inputs(ghenv.Component):\n    # if the mesh is colored by vertices, change it to be faces for cleaner visuals\n    lb_mesh = to_mesh3d(_mesh)\n    if len(_values) == len(lb_mesh.vertices):\n        face_values = []\n        for face in lb_mesh.faces:\n            fv = [_values[i] for i in face]\n            face_values.append(sum(fv) / len(fv))\n        _values = face_values\n\n    # set up categorized legend parameters\n    l_par = legend_par_.duplicate() if legend_par_ is not None else LegendParameters()\n    if legend_title_ is not None:\n        l_par.title = legend_title_\n    if not isinstance(l_par, LegendParametersCategorized):\n        l_par.include_larger_smaller = True\n        if l_par.is_segment_count_default:\n            l_par.segment_count = 7\n        l_par = l_par.to_categorized(_values)\n\n    # create the contours and snap the mesh to it\n    smooth_iter = _smooth_iter_ if _smooth_iter_ is not None else 0\n    contours, thresholds = mesh_to_contours(_mesh, _values, l_par, 0, as_lb_geo=True)\n    if smooth_iter > 0:\n        smoothed_cont, pt_map = [], {}\n        for polylines in contours:\n            sm_cont = []\n            for pl in polylines:\n                if isinstance(pl, Polyline3D):\n                    smooth_pl = pl\n                    for i in range(smooth_iter):\n                        smooth_pl = smooth_pl.smooth()\n                    sm_cont.append(smooth_pl)\n                    for opt, npt in zip(pl, smooth_pl):\n                        pt_map[coordinates_hash_3d(opt, tol)] = npt\n                else:\n                    sm_cont.append(pl)\n            smoothed_cont.append(sm_cont)\n        contours = smoothed_cont\n        lb_mesh = lb_mesh.apply_point_map(pt_map, tol)\n\n    # create the labels\n    if label_text_hgt_ is None or label_text_hgt_ > 0:\n        if label_text_hgt_ is not None or not l_par.is_text_height_default:\n            lbl_l_par = l_par.duplicate()\n            lbl_l_par.text_height = label_text_hgt_\n        else:\n            lbl_l_par = l_par\n        contours, labels = label_countours(contours, thresholds, lbl_l_par)\n        labels = list_to_data_tree(labels)\n    else:\n        contours = [[from_polyline3d(pl) for pl in cont] for cont in contours]\n\n    # create the VisualizationSet and GraphicContainer\n    vis_set = VisualizationSet.from_single_analysis_geo(\n        'Data_Mesh', [lb_mesh], _values, l_par)\n    graphic = vis_set.graphic_container()\n\n    # generate titles\n    if global_title_ is not None:\n        title = text_objects(global_title_, graphic.lower_title_location,\n                             graphic.legend_parameters.text_height * 1.5,\n                             graphic.legend_parameters.font)\n\n    # draw {{cad}} objects\n    contours = list_to_data_tree(contours)\n    lb_mesh.colors = graphic.value_colors\n    mesh = from_mesh3d(lb_mesh)\n    legend = legend_objects(graphic.legend)\n", 
   "category": "Ladybug", 
   "name": "LB Contour Mesh", 
-  "description": "Create a contoured visualization of any mesh and corresponding numerical dataset.\n_\nThis component works similar in principle to the \"LB Mesh Threshold Selector\"\nexcept that it is intended to produce multiple contours (instead of one\ncontour defined by a single threshold). It includes options for lableing\neach contour with its threshold value and smoothing the contours for a\nmore appealing visualization.\n-"
+  "description": "Create a contoured visualization of any mesh and corresponding numerical dataset.\n_\nThis component works similar in principle to the \"LB Mesh Threshold Selector\"\nexcept that it is intended to produce multiple contours (instead of one\ncontour defined by a single threshold).\n_\nIt includes options for lableing each contour with its threshold value and\nsmoothing the contours for a more appealing visualization.\n_\nIf the output of this component is not as smooth or visually appealing as expected,\nthis is often because there are not enough faces in the input mesh to draw a\nclear set of contours. Therefore lowering the mesh grid size used for the study\nor increasing the smoothness of mesh parameters will often yeild a better contour\nresult. Alternatively, connecting \"LB Legend Parameters\" with a lower seg_count_\ncan produce fewer contours, which may provide the algorithm with enough data to\ndraw the contours cleanly.\n-"
 }
