@@ -73,7 +73,7 @@ class MyComponent(component):
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_, viewport_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.9.1'
+        ghenv.Component.Message = '1.9.2'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -191,41 +191,41 @@ class MyComponent(component):
     def DrawViewportWires(self, args):
         try:
             if self.vis_con is not None:
-                # get the DisplayPipeline from the event arguments
-                display = args.Display
-                
-                # for each object to be rendered, pass the drawing arguments
-                for draw_args in self.vis_con.draw_3d_text:
-                    display.Draw3dText(*draw_args)
-                for draw_args in self.vis_con.draw_mesh_wires:
-                    display.DrawMeshWires(*draw_args)
-                for draw_args in self.vis_con.draw_mesh_vertices:
-                    display.DrawMeshVertices(*draw_args)
-                for draw_args in self.vis_con.draw_point:
-                    display.DrawPoint(*draw_args)
-                for draw_args in self.vis_con.draw_arrow:
-                    display.DrawArrow(*draw_args)
-                for draw_args in self.vis_con.draw_brep_wires:
-                    display.DrawBrepWires(*draw_args)
-                for draw_args in self.vis_con.draw_line:
-                    display.DrawLine(*draw_args)
-                for draw_args in self.vis_con.draw_patterned_line:
-                    display.DrawPatternedLine(*draw_args)
-                for draw_args in self.vis_con.draw_patterned_polyline:
-                    display.DrawPatternedPolyline(*draw_args)
-                for draw_args in self.vis_con.draw_curve:
-                    display.DrawCurve(*draw_args)
-                for draw_args in self.vis_con.draw_circle:
-                    display.DrawCircle(*draw_args)
-                for draw_args in self.vis_con.draw_arc:
-                    display.DrawArc(*draw_args)
-                for draw_args in self.vis_con.draw_sphere:
-                    display.DrawSphere(*draw_args)
-                for draw_args in self.vis_con.draw_cone:
-                    display.DrawCone(*draw_args)
-                for draw_args in self.vis_con.draw_cylinder:
-                    display.DrawCylinder(*draw_args)
                 if len(self.viewport)== 0 or args.Viewport.Name.lower() in self.viewport:
+                    # get the DisplayPipeline from the event arguments
+                    display = args.Display
+                    
+                    # for each object to be rendered, pass the drawing arguments
+                    for draw_args in self.vis_con.draw_3d_text:
+                        display.Draw3dText(*draw_args)
+                    for draw_args in self.vis_con.draw_mesh_wires:
+                        display.DrawMeshWires(*draw_args)
+                    for draw_args in self.vis_con.draw_mesh_vertices:
+                        display.DrawMeshVertices(*draw_args)
+                    for draw_args in self.vis_con.draw_point:
+                        display.DrawPoint(*draw_args)
+                    for draw_args in self.vis_con.draw_arrow:
+                        display.DrawArrow(*draw_args)
+                    for draw_args in self.vis_con.draw_brep_wires:
+                        display.DrawBrepWires(*draw_args)
+                    for draw_args in self.vis_con.draw_line:
+                        display.DrawLine(*draw_args)
+                    for draw_args in self.vis_con.draw_patterned_line:
+                        display.DrawPatternedLine(*draw_args)
+                    for draw_args in self.vis_con.draw_patterned_polyline:
+                        display.DrawPatternedPolyline(*draw_args)
+                    for draw_args in self.vis_con.draw_curve:
+                        display.DrawCurve(*draw_args)
+                    for draw_args in self.vis_con.draw_circle:
+                        display.DrawCircle(*draw_args)
+                    for draw_args in self.vis_con.draw_arc:
+                        display.DrawArc(*draw_args)
+                    for draw_args in self.vis_con.draw_sphere:
+                        display.DrawSphere(*draw_args)
+                    for draw_args in self.vis_con.draw_cone:
+                        display.DrawCone(*draw_args)
+                    for draw_args in self.vis_con.draw_cylinder:
+                        display.DrawCylinder(*draw_args)
                     for draw_args in self.vis_con.draw_2d_text:
                         display.Draw2dText(*draw_args)
                     for draw_args in self.vis_con.draw_sprite:
@@ -236,16 +236,17 @@ class MyComponent(component):
     def DrawViewportMeshes(self, args):
         try:
             if self.vis_con is not None:
-                # get the DisplayPipeline from the event arguments
-                display = args.Display
-                
-                # for each object to be rendered, pass the drawing arguments
-                for draw_args in self.vis_con.draw_mesh_false_colors:
-                    display.DrawMeshFalseColors(draw_args)
-                for draw_args in self.vis_con.draw_mesh_shaded:
-                    display.DrawMeshFalseColors(draw_args[0])
-                for draw_args in self.vis_con.draw_brep_shaded:
-                    display.DrawBrepShaded(*draw_args)
+                if len(self.viewport)== 0 or args.Viewport.Name.lower() in self.viewport:
+                    # get the DisplayPipeline from the event arguments
+                    display = args.Display
+                    
+                    # for each object to be rendered, pass the drawing arguments
+                    for draw_args in self.vis_con.draw_mesh_false_colors:
+                        display.DrawMeshFalseColors(draw_args)
+                    for draw_args in self.vis_con.draw_mesh_shaded:
+                        display.DrawMeshFalseColors(draw_args[0])
+                    for draw_args in self.vis_con.draw_brep_shaded:
+                        display.DrawBrepShaded(*draw_args)
         except Exception, e:
             System.Windows.Forms.MessageBox.Show(str(e), "script error")
     
