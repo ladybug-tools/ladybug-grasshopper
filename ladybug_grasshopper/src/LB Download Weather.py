@@ -29,7 +29,7 @@ unzip the file, and open .epw, .stat, and ddy weather files.
 
 ghenv.Component.Name = 'LB Download Weather'
 ghenv.Component.NickName = 'DownloadEPW'
-ghenv.Component.Message = '1.9.0'
+ghenv.Component.Message = '1.9.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '0 :: Import'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -51,10 +51,14 @@ except ImportError as e:
 
 if all_required_inputs(ghenv.Component):
     # process the URL and check if it is outdated
+    lone_epw = False
     _weather_URL = _weather_URL.strip()
-    if _weather_URL.lower().endswith('.zip'):  # onebuilding URL type
+    if _weather_URL.lower().endswith('.zip'):  # standard zip file format
         _folder_name = _weather_URL.split('/')[-1][:-4]
-    else: # dept of energy URL type
+    elif _weather_URL.lower().endswith('.epw'):  # a lone epw file
+        _folder_name = _weather_URL.split('/')[-1][:-4]
+        lone_epw = True
+    else: # old dept of energy URL type
         _folder_name = _weather_URL.split('/')[-2]
         if _weather_URL.endswith('/all'):
             repl_section = '{0}/all'.format(_folder_name)
@@ -86,9 +90,14 @@ if all_required_inputs(ghenv.Component):
 
     # download and unzip the files if they do not exist
     if not os.path.isfile(epw) or not os.path.isfile(stat) or not os.path.isfile(ddy):
-        zip_file_path = os.path.join(_folder_, _folder_name, _folder_name + '.zip')
-        download_file(_weather_URL, zip_file_path, True)
-        unzip_file(zip_file_path)
+        if lone_epw:
+            download_file(_weather_URL, epw, True)
+        else:
+            zip_file_path = os.path.join(_folder_, _folder_name, _folder_name + '.zip')
+            download_file(_weather_URL, zip_file_path, True)
+            unzip_file(zip_file_path)
 
     # set output
-    epw_file, stat_file, ddy_file = epw, stat, ddy
+    epw_file = epw
+    if not lone_epw:
+        stat_file, ddy_file = stat, ddy
