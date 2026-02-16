@@ -73,7 +73,7 @@ class MyComponent(component):
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_, viewport_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.9.2'
+        ghenv.Component.Message = '1.9.3'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -100,6 +100,8 @@ class MyComponent(component):
                 for vis_obj in _vis_set:
                     if isinstance(vis_obj, VisualizationSet):
                         vis_objs.append([vis_obj])
+                    elif hasattr(vis_obj, 'to_vis_set'):
+                        vis_objs.append([vis_obj.to_vis_set()])
                     elif hasattr(vis_obj, 'data'):
                         arr_type = (list, tuple)
                         if isinstance(vis_obj.data, arr_type) and \
