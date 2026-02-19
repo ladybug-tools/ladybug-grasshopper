@@ -1,5 +1,5 @@
 {
-  "version": "1.9.1", 
+  "version": "1.9.2", 
   "nickname": "Text2D", 
   "outputs": [
     []
@@ -34,10 +34,10 @@
       "default": null
     }, 
     {
-      "access": "item", 
+      "access": "list", 
       "name": "viewport_", 
-      "description": "Text for the name of the Rhino viewport to which the 2D screen-oriented\nlegend will be rendered. If unspecified, the 2D legend will be rendered\nin all viewports. Acceptable inputs include:\n-\nPerspective\nTop\nBottom\nLeft\nRight\nFront\nBack\nany view name that has been saved within the Rhino file", 
-      "type": "System.Object", 
+      "description": "Text for the name of the Rhino viewport to which the 2D screen-oriented\ntext will be rendered. Multiple viewports can be connected to have the\ntext display in several viewports. If unspecified, the text is rendered\nin all viewports. Acceptable inputs include:\n-\nPerspective\nTop\nBottom\nLeft\nRight\nFront\nBack\nany view name that has been saved within the Rhino file", 
+      "type": "string", 
       "default": null
     }
   ], 

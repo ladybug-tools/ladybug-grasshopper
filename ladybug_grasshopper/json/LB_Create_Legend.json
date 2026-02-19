@@ -1,5 +1,5 @@
 {
-  "version": "1.9.0", 
+  "version": "1.9.1", 
   "nickname": "CreateLegend", 
   "outputs": [
     [
@@ -74,6 +74,13 @@
       "name": "leg_par2d_", 
       "description": "Optional 2D LegendParameters from the \"LB Legend Parameters 2D\"\ncomponent, which will be used to customize a legend in the plane\nof the screen so that it functions like a head-up display (HUD).\nIf unspecified, the VisualizationSet will be rendered with 3D\nlegends in the Rhino scene much like the other native Ladybug\nTools components.", 
       "type": "System.Object", 
+      "default": null
+    }, 
+    {
+      "access": "list", 
+      "name": "x", 
+      "description": "Text for the name of the Rhino viewport to which the 2D legend will\nbe rendered. This input only has an effect when leg_par2d_ are\nconnected. Multiple viewports can be connected to have the legend\ndisplay in several viewports. If unspecified, the legend is rendered\nin all viewports. Acceptable inputs include:\n-\nPerspective\nTop\nBottom\nLeft\nRight\nFront\nBack\nany view name that has been saved within the Rhino file", 
+      "type": "string", 
       "default": null
     }
   ], 

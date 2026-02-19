@@ -30,6 +30,20 @@ with the legends automatically output from different studies.
             If unspecified, the VisualizationSet will be rendered with 3D
             legends in the Rhino scene much like the other native Ladybug
             Tools components.
+        viewport_: Text for the name of the Rhino viewport to which the 2D legend will
+            be rendered. This input only has an effect when leg_par2d_ are
+            connected. Multiple viewports can be connected to have the legend
+            display in several viewports. If unspecified, the legend is rendered
+            in all viewports. Acceptable inputs include:
+                -
+                Perspective
+                Top
+                Bottom
+                Left
+                Right
+                Front
+                Back
+                any view name that has been saved within the Rhino file
 
     Returns:
         mesh: A colored mesh for the legend colors.
@@ -53,11 +67,12 @@ class MyComponent(component):
         self.draw_2d_text = None
         self.draw_sprite = None
         self.colored_mesh = None
+        self.viewport = ()
     
-    def RunScript(self, _values, _base_plane_, title_, legend_par_, leg_par2d_):
+    def RunScript(self, _values, _base_plane_, title_, legend_par_, leg_par2d_, viewport_):
         ghenv.Component.Name = "LB Create Legend"
         ghenv.Component.NickName = 'CreateLegend'
-        ghenv.Component.Message = '1.9.0'
+        ghenv.Component.Message = '1.9.1'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -108,10 +123,12 @@ class MyComponent(component):
                 d_sprite, self.draw_2d_text = \
                     VisualizationSetConverter.convert_legend2d(legend)
                 self.draw_sprite = [d_sprite]
+            self.viewport = tuple(vp.lower() for vp in viewport_)
         else:
             mesh, title_obj, label_objs, label_text, colors = \
                 None, None, None, None, None
             self.draw_2d_text, self.draw_sprite = None, None
+            self.viewport = ()
         
         # return outputs if you have them; here I try it for you
         self.colored_mesh = mesh
@@ -119,17 +136,18 @@ class MyComponent(component):
         
     def DrawViewportMeshes(self, args):
         try:
-            # get the DisplayPipeline from the event arguments
-            display = args.Display
-            # draw the objects in the scene
-            if self.colored_mesh is not None:
-                display.DrawMeshFalseColors(self.colored_mesh)
-            if self.draw_2d_text is not None:
-                for draw_args in self.draw_2d_text:
-                    display.Draw2dText(*draw_args)
-            if self.draw_sprite is not None:
-                for draw_args in self.draw_sprite:
-                    display.DrawSprite(*draw_args)
+            if len(self.viewport) == 0 or args.Viewport.Name.lower() in self.viewport:
+                # get the DisplayPipeline from the event arguments
+                display = args.Display
+                # draw the objects in the scene
+                if self.colored_mesh is not None:
+                    display.DrawMeshFalseColors(self.colored_mesh)
+                if self.draw_2d_text is not None:
+                    for draw_args in self.draw_2d_text:
+                        display.Draw2dText(*draw_args)
+                if self.draw_sprite is not None:
+                    for draw_args in self.draw_sprite:
+                        display.DrawSprite(*draw_args)
         except Exception, e:
             System.Windows.Forms.MessageBox.Show(str(e), "script error")
     
