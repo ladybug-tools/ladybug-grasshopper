@@ -72,7 +72,7 @@ class MyComponent(component):
     def RunScript(self, _values, _base_plane_, title_, legend_par_, leg_par2d_, viewport_):
         ghenv.Component.Name = "LB Create Legend"
         ghenv.Component.NickName = 'CreateLegend'
-        ghenv.Component.Message = '1.9.1'
+        ghenv.Component.Message = '1.9.2'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '0'
@@ -136,6 +136,8 @@ class MyComponent(component):
         
     def DrawViewportMeshes(self, args):
         try:
+            if ghenv.Component.Locked:
+                return
             if len(self.viewport) == 0 or args.Viewport.Name.lower() in self.viewport:
                 # get the DisplayPipeline from the event arguments
                 display = args.Display

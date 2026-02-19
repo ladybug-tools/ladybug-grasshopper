@@ -1,5 +1,5 @@
 {
-  "version": "1.9.1", 
+  "version": "1.9.2", 
   "nickname": "CreateLegend", 
   "outputs": [
     [
@@ -78,7 +78,7 @@
     }, 
     {
       "access": "list", 
-      "name": "x", 
+      "name": "viewport_", 
       "description": "Text for the name of the Rhino viewport to which the 2D legend will\nbe rendered. This input only has an effect when leg_par2d_ are\nconnected. Multiple viewports can be connected to have the legend\ndisplay in several viewports. If unspecified, the legend is rendered\nin all viewports. Acceptable inputs include:\n-\nPerspective\nTop\nBottom\nLeft\nRight\nFront\nBack\nany view name that has been saved within the Rhino file", 
       "type": "string", 
       "default": null
