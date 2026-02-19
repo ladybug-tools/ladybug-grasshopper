@@ -37,9 +37,10 @@ weights/types, display modes (eg. wireframe vs. shaded), transparency, and more.
             index of the data set to be visualized (starting with 0). When using
             text, this will refer to the name of the data type for the data set
             to be displayed.
-        viewport_: Text for the name of the Rhino viewport to which the 2D screen-oriented
-            legend will be rendered. If unspecified, the 2D legend will be rendered
-            in all viewports. Acceptable inputs include:
+        viewport_: Text for the name of the Rhino viewport in which the VisualizationSet
+            will be rendered. Multiple viewports can be connected to have the
+            VisualizationSet display in several viewports. If unspecified, the
+            VisualizationSet is rendered in all viewports. Acceptable inputs include:
                 -
                 Perspective
                 Top
@@ -73,7 +74,7 @@ class MyComponent(component):
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_, viewport_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.9.3'
+        ghenv.Component.Message = '1.9.4'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'

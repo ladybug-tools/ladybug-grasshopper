@@ -27,7 +27,8 @@ always be displayed on-screen.
         _color_: An optional color to set the color of the text. If unspecified,
             it will be black.
         viewport_: Text for the name of the Rhino viewport to which the 2D screen-oriented
-            legend will be rendered. If unspecified, the 2D legend will be rendered
+            text will be rendered. Multiple viewports can be connected to have the
+            text display in several viewports. If unspecified, the text is rendered
             in all viewports. Acceptable inputs include:
                 -
                 Perspective
@@ -51,12 +52,12 @@ class MyComponent(component):
     def __init__(self):
         super(MyComponent,self).__init__()
         self.text_2d_args = None
-        self.viewport = None
+        self.viewport = ()
     
     def RunScript(self, _text, leg_par2d_, _font_, _color_, viewport_):
         ghenv.Component.Name = 'LB Screen Oriented Text'
         ghenv.Component.NickName = 'Text2D'
-        ghenv.Component.Message = '1.9.1'
+        ghenv.Component.Message = '1.9.2'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '2'
@@ -97,10 +98,10 @@ class MyComponent(component):
                 d_args = (
                     txt, _color_, rg.Point2d(or_x,or_y), False, _height, _font)
                 self.text_2d_args.append(d_args)
-            self.viewport = viewport_
+            self.viewport = tuple(vp.lower() for vp in viewport_)
         else:
             self.text_2d_args = None
-            self.viewport = None
+            self.viewport = ()
     
     def DrawViewportWires(self, args):
         try:
@@ -108,8 +109,8 @@ class MyComponent(component):
                 # get the DisplayPipeline from the event arguments
                 display = args.Display
                 # render the 2D text from the arguments
-                if self.viewport is None or \
-                        self.viewport.lower() == args.Viewport.Name.lower():
+                if len(self.viewport) == 0 or \
+                        args.Viewport.Name.lower() in self.viewport:
                     for draw_args in self.text_2d_args:
                         display.Draw2dText(*draw_args)
         except Exception, e:
