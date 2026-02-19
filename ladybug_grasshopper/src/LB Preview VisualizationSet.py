@@ -74,7 +74,7 @@ class MyComponent(component):
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_, viewport_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.9.4'
+        ghenv.Component.Message = '1.9.5'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -193,6 +193,8 @@ class MyComponent(component):
     
     def DrawViewportWires(self, args):
         try:
+            if ghenv.Component.Locked:
+                return
             if self.vis_con is not None:
                 if len(self.viewport)== 0 or args.Viewport.Name.lower() in self.viewport:
                     # get the DisplayPipeline from the event arguments
