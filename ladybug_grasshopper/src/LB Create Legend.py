@@ -1,7 +1,7 @@
 # Ladybug: A Plugin for Environmental Analysis (GPL)
 # This file is part of Ladybug.
 #
-# Copyright (c) 2025, Ladybug Tools.
+# Copyright (c) 2026, Ladybug Tools.
 # You should have received a copy of the GNU Affero General Public License
 # along with Ladybug; If not, see <http://www.gnu.org/licenses/>.
 # 
@@ -72,7 +72,7 @@ class MyComponent(component):
     def RunScript(self, _values, _base_plane_, title_, legend_par_, leg_par2d_, viewport_):
         ghenv.Component.Name = "LB Create Legend"
         ghenv.Component.NickName = 'CreateLegend'
-        ghenv.Component.Message = '1.9.2'
+        ghenv.Component.Message = '1.10.0'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '0'

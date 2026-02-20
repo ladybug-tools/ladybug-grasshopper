@@ -1,7 +1,7 @@
 # Ladybug: A Plugin for Environmental Analysis (GPL)
 # This file is part of Ladybug.
 #
-# Copyright (c) 2025, Ladybug Tools.
+# Copyright (c) 2026, Ladybug Tools.
 # You should have received a copy of the GNU Affero General Public License
 # along with Ladybug; If not, see <http://www.gnu.org/licenses/>.
 # 
@@ -74,7 +74,7 @@ class MyComponent(component):
     def RunScript(self, _vis_set, legend_par_, leg_par2d_, data_set_, viewport_):
         ghenv.Component.Name = 'LB Preview VisualizationSet'
         ghenv.Component.NickName = 'VisSet'
-        ghenv.Component.Message = '1.9.5'
+        ghenv.Component.Message = '1.10.0'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '1'
