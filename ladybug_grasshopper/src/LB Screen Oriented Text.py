@@ -1,7 +1,7 @@
 # Ladybug: A Plugin for Environmental Analysis (GPL)
 # This file is part of Ladybug.
 #
-# Copyright (c) 2025, Ladybug Tools.
+# Copyright (c) 2026, Ladybug Tools.
 # You should have received a copy of the GNU Affero General Public License
 # along with Ladybug; If not, see <http://www.gnu.org/licenses/>.
 # 
@@ -57,7 +57,7 @@ class MyComponent(component):
     def RunScript(self, _text, leg_par2d_, _font_, _color_, viewport_):
         ghenv.Component.Name = 'LB Screen Oriented Text'
         ghenv.Component.NickName = 'Text2D'
-        ghenv.Component.Message = '1.9.3'
+        ghenv.Component.Message = '1.10.0'
         ghenv.Component.Category = 'Ladybug'
         ghenv.Component.SubCategory = '4 :: Extra'
         ghenv.Component.AdditionalHelpFromDocStrings = '2'

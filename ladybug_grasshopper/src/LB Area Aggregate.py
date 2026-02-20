@@ -1,7 +1,7 @@
 # Ladybug: A Plugin for Environmental Analysis (GPL)
 # This file is part of Ladybug.
 #
-# Copyright (c) 2025, Ladybug Tools.
+# Copyright (c) 2026, Ladybug Tools.
 # You should have received a copy of the GNU Affero General Public License
 # along with Ladybug; If not, see <http://www.gnu.org/licenses/>.
 # 
@@ -26,7 +26,7 @@ of the data collection is not normalizable to yeild a useful type.
 
 ghenv.Component.Name = 'LB Area Aggregate'
 ghenv.Component.NickName = 'AreaAgg'
-ghenv.Component.Message = '1.9.0'
+ghenv.Component.Message = '1.10.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '0'
