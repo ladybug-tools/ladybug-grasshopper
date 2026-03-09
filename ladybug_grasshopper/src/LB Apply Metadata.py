@@ -8,28 +8,33 @@
 # @license AGPL-3.0-or-later <https://spdx.org/licenses/AGPL-3.0-or-later>
 
 """
-Set or override metadata for a Ladybug data collection.
+Apply metadata to a Ladybug data collection.
 -
 
     Args:
         _data: A Ladybug data collection object or a list of data collections.
-        _metadata_: Optional metadata to be associated with the Header. The input 
-            should be a list of text strings with a property name and value for 
+        _metadata_: Optional metadata to be associated with the Header. The input
+            should be a list of text strings with a property name and value for
             the property separated by a colon. For example:
             _
             .    source: TMY
             .    city: New York
             .    country: USA
             _
-            If provided, it will replace the current metadata.
-            If not provided, the original metadata will be preserved.
-            Note: 
-                * Keys 'Zone', 'Surface', and 'System' will have their values 
-                  converted to uppercase. These keys are used for data matching 
-                  and will not appear in chart titles. 
+            By default, the connected metadata will be merged with the existing
+            metadata on the data collection. If the same key exists in both
+            places, the new value will overwrite the old one.
+            Note:
+                * Keys 'Zone', 'Surface', and 'System' will have their values
+                  converted to uppercase in order to align with downstream object-
+                  matching workflows.
                 * Key 'type' will modify the legend name in LB Monthly Chart,
-                  which is helpful when comparing multiple data collections 
+                  which is helpful when comparing multiple data collections
                   of the same type.
+        override_: Boolean to note whether the existing metadata should be
+            overwritten instead of merged. If True, only the connected metadata
+            will remain on the output data collection. If no _metadata_ is
+            connected, this input can be used to clear all existing metadata.
 
     Returns:
         data: The data collection with the metadata applied to it.
@@ -40,7 +45,7 @@ ghenv.Component.NickName = 'ApplyMeta'
 ghenv.Component.Message = '1.10.0'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '1 :: Analyze Data'
-ghenv.Component.AdditionalHelpFromDocStrings = '2'
+ghenv.Component.AdditionalHelpFromDocStrings = '0'
 
 try:
     from ladybug.datacollection import BaseCollection
@@ -53,26 +58,20 @@ except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
 
 
-# Clear outputs at the beginning to ensure fresh data
-data = None
-
-
 def parse_metadata_single(metadata_input):
     """Parse a single metadata input into a dictionary."""
     if metadata_input is None:
         return {}
-    
-    # If already a dictionary, return as is
+
     if isinstance(metadata_input, dict):
         return metadata_input.copy()
-    
-    # If a string, try to parse as JSON or key:value pairs
+
     if isinstance(metadata_input, str):
         try:
             import json
-            return json.loads(metadata_input)
+            parsed = json.loads(metadata_input)
+            return parsed if isinstance(parsed, dict) else {}
         except ValueError:
-            # Try parsing as key:value,key:value format
             result = {}
             pairs = metadata_input.split(',')
             for pair in pairs:
@@ -80,43 +79,30 @@ def parse_metadata_single(metadata_input):
                     key, value = pair.split(':', 1)
                     result[key.strip()] = value.strip()
             return result
-    
+
     return {}
 
 
 def parse_metadata(metadata_input):
-    """Parse metadata input, handling both single and multiple entries."""
+    """Parse metadata input into a single dictionary."""
     if metadata_input is None:
         return None
-    
-    # Check if it's a DataTree with multiple branches
-    if hasattr(metadata_input, 'BranchCount'):
-        # Merge all branches into a single dictionary
-        merged_metadata = {}
-        for branch in metadata_input.Branches:
-            for item in branch:
-                item_dict = parse_metadata_single(item)
-                merged_metadata.update(item_dict)
-        return merged_metadata if merged_metadata else None
-    
-    # Check if it's a list/tuple of metadata
+
     if isinstance(metadata_input, (list, tuple)):
         merged_metadata = {}
         for item in metadata_input:
             item_dict = parse_metadata_single(item)
             merged_metadata.update(item_dict)
         return merged_metadata if merged_metadata else None
-    
-    # Single metadata entry
+
     return parse_metadata_single(metadata_input)
 
 
 def process_special_keys(metadata):
-    """Process special keys: convert to uppercase and add display keys."""
-    # Keys that need uppercase conversion
+    """Uppercase keys used for downstream object matching."""
+    metadata = metadata.copy()
     uppercase_keys = ('Zone', 'Surface', 'System')
-    
-    # Convert to uppercase
+
     for key in uppercase_keys:
         if key in metadata:
             value = metadata[key]
@@ -124,46 +110,37 @@ def process_special_keys(metadata):
                 metadata[key] = value.upper()
             elif isinstance(value, list):
                 metadata[key] = [v.upper() if isinstance(v, str) else v for v in value]
-    
-    # Add display keys for excluded keys so they appear in charts
-    # Zone -> Room (for display)
-    if 'Zone' in metadata and 'Room' not in metadata:
-        metadata['Room'] = metadata['Zone']
-    
-    # Surface -> Face (for display)
-    if 'Surface' in metadata and 'Face' not in metadata:
-        metadata['Face'] = metadata['Surface']
-    
+
     return metadata
 
 
-def process_data_collection(data_collection, new_metadata):
+def process_data_collection(data_collection, new_metadata, override):
     """Process a single data collection and apply metadata."""
-    # Create a duplicate to avoid mutating the original
     new_collection = data_collection.duplicate()
-    
-    # Only apply metadata if provided
-    if new_metadata is not None and new_metadata:
-        # Process special keys
+
+    if new_metadata is not None:
         new_metadata = process_special_keys(new_metadata)
-        # Set metadata
-        new_collection.header.metadata = new_metadata
-    
+        if override:
+            new_collection.header.metadata = new_metadata
+        else:
+            metadata = new_collection.header.metadata.copy()
+            metadata.update(new_metadata)
+            new_collection.header.metadata = metadata
+    elif override:
+        new_collection.header.metadata = {}
+
     return new_collection
 
 
 if all_required_inputs(ghenv.Component):
-    # Parse metadata input (handles both single and multiple entries)
-    meta_dict = parse_metadata(_metadata_) if '_metadata_' in globals() else None
-    
-    # Process single data collection or list of collections
+    meta_dict = parse_metadata(_metadata_)
+    override_ = False if override_ is None else override_
+
     if isinstance(_data, BaseCollection):
-        # Single data collection
-        data = process_data_collection(_data, meta_dict)
+        data = process_data_collection(_data, meta_dict, override_)
     else:
-        # List of data collections
         try:
-            data = [process_data_collection(d, meta_dict) for d in _data]
+            data = [process_data_collection(d, meta_dict, override_) for d in _data]
         except TypeError:
             raise TypeError('_data must be a Data Collection or a list of Data '
                           'Collections. Got {}.'.format(type(_data)))

@@ -1,36 +1,43 @@
 {
-  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\n# Clear outputs at the beginning to ensure fresh data\ndata = None\n\n\ndef parse_metadata_single(metadata_input):\n    \"\"\"Parse a single metadata input into a dictionary.\"\"\"\n    if metadata_input is None:\n        return {}\n    \n    # If already a dictionary, return as is\n    if isinstance(metadata_input, dict):\n        return metadata_input.copy()\n    \n    # If a string, try to parse as JSON or key:value pairs\n    if isinstance(metadata_input, str):\n        try:\n            import json\n            return json.loads(metadata_input)\n        except ValueError:\n            # Try parsing as key:value,key:value format\n            result = {}\n            pairs = metadata_input.split(',')\n            for pair in pairs:\n                if ':' in pair:\n                    key, value = pair.split(':', 1)\n                    result[key.strip()] = value.strip()\n            return result\n    \n    return {}\n\n\ndef parse_metadata(metadata_input):\n    \"\"\"Parse metadata input, handling both single and multiple entries.\"\"\"\n    if metadata_input is None:\n        return None\n    \n    # Check if it's a DataTree with multiple branches\n    if hasattr(metadata_input, 'BranchCount'):\n        # Merge all branches into a single dictionary\n        merged_metadata = {}\n        for branch in metadata_input.Branches:\n            for item in branch:\n                item_dict = parse_metadata_single(item)\n                merged_metadata.update(item_dict)\n        return merged_metadata if merged_metadata else None\n    \n    # Check if it's a list/tuple of metadata\n    if isinstance(metadata_input, (list, tuple)):\n        merged_metadata = {}\n        for item in metadata_input:\n            item_dict = parse_metadata_single(item)\n            merged_metadata.update(item_dict)\n        return merged_metadata if merged_metadata else None\n    \n    # Single metadata entry\n    return parse_metadata_single(metadata_input)\n\n\ndef process_special_keys(metadata):\n    \"\"\"Process special keys: convert to uppercase and add display keys.\"\"\"\n    # Keys that need uppercase conversion\n    uppercase_keys = ('Zone', 'Surface', 'System')\n    \n    # Convert to uppercase\n    for key in uppercase_keys:\n        if key in metadata:\n            value = metadata[key]\n            if isinstance(value, str):\n                metadata[key] = value.upper()\n            elif isinstance(value, list):\n                metadata[key] = [v.upper() if isinstance(v, str) else v for v in value]\n    \n    # Add display keys for excluded keys so they appear in charts\n    # Zone -> Room (for display)\n    if 'Zone' in metadata and 'Room' not in metadata:\n        metadata['Room'] = metadata['Zone']\n    \n    # Surface -> Face (for display)\n    if 'Surface' in metadata and 'Face' not in metadata:\n        metadata['Face'] = metadata['Surface']\n    \n    return metadata\n\n\ndef process_data_collection(data_collection, new_metadata):\n    \"\"\"Process a single data collection and apply metadata.\"\"\"\n    # Create a duplicate to avoid mutating the original\n    new_collection = data_collection.duplicate()\n    \n    # Only apply metadata if provided\n    if new_metadata is not None and new_metadata:\n        # Process special keys\n        new_metadata = process_special_keys(new_metadata)\n        # Set metadata\n        new_collection.header.metadata = new_metadata\n    \n    return new_collection\n\n\nif all_required_inputs(ghenv.Component):\n    # Parse metadata input (handles both single and multiple entries)\n    meta_dict = parse_metadata(_metadata_) if '_metadata_' in globals() else None\n    \n    # Process single data collection or list of collections\n    if isinstance(_data, BaseCollection):\n        # Single data collection\n        data = process_data_collection(_data, meta_dict)\n    else:\n        # List of data collections\n        try:\n            data = [process_data_collection(d, meta_dict) for d in _data]\n        except TypeError:\n            raise TypeError('_data must be a Data Collection or a list of Data '\n                          'Collections. Got {}.'.format(type(_data)))", 
-  "category": "Ladybug", 
+  "description": "Apply metadata to a Ladybug data collection.\n-", 
   "subcategory": "1 :: Analyze Data", 
-  "inputs": [
-    {
-      "type": "System.Object", 
-      "description": "A Ladybug data collection object or a list of data collections.", 
-      "default": null, 
-      "name": "_data", 
-      "access": "item"
-    }, 
-    {
-      "type": "System.Object", 
-      "description": "Optional metadata to be associated with the Header. The input \nshould be a list of text strings with a property name and value for\nthe property separated by a colon. For example:\n_\n.    source: TMY\n.    city: New York\n.    country: USA\n_\nIf provided, it will replace the current metadata.\nIf not provided, the original metadata will be preserved.", 
-      "default": null, 
-      "name": "_metadata_", 
-      "access": "list"
-    }
-  ], 
-  "description": "Set or override metadata for a Ladybug data collection.\n-", 
   "outputs": [
     [
       {
-        "type": null, 
-        "description": "The data collection with the metadata applied to it.", 
-        "default": null, 
         "name": "data", 
+        "type": null, 
+        "default": null, 
+        "description": "The data collection with the metadata applied to it.", 
         "access": "None"
       }
     ]
   ], 
+  "category": "Ladybug", 
   "version": "1.10.0", 
+  "code": "\ntry:\n    from ladybug.datacollection import BaseCollection\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef parse_metadata_single(metadata_input):\n    \"\"\"Parse a single metadata input into a dictionary.\"\"\"\n    if metadata_input is None:\n        return {}\n\n    if isinstance(metadata_input, dict):\n        return metadata_input.copy()\n\n    if isinstance(metadata_input, str):\n        try:\n            import json\n            parsed = json.loads(metadata_input)\n            return parsed if isinstance(parsed, dict) else {}\n        except ValueError:\n            result = {}\n            pairs = metadata_input.split(',')\n            for pair in pairs:\n                if ':' in pair:\n                    key, value = pair.split(':', 1)\n                    result[key.strip()] = value.strip()\n            return result\n\n    return {}\n\n\ndef parse_metadata(metadata_input):\n    \"\"\"Parse metadata input into a single dictionary.\"\"\"\n    if metadata_input is None:\n        return None\n\n    if isinstance(metadata_input, (list, tuple)):\n        merged_metadata = {}\n        for item in metadata_input:\n            item_dict = parse_metadata_single(item)\n            merged_metadata.update(item_dict)\n        return merged_metadata if merged_metadata else None\n\n    return parse_metadata_single(metadata_input)\n\n\ndef process_special_keys(metadata):\n    \"\"\"Uppercase keys used for downstream object matching.\"\"\"\n    metadata = metadata.copy()\n    uppercase_keys = ('Zone', 'Surface', 'System')\n\n    for key in uppercase_keys:\n        if key in metadata:\n            value = metadata[key]\n            if isinstance(value, str):\n                metadata[key] = value.upper()\n            elif isinstance(value, list):\n                metadata[key] = [v.upper() if isinstance(v, str) else v for v in value]\n\n    return metadata\n\n\ndef process_data_collection(data_collection, new_metadata, override):\n    \"\"\"Process a single data collection and apply metadata.\"\"\"\n    new_collection = data_collection.duplicate()\n\n    if new_metadata is not None:\n        new_metadata = process_special_keys(new_metadata)\n        if override:\n            new_collection.header.metadata = new_metadata\n        else:\n            metadata = new_collection.header.metadata.copy()\n            metadata.update(new_metadata)\n            new_collection.header.metadata = metadata\n    elif override:\n        new_collection.header.metadata = {}\n\n    return new_collection\n\n\nif all_required_inputs(ghenv.Component):\n    meta_dict = parse_metadata(_metadata_)\n    override_ = False if override_ is None else override_\n\n    if isinstance(_data, BaseCollection):\n        data = process_data_collection(_data, meta_dict, override_)\n    else:\n        try:\n            data = [process_data_collection(d, meta_dict, override_) for d in _data]\n        except TypeError:\n            raise TypeError('_data must be a Data Collection or a list of Data '\n                          'Collections. Got {}.'.format(type(_data)))", 
+  "inputs": [
+    {
+      "name": "_data", 
+      "type": "System.Object", 
+      "default": null, 
+      "description": "A Ladybug data collection object or a list of data collections.", 
+      "access": "item"
+    }, 
+    {
+      "name": "_metadata_", 
+      "type": "System.Object", 
+      "default": null, 
+      "description": "Optional metadata to be associated with the Header. The input\nshould be a list of text strings with a property name and value for\nthe property separated by a colon. For example:\n_\n.    source: TMY\n.    city: New York\n.    country: USA\n_\nBy default, the connected metadata will be merged with the existing\nmetadata on the data collection. If the same key exists in both\nplaces, the new value will overwrite the old one.", 
+      "access": "list"
+    }, 
+    {
+      "name": "override_", 
+      "type": "System.Object", 
+      "default": null, 
+      "description": "Boolean to note whether the existing metadata should be\noverwritten instead of merged. If True, only the connected metadata\nwill remain on the output data collection. If no _metadata_ is\nconnected, this input can be used to clear all existing metadata.", 
+      "access": "item"
+    }
+  ], 
   "name": "LB Apply Metadata", 
   "nickname": "ApplyMeta"
 }
