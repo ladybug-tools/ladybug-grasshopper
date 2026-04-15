@@ -16,8 +16,10 @@ Create a colored plot of any hourly data collection.
             which will be used to generate the hourly plot.
         _base_pt_: An optional Point3D to be used as a starting point to generate
             the geometry of the plot (Default: (0, 0, 0)).
-        _x_dim_: A number to set the X dimension of the mesh cells (Default: 1 meters).
-        _y_dim_: A number to set the Y dimension of the mesh cells (Default: 4 meters).
+        _x_dim_: A number to set the X dimension of the mesh cells. (Default: 1 meters).
+        _y_dim_: A number to set the Y dimension of the mesh cells. (Default: 4 meters,
+            unless a fine timestep collection is connected, in which case
+            4.0 meters / timestep is used).
         _z_dim_: A number to set the Z dimension of the entire chart. This will
             be used to make the colored_mesh3d of the chart vary in the Z
             dimension according to the data. The value input here should usually be
@@ -64,7 +66,7 @@ Create a colored plot of any hourly data collection.
 
 ghenv.Component.Name = "LB Hourly Plot"
 ghenv.Component.NickName = 'HourlyPlot'
-ghenv.Component.Message = '1.10.0'
+ghenv.Component.Message = '1.10.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
@@ -104,10 +106,13 @@ if all_required_inputs(ghenv.Component):
 
     # set default values for the chart dimensions
     _base_pt_ = to_point3d(_base_pt_) if _base_pt_ is not None else Point3D()
-    _x_dim_ = _x_dim_ if _x_dim_ is not None else 1.0 / conversion_to_meters()
-    _y_dim_ = _y_dim_ if _y_dim_ is not None else 4.0 / conversion_to_meters()
-    _z_dim_ = _z_dim_ if _z_dim_ is not None else 0
     reverse_y_ = reverse_y_ if reverse_y_ is not None else False
+    _z_dim_ = _z_dim_ if _z_dim_ is not None else 0
+    _x_dim_ = _x_dim_ if _x_dim_ is not None else 1.0 / conversion_to_meters()
+    if _y_dim_ is None:
+        t_step = _data[0].header.analysis_period.timestep
+        _y_dim_ = 4.0 / conversion_to_meters() \
+            if t_step == 1 else (4 / t_step) / conversion_to_meters()
 
     # empty lists of objects to be filled with visuals
     mesh, title, all_legends, all_borders, all_labels, vis_set = [], [], [], [], [], []
