@@ -55,6 +55,9 @@ https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
             27 - Cividis (colorblind friendly)
             28 - Viridis (colorblind friendly)
             29 - Parula (colorblind friendly)
+        opacity_: An optional number between zero (fully transparent) and one
+            (fully opaque) for the opacity of colors in the color
+            range. (Default: 1).
 
     Returns:
         colors: A series of colors to be plugged into the "LB Legend Parameters"
@@ -63,18 +66,18 @@ https://github.com/ladybug-tools/lbt-grasshopper/blob/master/gradients.png
 
 ghenv.Component.Name = 'LB Color Range'
 ghenv.Component.NickName = 'ColRange'
-ghenv.Component.Message = '1.10.0'
+ghenv.Component.Message = '1.10.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '4 :: Extra'
 ghenv.Component.AdditionalHelpFromDocStrings = '1'
 
 try:
-    from ladybug.color import Colorset
+    from ladybug.color import Colorset, Color
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug:\n\t{}'.format(e))
 
 try:
-    from ladybug_rhino.color import color_to_color
+    from ladybug_rhino.color import argb_color_to_color
     from ladybug_rhino.grasshopper import turn_off_old_tag
 except ImportError as e:
     raise ImportError('\nFailed to import ladybug_rhino:\n\t{}'.format(e))
@@ -82,5 +85,8 @@ turn_off_old_tag(ghenv.Component)
 
 
 _index_ = _index_ or 0
-cs = Colorset()
-colors = [color_to_color(col) for col in cs[_index_]]
+cs = Colorset()[_index_]
+if opacity_ is not None and 0 <= opacity_ <= 1:
+    opacity = int(255 * opacity_)
+    cs = [Color(c.r, c.g, c.b, opacity) for c in cs]
+colors = [argb_color_to_color(col) for col in cs]
