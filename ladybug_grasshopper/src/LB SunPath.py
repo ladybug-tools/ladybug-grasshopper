@@ -39,6 +39,8 @@ analysis and shading design.
             instead of a 2D one. (Default: None) Choose from the following:
                 * Orthographic
                 * Stereographic
+                * Equidistant
+                * Equisolid
         daily_: Boolean to note whether the sunpath should display only one daily
             arc for each unique day in the input hoys_ (True) or whether the
             output sun path geometry should be for the entire year, complete
@@ -98,7 +100,7 @@ analysis and shading design.
 
 ghenv.Component.Name = 'LB SunPath'
 ghenv.Component.NickName = 'Sunpath'
-ghenv.Component.Message = '1.10.0'
+ghenv.Component.Message = '1.10.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'

@@ -1,120 +1,120 @@
 {
-  "version": "1.10.0", 
   "nickname": "SkyDome", 
-  "outputs": [
-    [
-      {
-        "access": "None", 
-        "name": "mesh", 
-        "description": "A colored mesh representing the intensity of radiation for each of\nthe sky patches within the sky dome.", 
-        "type": null, 
-        "default": null
-      }, 
-      {
-        "access": "None", 
-        "name": "compass", 
-        "description": "A set of circles, lines and text objects that mark the cardinal\ndirections in relation to the sky dome.", 
-        "type": null, 
-        "default": null
-      }, 
-      {
-        "access": "None", 
-        "name": "legend", 
-        "description": "A legend showing the kWh/m2 or W/m2 values that correspond to the colors\nof the mesh.", 
-        "type": null, 
-        "default": null
-      }, 
-      {
-        "access": "None", 
-        "name": "title", 
-        "description": "A text object for the title of the sky dome.", 
-        "type": null, 
-        "default": null
-      }, 
-      {
-        "access": "None", 
-        "name": "patch_vecs", 
-        "description": "A list of vectors for each of the patches of the sky dome.\nAll vectors are unit vectors and point from the center towards each\nof the patches. They can be used to construct visualizations of the\nrays used to perform radiation analysis.", 
-        "type": null, 
-        "default": null
-      }, 
-      {
-        "access": "None", 
-        "name": "patch_values", 
-        "description": "Radiation values for each of the sky patches in kWh/m2 or W/m2.\nThis will be one list if show_comp_ is \"False\" and a list of 3\nlists (aka. a Data Tree) for total, direct, diffuse if show_comp_\nis \"True\".", 
-        "type": null, 
-        "default": null
-      }, 
-      {
-        "access": "None", 
-        "name": "mesh_values", 
-        "description": "Radiation values for each face of the dome mesh in kWh/m2. This\ncan be used to post-process the radiation data and then regenerate\nthe dome visualization using the mesh output from this component\nand the \"LB Spatial Heatmap\" component. Examples of useful post-\nprocessing include converting the units to something other than\nkWh/m2, inverting the +/- sign of radiation values depending on\nwhether radiation is helpful or harmful to building thermal loads,\netc. This will be one list if show_comp_ is \"False\" and a list of\n3 lists (aka. a Data Tree) for total, direct, diffuse if show_comp_\nis \"True\".", 
-        "type": null, 
-        "default": null
-      }, 
-      {
-        "access": "None", 
-        "name": "vis_set", 
-        "description": "An object containing VisualizationSet arguments for drawing a detailed\nversion of the Sky Dome in the Rhino scene. This can be connected to\nthe \"LB Preview Visualization Set\" component to display this version\nof the Sky Dome in Rhino.", 
-        "type": null, 
-        "default": null
-      }
-    ]
-  ], 
+  "description": "Visualize a sky matrix from the \"LB Cumulative Sky Matrix\" component as a colored\ndome, subdivided into patches with a radiation value for each patch.\n-", 
   "inputs": [
     {
-      "access": "item", 
-      "name": "_sky_mtx", 
       "description": "A Sky Matrix from the \"LB Cumulative Sky Matrix\" component or the\n\"LB Benefit Sky Matrix\" component, which describes the radiation\ncoming from the various patches of the sky.", 
-      "type": "System.Object", 
-      "default": null
+      "name": "_sky_mtx", 
+      "default": null, 
+      "access": "item", 
+      "type": "System.Object"
     }, 
     {
-      "access": "item", 
-      "name": "_center_pt_", 
       "description": "A point for the center of the dome. (Default: (0, 0, 0))", 
-      "type": "Point3d", 
-      "default": null
+      "name": "_center_pt_", 
+      "default": null, 
+      "access": "item", 
+      "type": "Point3d"
     }, 
     {
-      "access": "item", 
-      "name": "_scale_", 
       "description": "A number to set the scale of the sky dome. The default is 1,\nwhich corresponds to a radius of 100 meters in the current Rhino\nmodel's unit system.", 
-      "type": "double", 
-      "default": null
+      "name": "_scale_", 
+      "default": null, 
+      "access": "item", 
+      "type": "double"
     }, 
     {
-      "access": "item", 
+      "description": "Optional text for the name of a projection to use from the sky\ndome hemisphere to the 2D plane. If None, a 3D sky dome will be drawn\ninstead of a 2D one. (Default: None) Choose from the following:\n* Orthographic\n* Stereographic\n* Equidistant\n* Equisolid", 
       "name": "projection_", 
-      "description": "Optional text for the name of a projection to use from the sky\ndome hemisphere to the 2D plane. If None, a 3D sky dome will be drawn\ninstead of a 2D one. (Default: None) Choose from the following:\n* Orthographic\n* Stereographic", 
-      "type": "string", 
-      "default": null
+      "default": null, 
+      "access": "item", 
+      "type": "string"
     }, 
     {
-      "access": "item", 
-      "name": "irradiance_", 
       "description": "Boolean to note whether the sky dome should be plotted with units of\ncumulative Radiation (kWh/m2) [False] or with units of average\nIrradiance (W/m2) [True]. (Default: False).", 
-      "type": "bool", 
-      "default": null
+      "name": "irradiance_", 
+      "default": null, 
+      "access": "item", 
+      "type": "bool"
     }, 
     {
-      "access": "item", 
-      "name": "show_comp_", 
       "description": "Boolean to indicate whether only one dome with total radiation\nshould be displayed (False) or three domes with the solar radiation\ncomponents (total, direct, and diffuse) should be shown. (Default: False).", 
-      "type": "bool", 
-      "default": null
+      "name": "show_comp_", 
+      "default": null, 
+      "access": "item", 
+      "type": "bool"
     }, 
     {
-      "access": "item", 
-      "name": "legend_par_", 
       "description": "An optional LegendParameter object to change the display of the\nsky dome (Default: None).", 
-      "type": "System.Object", 
-      "default": null
+      "name": "legend_par_", 
+      "default": null, 
+      "access": "item", 
+      "type": "System.Object"
     }
   ], 
   "subcategory": "2 :: Visualize Data", 
+  "name": "LB Sky Dome", 
   "code": "\ntry:\n    from ladybug_geometry.geometry3d.pointvector import Point3D\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_geometry:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_radiance.visualize.skydome import SkyDome\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_radiance:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import conversion_to_meters\n    from ladybug_{{cad}}.togeometry import to_point3d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_vector3d\n    from ladybug_{{cad}}.fromobjects import legend_objects, compass_objects\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, \\\n        objectify_output, list_to_data_tree\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\ndef translate_dome(lb_mesh, lb_compass, graphic, title_txt, values):\n    \"\"\"Translate sky dome geometry into a format suitable for {{Cad}}.\n\n    Args:\n        lb_mesh: A ladybug Mesh3D for the dome.\n        lb_compass: A ladybug Compass object.\n        graphic: A GraphicContainer for the dome.\n        title_txt: Text for title of the dome.\n        values: A list of radiation values that align with the dome_mesh faces.\n\n    Returns:\n        dome_mesh: A {{Cad}} colored mesh for the dome.\n        dome_compass: {{Cad}} objects for the dome compass.\n        dome_legend:  {{Cad}} objects for the dome legend.\n        dome_title: A bake-able title for the dome.\n        values: A list of radiation values that align with the dome_mesh faces.\n    \"\"\"\n    # translate the dome visualization, including legend and compass\n    dome_mesh = from_mesh3d(lb_mesh)\n    dome_legend = legend_objects(graphic.legend)\n    dome_compass = compass_objects(\n        lb_compass, z, None, sky_dome.projection, graphic.legend_parameters.font)\n\n    # construct a title from the metadata\n    dome_title = text_objects(title_txt, graphic.lower_title_location,\n                              graphic.legend_parameters.text_height,\n                              graphic.legend_parameters.font)\n\n    return dome_mesh, dome_compass, dome_legend, dome_title, values\n\n\nif all_required_inputs(ghenv.Component):\n    # set defaults for global variables\n    _scale_ = 1 if _scale_ is None else _scale_\n    radius = (100 * _scale_) / conversion_to_meters()\n    if _center_pt_ is not None:  # process the center point\n        center_pt3d = to_point3d(_center_pt_)\n        z = center_pt3d.z\n    else:\n        center_pt3d, z = Point3D(), 0\n\n    # create the SkyDome object\n    sky_dome = SkyDome(_sky_mtx, legend_par_, irradiance_,\n                       center_pt3d, radius, projection_)\n\n    # output patch patch vectors\n    patch_vecs = [from_vector3d(vec) for vec in sky_dome.patch_vectors]\n\n    # create the dome visualization\n    if not show_comp_:  # only create the total dome mesh\n        mesh, compass, legend, title, mesh_values = translate_dome(*sky_dome.draw())\n        patch_values = sky_dome.total_values\n    else:  # create domes for total, direct and diffuse\n        # loop through the 3 radiation types and produce a dome\n        mesh, compass, legend, title, mesh_values = [], [], [], [], []\n        rad_types = ('total', 'direct', 'diffuse')\n        for dome_i in range(3):\n            cent_pt = Point3D(center_pt3d.x + radius * 3 * dome_i,\n                              center_pt3d.y, center_pt3d.z)\n            dome_mesh, dome_compass, dome_legend, dome_title, dome_values = \\\n                translate_dome(*sky_dome.draw(rad_types[dome_i], cent_pt))\n            mesh.append(dome_mesh)\n            compass.extend(dome_compass)\n            legend.extend(dome_legend)\n            title.append(dome_title)\n            mesh_values.append(dome_values)\n        rad_data = (sky_dome.total_values, sky_dome.direct_values, sky_dome.diffuse_values)\n        patch_values = list_to_data_tree(rad_data)\n        mesh_values = list_to_data_tree(mesh_values)\n\n    # output the visualization set\n    vis_set = [sky_dome, show_comp_]\n    vis_set = objectify_output('VisualizationSet Aruments [SkyDome]', vis_set)\n", 
   "category": "Ladybug", 
-  "name": "LB Sky Dome", 
-  "description": "Visualize a sky matrix from the \"LB Cumulative Sky Matrix\" component as a colored\ndome, subdivided into patches with a radiation value for each patch.\n-"
+  "outputs": [
+    [
+      {
+        "description": "A colored mesh representing the intensity of radiation for each of\nthe sky patches within the sky dome.", 
+        "name": "mesh", 
+        "default": null, 
+        "access": "None", 
+        "type": null
+      }, 
+      {
+        "description": "A set of circles, lines and text objects that mark the cardinal\ndirections in relation to the sky dome.", 
+        "name": "compass", 
+        "default": null, 
+        "access": "None", 
+        "type": null
+      }, 
+      {
+        "description": "A legend showing the kWh/m2 or W/m2 values that correspond to the colors\nof the mesh.", 
+        "name": "legend", 
+        "default": null, 
+        "access": "None", 
+        "type": null
+      }, 
+      {
+        "description": "A text object for the title of the sky dome.", 
+        "name": "title", 
+        "default": null, 
+        "access": "None", 
+        "type": null
+      }, 
+      {
+        "description": "A list of vectors for each of the patches of the sky dome.\nAll vectors are unit vectors and point from the center towards each\nof the patches. They can be used to construct visualizations of the\nrays used to perform radiation analysis.", 
+        "name": "patch_vecs", 
+        "default": null, 
+        "access": "None", 
+        "type": null
+      }, 
+      {
+        "description": "Radiation values for each of the sky patches in kWh/m2 or W/m2.\nThis will be one list if show_comp_ is \"False\" and a list of 3\nlists (aka. a Data Tree) for total, direct, diffuse if show_comp_\nis \"True\".", 
+        "name": "patch_values", 
+        "default": null, 
+        "access": "None", 
+        "type": null
+      }, 
+      {
+        "description": "Radiation values for each face of the dome mesh in kWh/m2. This\ncan be used to post-process the radiation data and then regenerate\nthe dome visualization using the mesh output from this component\nand the \"LB Spatial Heatmap\" component. Examples of useful post-\nprocessing include converting the units to something other than\nkWh/m2, inverting the +/- sign of radiation values depending on\nwhether radiation is helpful or harmful to building thermal loads,\netc. This will be one list if show_comp_ is \"False\" and a list of\n3 lists (aka. a Data Tree) for total, direct, diffuse if show_comp_\nis \"True\".", 
+        "name": "mesh_values", 
+        "default": null, 
+        "access": "None", 
+        "type": null
+      }, 
+      {
+        "description": "An object containing VisualizationSet arguments for drawing a detailed\nversion of the Sky Dome in the Rhino scene. This can be connected to\nthe \"LB Preview Visualization Set\" component to display this version\nof the Sky Dome in Rhino.", 
+        "name": "vis_set", 
+        "default": null, 
+        "access": "None", 
+        "type": null
+      }
+    ]
+  ], 
+  "version": "1.10.1"
 }
