@@ -46,6 +46,8 @@ The Radiation Dome can be understood in different ways:
             instead of a 2D one. (Default: None) Choose from the following:
                 * Orthographic
                 * Stereographic
+                * Equidistant
+                * Equisolid
         irradiance_: Boolean to note whether the radiation dome should be plotted with units
             of cumulative Radiation (kWh/m2) [False] or with units of average
             Irradiance (W/m2) [True]. (Default: False).
@@ -85,7 +87,7 @@ The Radiation Dome can be understood in different ways:
 
 ghenv.Component.Name = 'LB Radiation Dome'
 ghenv.Component.NickName = 'RadiationDome'
-ghenv.Component.Message = '1.10.0'
+ghenv.Component.Message = '1.10.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '2 :: Visualize Data'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
