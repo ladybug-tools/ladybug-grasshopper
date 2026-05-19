@@ -68,6 +68,8 @@ is visible will also be computed.
             instead of a 2D one. Choose from the following:
                 * Orthographic
                 * Stereographic
+                * Equidistant
+                * Equisolid
 
     Returns:
         report: ...
@@ -90,7 +92,7 @@ is visible will also be computed.
 
 ghenv.Component.Name = 'LB Sky Mask'
 ghenv.Component.NickName = 'SyMask'
-ghenv.Component.Message = '1.10.0'
+ghenv.Component.Message = '1.10.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '3'
@@ -180,12 +182,13 @@ if center_pt3d != Point3D():
 if projection_ is not None:
     if projection_.title() == 'Orthographic':
         pts = (Compass.point3d_to_orthographic(pt) for pt in sky_mask.vertices)
-    elif projection_.title() == 'Stereographic':
-        pts = (Compass.point3d_to_stereographic(pt, radius, center_pt3d)
-               for pt in sky_mask.vertices)
     else:
-        raise ValueError(
-            'Projection type "{}" is not recognized.'.format(projection_))
+        func_name = 'point3d_to_{}'.format(projection_.lower())
+        try:
+            project_func = getattr(Compass, func_name)
+        except Exception:
+            raise ValueError('Projection "{}" is not supported.'.format(projection_))
+        pts = (project_func(pt, radius, center_pt3d) for pt in sky_mask.vertices)
     pts3d = tuple(Point3D(pt.x, pt.y, center_pt3d.z) for pt in pts)
     sky_mask = Mesh3D(pts3d, sky_mask.faces)
 sky_pattern = [True] * len(view_vecs)  # pattern to be adjusted by the various masks
