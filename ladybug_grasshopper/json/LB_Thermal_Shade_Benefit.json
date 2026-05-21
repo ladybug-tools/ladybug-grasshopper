@@ -1,162 +1,162 @@
 {
-  "version": "1.10.0", 
   "nickname": "ThermalShadeBenefit", 
+  "category": "Ladybug", 
+  "description": "Visualize the desirability of shade in terms of proximity of conditions to\na favorable temerature range.\n_\nThe calculation runs by generating solar vectors for a data collection of input\ntemperature values. Solar vectors for hours when the temperature is above the\nupper temperature threshold contribute positively to shade desirability (shade_help)\nwhile solar vectors for hours when the temperature is below the lower temperature\nthreshold contribute negatively (shade_harm).\n_\nThe component outputs a colored mesh of the shade illustrating the net effect of\nshading each part of the _shade_geo. A higher saturation of blue indicates that\nshading the cell is desirable to avoid excessively hot temperatures. A higher\nsaturation of red indicates that shading the cell is harmful, blocking helpful\nsun in cold conditions that could bring conditions closer to the desired\ntemperature range. Desaturated cells indicate that shading the cell will have\nrelatively little effect on keeping the _study_region in the desired thermal range.\n_\nThe units for shade desirability are degree-days per unit area of shade, which are\nessentially the amount of time in days that sun is blocked by a given cell\nmultiplied by the degrees above (or below) the temperature thresholds during\nthat time. So, if a given square meter of input _shade_geo has a shade desirability\nof 10 degree-days per square meter, this means that a shade in this location\nprovides roughly 1 day of sun protection from conditions 10 degrees Celsius\nwarmer than the _up_threshold_ to the _study_region.\n_\nMore information on the methods used by this component can be found in the\nfollowing publication:\nMackey, Christopher; Sadeghipour Roudsari, Mostapha; Samaras, Panagiotis.\n\u201cComfortCover: A Novel Method for the Design of Outdoor Shades.\u201d In Proceedings\nof Symposium on Simulation for Architecture and Urban Design. Washington, DC,\nUnited States, Apr 12-15 2015.\nhttps://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing\n-", 
+  "inputs": [
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "A number between -360 and 360 for the counterclockwise\ndifference between the North and the positive Y-axis in degrees.\n90 is West and 270 is East. This can also be Vector for the\ndirection to North. (Default: 0)", 
+      "name": "north_", 
+      "type": "System.Object"
+    }, 
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "A ladybug Location that has been output from the \"LB Import EPW\"\ncomponent or the \"LB Construct Location\" component.", 
+      "name": "_location", 
+      "type": "System.Object"
+    }, 
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "An hourly data collection with the unshaded temperature experienced\nat the _study_region. This temperature will be used to evaluate shade\nbenefit for this study region. This temperature data collection should\ntypically be informed by an analysis with the \"LB Outdoor Solar MRT\"\nor the \"LB Indoor Solar MRT\" component, which will account for the\nincreased temperature delta expereinced as a result of being in the\nsun. For evaluation of shade in terms of outdoor thermal comfort, the\nbest practice is to use the Universal Thermal Climate Index (UTCI)\ntemperature at the study region for this input. For evaluation of\nshade benefit in terms of indoor comfort,  the best practice is to\nuse the Standard Effective Temperature (SET) derived from the\n\"LB PMV Comfort\" component for this input. In both cases, the MRT\ninputs to the thermal comfort models should use solar-adjusted MRT.", 
+      "name": "_temperature", 
+      "type": "System.Object"
+    }, 
+    {
+      "default": null, 
+      "access": "list", 
+      "description": "Rhino Breps and/or Rhino Meshes representing an area for which shading\ndesirability is being evaluated. This is often the region where a human\nsubject will sit (eg. a bench) or it could be the window of a building\nwhere an occupant might be standing or sitting.", 
+      "name": "_study_region", 
+      "type": "GeometryBase"
+    }, 
+    {
+      "default": null, 
+      "access": "list", 
+      "description": "Rhino Breps and/or Rhino Meshes representing shading to be evaluated\nin terms of its benefit. Note that, in the case that multiple\nshading geometries are connected, this component does not account\nfor the interaction between the different shading surfaces and will\njust evaluate each part of the shade independently.", 
+      "name": "_shade_geo", 
+      "type": "GeometryBase"
+    }, 
+    {
+      "default": null, 
+      "access": "list", 
+      "description": "Rhino Breps and/or Rhino Meshes representing context geometry that can\nblock sunlight to the _study_region, therefore discounting any benefit\nor harm that could come to the region.", 
+      "name": "context_", 
+      "type": "GeometryBase"
+    }, 
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "A positive number in Rhino model units for the size of grid cells at\nwhich the input _shade_geo will be subdivided for shade benefit\nanalysis. The smaller the grid size, the higher the resolution of\nthe analysis and the longer the calculation will take.  So it is\nrecommended that one start with a large value here and decrease\nthe value as needed. However, the grid size should usually be\nsmaller than the dimensions of the smallest piece of the _shade_geo\nand context_ in order to yield meaningful results.", 
+      "name": "_grid_size", 
+      "type": "double"
+    }, 
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "A number representing the temperature in Celsius above which\nshade is considered desirable/helpful. The default is 26C, which\ncorresponds to the upper limit of \"No Thermal Stress\" according\nto the UTCI thermal comfort model (above this, heat stress begins).\nA different value may be desirable for indoor thermal comfort studies.", 
+      "name": "_up_threshold_", 
+      "type": "double"
+    }, 
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "A number representing the temperature in Celsius below which shade\nis considered harmful and access to the sun is preferable. The default\nis 9C, which corresponds to the lower limit of \"No Thermal Stress\"\naccording to the UTCI thermal comfort model (below this, cold stress\nbegins). A different value may be desirable for indoor thermal\ncomfort studies.", 
+      "name": "_low_threshold_", 
+      "type": "double"
+    }, 
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "An integer for the number of timesteps per hour at which\nsun vectors will be generated for the analysis. Higher values will\nresult in the generation of more vectors, which will make the\nresulting shade mesh smoother and a better representation of shade\nbenefit and harm. However, the calculation will take\nlonger as there are more intersection operations to perform. The\ndefault is 1 timestep per hour, which is the coarsest resolution\navalable and the fastest calculation.", 
+      "name": "_timestep_", 
+      "type": "int"
+    }, 
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "Optional legend parameters from the \"LB Legend Parameters\"\nthat will be used to customize the display of the results.", 
+      "name": "legend_par_", 
+      "type": "System.Object"
+    }, 
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "An integer to set the number of CPUs used in the execution of the\nintersection calculation. If unspecified, it will automatically default\nto one less than the number of CPUs currently available on the\nmachine or 1 if only one processor is available.", 
+      "name": "_cpu_count_", 
+      "type": "int"
+    }, 
+    {
+      "default": null, 
+      "access": "item", 
+      "description": "Set to \"True\" to run the component and perform shade benefit analysis.", 
+      "name": "_run", 
+      "type": "bool"
+    }
+  ], 
+  "name": "LB Thermal Shade Benefit", 
+  "subcategory": "3 :: Analyze Geometry", 
+  "code": "\nimport math\n\ntry:\n    from ladybug.sunpath import Sunpath\n    from ladybug.datacollection import HourlyDiscontinuousCollection\n    from ladybug.color import Colorset\n    from ladybug.graphic import GraphicContainer\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import units_abbreviation\n    from ladybug_{{cad}}.togeometry import to_joined_gridded_mesh3d, to_vector2d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_point3d, from_vector3d\n    from ladybug_{{cad}}.fromobjects import legend_objects\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.intersect import join_geometry_to_mesh, generate_intersection_rays, \\\n        intersect_rays_with_mesh_faces\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, hide_output, \\\n        recommended_processor_count\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _run:\n    # set the defaults and process all of the inputs\n    workers = _cpu_count_ if _cpu_count_ is not None else recommended_processor_count()\n    if north_ is not None:  # process the north_\n        try:\n            north_ = math.degrees(\n                to_vector2d(north_).angle_clockwise(Vector2D(0, 1)))\n        except AttributeError:  # north angle instead of vector\n            north_ = float(north_)\n    else:\n        north_ = 0\n    assert isinstance(_temperature, HourlyDiscontinuousCollection), \\\n        'Connected _temperature is not a Hourly Data Collection. Got {}'.format(\n            type(_temperature))\n    assert _temperature.header.unit == 'C', \\\n        'Connected _temperature must be in Celsius. Got {}.'.format(\n            _temperature.header.unit)\n    if _timestep_ and _timestep_ != _temperature.header.analysis_period.timestep:\n        if _timestep_ < _temperature.header.analysis_period.timestep:\n            data = _temperature.cull_to_timestep(_timestep_)\n        else:\n            data = _temperature.interpolate_to_timestep(_timestep_)\n    else:\n        data = _temperature\n    t_step_per_day = data.header.analysis_period.timestep * 24\n    up_thresh = 26 if _up_threshold_ is None else _up_threshold_\n    low_thresh = 9 if _low_threshold_ is None else _low_threshold_\n    assert up_thresh > low_thresh, 'Input _up_threshold_ [{}] must be greater ' \\\n        'than input _low_threshold_ [{}].'.format(up_thresh, low_thresh)\n\n    # initialize sunpath based on location and get all of the vectors\n    sp = Sunpath.from_location(_location, north_)\n    lb_vecs, relevant_temps = [], []\n    for dt, temp in zip(data.datetimes, data.values):\n        if temp > up_thresh or temp < low_thresh:\n            sun = sp.calculate_sun_from_date_time(dt)\n            if sun.is_during_day:\n                lb_vecs.append(sun.sun_vector_reversed)\n                relevant_temps.append(temp)\n    vectors = [from_vector3d(lb_vec) for lb_vec in lb_vecs]\n\n    # create the gridded mesh from the geometry\n    analysis_mesh = to_joined_gridded_mesh3d(_shade_geo, _grid_size)\n    mesh = from_mesh3d(analysis_mesh)\n    study_mesh = to_joined_gridded_mesh3d(_study_region, _grid_size / 2)\n    points = [from_point3d(pt) for pt in study_mesh.face_centroids]\n    hide_output(ghenv.Component, 2)\n\n    # create a series of rays that represent the sun projected through the shade\n    int_rays = generate_intersection_rays(points, vectors)\n\n    # if there is context, remove any rays that are blocked by the context\n    shade_mesh = join_geometry_to_mesh(context_) \\\n        if len(context_) != 0 and context_[0] is not None else None\n\n    # intersect the sun rays with the shade mesh\n    face_int = intersect_rays_with_mesh_faces(\n        mesh, int_rays, shade_mesh, cpu_count=workers)\n\n    # loop through the face intersection result and evaluate the benefit\n    pt_div = 1 / float(len(points))\n    shade_help, shade_harm, shade_net = [], [], []\n    for face_res, face_area in zip(face_int, analysis_mesh.face_areas):\n        f_help, f_harm = 0, 0\n        for t_ind in face_res:\n            t_val = relevant_temps[t_ind]\n            if t_val > up_thresh:\n                f_help += t_val - up_thresh\n            elif t_val < low_thresh:\n                f_harm += t_val - low_thresh\n        # Normalize by the area of the cell so there's is a consistent metric\n        # between cells of different areas.\n        # Also, divide the value by t_step_per_day such that the final unit is in\n        # degree-days/model unit instead of degree-timesteps/model unit.\n        if face_area != 0:\n            shd_help = ((f_help / face_area) / t_step_per_day) * pt_div\n            shd_harm = ((f_harm / face_area) / t_step_per_day) * pt_div\n            shade_help.append(shd_help)\n            shade_harm.append(shd_harm)\n            shade_net.append(shd_help + shd_harm)\n        else:\n            shade_help.append(0)\n            shade_harm.append(0)\n            shade_net.append(0)\n\n    # create the mesh and legend outputs\n    graphic = GraphicContainer(shade_net, analysis_mesh.min, analysis_mesh.max, legend_par_)\n    graphic.legend_parameters.title = 'degC-days/{}2'.format(units_abbreviation())\n    if legend_par_ is None or legend_par_.are_colors_default:\n        graphic.legend_parameters.colors = reversed(Colorset.shade_benefit_harm())\n    if legend_par_ is None or legend_par_.min is None or legend_par_.max is None:\n        bnd_val = max(max(shade_net), abs(min(shade_net)))\n        if legend_par_ is None or legend_par_.min is None:\n            graphic.legend_parameters.min = -bnd_val\n        if legend_par_ is None or legend_par_.max is None:\n            graphic.legend_parameters.max = bnd_val\n    title = text_objects('Thermal Shade Benefit', graphic.lower_title_location,\n                         graphic.legend_parameters.text_height * 1.5,\n                         graphic.legend_parameters.font)\n\n    # create all of the visual outputs\n    analysis_mesh.colors = graphic.value_colors\n    mesh = from_mesh3d(analysis_mesh)\n    legend = legend_objects(graphic.legend)\n", 
+  "version": "1.10.1", 
   "outputs": [
     [
       {
+        "default": null, 
         "access": "None", 
-        "name": "vectors", 
         "description": "The sun vectors that were used to evaluate the shade (note that\nthese will increase as the _timestep_ increases).", 
-        "type": null, 
-        "default": null
+        "name": "vectors", 
+        "type": null
       }, 
       {
+        "default": null, 
         "access": "None", 
-        "name": "points", 
         "description": "Points across the study_region from which sun vectors are projected.", 
-        "type": null, 
-        "default": null
+        "name": "points", 
+        "type": null
       }, 
       {
+        "default": null, 
         "access": "None", 
-        "name": "mesh", 
         "description": "A colored mesh of the _shade_geo showing where shading is helpful (in blue),\nharmful (in red), or does not make much of a difference (white or\ndesaturated colors). Note that the colors can change depending upon\nthe input legend_par_.", 
-        "type": null, 
-        "default": null
+        "name": "mesh", 
+        "type": null
       }, 
       {
+        "default": null, 
         "access": "None", 
-        "name": "legend", 
         "description": "Legend showing the numeric values of degree-days per unit are of shade\nthat correspond to the colors in the shade mesh.", 
-        "type": null, 
-        "default": null
+        "name": "legend", 
+        "type": null
       }, 
       {
+        "default": null, 
         "access": "None", 
-        "name": "title", 
         "description": "A text object for the study title.", 
-        "type": null, 
-        "default": null
+        "name": "title", 
+        "type": null
       }, 
       {
+        "default": null, 
         "access": "None", 
-        "name": "shade_help", 
         "description": "The cumulative degree-days per square area unit helped by shading each\ncell of the shade. If a given square meter of _shade_geo has a helpfulness\nof 10 degree-days/m2, this means that a shade in this location provides\n1 day of sun protection from conditions 10 degrees warmer than the\n_up_threshold_ to the _study_region.", 
-        "type": null, 
-        "default": null
+        "name": "shade_help", 
+        "type": null
       }, 
       {
+        "default": null, 
         "access": "None", 
-        "name": "shade_harm", 
         "description": "The cumulative degree-days per square area unit harmed by shading each\ncell of the shade. If a given square meter of _shade_geo has a harmfulness\nof -10 degree-days, this means that a shade in this location blocks\n1 day of sun duirng conditions that are 10 degrees Celsius colder than\nthe _low_threshold_ to the _study_region.", 
-        "type": null, 
-        "default": null
+        "name": "shade_harm", 
+        "type": null
       }, 
       {
+        "default": null, 
         "access": "None", 
-        "name": "shade_net", 
         "description": "The sum of the helpfulness and harmfulness for each cell. This will be\nnegative if shading the cell has a net harmful effect and positive\nif the shade has a net helpful effect.", 
-        "type": null, 
-        "default": null
+        "name": "shade_net", 
+        "type": null
       }
     ]
-  ], 
-  "inputs": [
-    {
-      "access": "item", 
-      "name": "north_", 
-      "description": "A number between -360 and 360 for the counterclockwise\ndifference between the North and the positive Y-axis in degrees.\n90 is West and 270 is East. This can also be Vector for the\ndirection to North. (Default: 0)", 
-      "type": "System.Object", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "_location", 
-      "description": "A ladybug Location that has been output from the \"LB Import EPW\"\ncomponent or the \"LB Construct Location\" component.", 
-      "type": "System.Object", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "_temperature", 
-      "description": "An hourly data collection with the unshaded temperature experienced\nat the _study_region. This temperature will be used to evaluate shade\nbenefit for this study region. This temperature data collection should\ntypically be informed by an analysis with the \"LB Outdoor Solar MRT\"\nor the \"LB Indoor Solar MRT\" component, which will account for the\nincreased temperature delta expereinced as a result of being in the\nsun. For evaluation of shade in terms of outdoor thermal comfort, the\nbest practice is to use the Universal Thermal Climate Index (UTCI)\ntemperature at the study region for this input. For evaluation of\nshade benefit in terms of indoor comfort,  the best practice is to\nuse the Standard Effective Temperature (SET) derived from the\n\"LB PMV Comfort\" component for this input. In both cases, the MRT\ninputs to the thermal comfort models should use solar-adjusted MRT.", 
-      "type": "System.Object", 
-      "default": null
-    }, 
-    {
-      "access": "list", 
-      "name": "_study_region", 
-      "description": "Rhino Breps and/or Rhino Meshes representing an area for which shading\ndesirability is being evaluated. This is often the region where a human\nsubject will sit (eg. a bench) or it could be the window of a building\nwhere an occupant might be standing or sitting.", 
-      "type": "GeometryBase", 
-      "default": null
-    }, 
-    {
-      "access": "list", 
-      "name": "_shade_geo", 
-      "description": "Rhino Breps and/or Rhino Meshes representing shading to be evaluated\nin terms of its benefit. Note that, in the case that multiple\nshading geometries are connected, this component does not account\nfor the interaction between the different shading surfaces and will\njust evaluate each part of the shade independently.", 
-      "type": "GeometryBase", 
-      "default": null
-    }, 
-    {
-      "access": "list", 
-      "name": "context_", 
-      "description": "Rhino Breps and/or Rhino Meshes representing context geometry that can\nblock sunlight to the _study_region, therefore discounting any benefit\nor harm that could come to the region.", 
-      "type": "GeometryBase", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "_grid_size", 
-      "description": "A positive number in Rhino model units for the size of grid cells at\nwhich the input _shade_geo will be subdivided for shade benefit\nanalysis. The smaller the grid size, the higher the resolution of\nthe analysis and the longer the calculation will take.  So it is\nrecommended that one start with a large value here and decrease\nthe value as needed. However, the grid size should usually be\nsmaller than the dimensions of the smallest piece of the _shade_geo\nand context_ in order to yield meaningful results.", 
-      "type": "double", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "_up_threshold_", 
-      "description": "A number representing the temperature in Celsius above which\nshade is considered desirable/helpful. The default is 26C, which\ncorresponds to the upper limit of \"No Thermal Stress\" according\nto the UTCI thermal comfort model (above this, heat stress begins).\nA different value may be desirable for indoor thermal comfort studies.", 
-      "type": "double", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "_low_threshold_", 
-      "description": "A number representing the temperature in Celsius below which shade\nis considered harmful and access to the sun is preferable. The default\nis 9C, which corresponds to the lower limit of \"No Thermal Stress\"\naccording to the UTCI thermal comfort model (below this, cold stress\nbegins). A different value may be desirable for indoor thermal\ncomfort studies.", 
-      "type": "double", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "_timestep_", 
-      "description": "An integer for the number of timesteps per hour at which\nsun vectors will be generated for the analysis. Higher values will\nresult in the generation of more vectors, which will make the\nresulting shade mesh smoother and a better representation of shade\nbenefit and harm. However, the calculation will take\nlonger as there are more intersection operations to perform. The\ndefault is 1 timestep per hour, which is the coarsest resolution\navalable and the fastest calculation.", 
-      "type": "int", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "legend_par_", 
-      "description": "Optional legend parameters from the \"LB Legend Parameters\"\nthat will be used to customize the display of the results.", 
-      "type": "System.Object", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "_cpu_count_", 
-      "description": "An integer to set the number of CPUs used in the execution of the\nintersection calculation. If unspecified, it will automatically default\nto one less than the number of CPUs currently available on the\nmachine or 1 if only one processor is available.", 
-      "type": "int", 
-      "default": null
-    }, 
-    {
-      "access": "item", 
-      "name": "_run", 
-      "description": "Set to \"True\" to run the component and perform shade benefit analysis.", 
-      "type": "bool", 
-      "default": null
-    }
-  ], 
-  "subcategory": "3 :: Analyze Geometry", 
-  "code": "\nimport math\n\ntry:\n    from ladybug.sunpath import Sunpath\n    from ladybug.datacollection import HourlyDiscontinuousCollection\n    from ladybug.color import Colorset\n    from ladybug.graphic import GraphicContainer\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug:\\n\\t{}'.format(e))\n\ntry:\n    from ladybug_{{cad}}.config import units_abbreviation\n    from ladybug_{{cad}}.togeometry import to_joined_gridded_mesh3d, to_vector2d\n    from ladybug_{{cad}}.fromgeometry import from_mesh3d, from_point3d, from_vector3d\n    from ladybug_{{cad}}.fromobjects import legend_objects\n    from ladybug_{{cad}}.text import text_objects\n    from ladybug_{{cad}}.intersect import join_geometry_to_mesh, generate_intersection_rays, \\\n        intersect_rays_with_mesh_faces\n    from ladybug_{{cad}}.{{plugin}} import all_required_inputs, hide_output, \\\n        recommended_processor_count\nexcept ImportError as e:\n    raise ImportError('\\nFailed to import ladybug_{{cad}}:\\n\\t{}'.format(e))\n\n\nif all_required_inputs(ghenv.Component) and _run:\n    # set the defaults and process all of the inputs\n    workers = _cpu_count_ if _cpu_count_ is not None else recommended_processor_count()\n    if north_ is not None:  # process the north_\n        try:\n            north_ = math.degrees(\n                to_vector2d(north_).angle_clockwise(Vector2D(0, 1)))\n        except AttributeError:  # north angle instead of vector\n            north_ = float(north_)\n    else:\n        north_ = 0\n    assert isinstance(_temperature, HourlyDiscontinuousCollection), \\\n        'Connected _temperature is not a Hourly Data Collection. Got {}'.format(\n            type(_temperature))\n    assert _temperature.header.unit == 'C', \\\n        'Connected _temperature must be in Celsius. Got {}.'.format(\n            _temperature.header.unit)\n    if _timestep_ and _timestep_ != _temperature.header.analysis_period.timestep:\n        if _timestep_ < _temperature.header.analysis_period.timestep:\n            data = _temperature.cull_to_timestep(_timestep_)\n        else:\n            data = _temperature.interpolate_to_timestep(_timestep_)\n    else:\n        data = _temperature\n    t_step_per_day = data.header.analysis_period.timestep * 24\n    up_thresh = 26 if _up_threshold_ is None else _up_threshold_\n    low_thresh = 9 if _low_threshold_ is None else _low_threshold_\n    assert up_thresh > low_thresh, 'Input _up_threshold_ [{}] must be greater ' \\\n        'than input _low_threshold_ [{}].'.format(up_thresh, low_thresh)\n\n    # initialize sunpath based on location and get all of the vectors\n    sp = Sunpath.from_location(_location, north_)\n    lb_vecs, relevant_temps = [], []\n    for dt, temp in zip(data.datetimes, data.values):\n        if temp > up_thresh or temp < low_thresh:\n            sun = sp.calculate_sun_from_date_time(dt)\n            if sun.is_during_day:\n                lb_vecs.append(sun.sun_vector_reversed)\n                relevant_temps.append(temp)\n    vectors = [from_vector3d(lb_vec) for lb_vec in lb_vecs]\n\n    # create the gridded mesh from the geometry\n    analysis_mesh = to_joined_gridded_mesh3d(_shade_geo, _grid_size)\n    mesh = from_mesh3d(analysis_mesh)\n    study_mesh = to_joined_gridded_mesh3d(_study_region, _grid_size / 2)\n    points = [from_point3d(pt) for pt in study_mesh.face_centroids]\n    hide_output(ghenv.Component, 2)\n\n    # create a series of rays that represent the sun projected through the shade\n    int_rays = generate_intersection_rays(points, vectors)\n\n    # if there is context, remove any rays that are blocked by the context\n    shade_mesh = join_geometry_to_mesh(context_) \\\n        if len(context_) != 0 and context_[0] is not None else None\n\n    # intersect the sun rays with the shade mesh\n    face_int = intersect_rays_with_mesh_faces(\n        mesh, int_rays, shade_mesh, cpu_count=workers)\n\n    # loop through the face intersection result and evaluate the benefit\n    pt_div = 1 / float(len(points))\n    shade_help, shade_harm, shade_net = [], [], []\n    for face_res, face_area in zip(face_int, analysis_mesh.face_areas):\n        f_help, f_harm = 0, 0\n        for t_ind in face_res:\n            t_val = relevant_temps[t_ind]\n            if t_val > up_thresh:\n                f_help += t_val - up_thresh\n            elif t_val < low_thresh:\n                f_harm += t_val - low_thresh\n        # Normalize by the area of the cell so there's is a consistent metric\n        # between cells of different areas.\n        # Also, divide the value by t_step_per_day such that the final unit is in\n        # degree-days/model unit instead of degree-timesteps/model unit.\n        shd_help = ((f_help / face_area) / t_step_per_day) * pt_div\n        shd_harm = ((f_harm / face_area) / t_step_per_day) * pt_div\n        shade_help.append(shd_help)\n        shade_harm.append(shd_harm)\n        shade_net.append(shd_help + shd_harm)\n\n    # create the mesh and legend outputs\n    graphic = GraphicContainer(shade_net, analysis_mesh.min, analysis_mesh.max, legend_par_)\n    graphic.legend_parameters.title = 'degC-days/{}2'.format(units_abbreviation())\n    if legend_par_ is None or legend_par_.are_colors_default:\n        graphic.legend_parameters.colors = reversed(Colorset.shade_benefit_harm())\n    if legend_par_ is None or legend_par_.min is None or legend_par_.max is None:\n        bnd_val = max(max(shade_net), abs(min(shade_net)))\n        if legend_par_ is None or legend_par_.min is None:\n            graphic.legend_parameters.min = -bnd_val\n        if legend_par_ is None or legend_par_.max is None:\n            graphic.legend_parameters.max = bnd_val\n    title = text_objects('Thermal Shade Benefit', graphic.lower_title_location,\n                         graphic.legend_parameters.text_height * 1.5,\n                         graphic.legend_parameters.font)\n\n    # create all of the visual outputs\n    analysis_mesh.colors = graphic.value_colors\n    mesh = from_mesh3d(analysis_mesh)\n    legend = legend_objects(graphic.legend)\n", 
-  "category": "Ladybug", 
-  "name": "LB Thermal Shade Benefit", 
-  "description": "Visualize the desirability of shade in terms of proximity of conditions to\na favorable temerature range.\n_\nThe calculation runs by generating solar vectors for a data collection of input\ntemperature values. Solar vectors for hours when the temperature is above the\nupper temperature threshold contribute positively to shade desirability (shade_help)\nwhile solar vectors for hours when the temperature is below the lower temperature\nthreshold contribute negatively (shade_harm).\n_\nThe component outputs a colored mesh of the shade illustrating the net effect of\nshading each part of the _shade_geo. A higher saturation of blue indicates that\nshading the cell is desirable to avoid excessively hot temperatures. A higher\nsaturation of red indicates that shading the cell is harmful, blocking helpful\nsun in cold conditions that could bring conditions closer to the desired\ntemperature range. Desaturated cells indicate that shading the cell will have\nrelatively little effect on keeping the _study_region in the desired thermal range.\n_\nThe units for shade desirability are degree-days per unit area of shade, which are\nessentially the amount of time in days that sun is blocked by a given cell\nmultiplied by the degrees above (or below) the temperature thresholds during\nthat time. So, if a given square meter of input _shade_geo has a shade desirability\nof 10 degree-days per square meter, this means that a shade in this location\nprovides roughly 1 day of sun protection from conditions 10 degrees Celsius\nwarmer than the _up_threshold_ to the _study_region.\n_\nMore information on the methods used by this component can be found in the\nfollowing publication:\nMackey, Christopher; Sadeghipour Roudsari, Mostapha; Samaras, Panagiotis.\n\u201cComfortCover: A Novel Method for the Design of Outdoor Shades.\u201d In Proceedings\nof Symposium on Simulation for Architecture and Urban Design. Washington, DC,\nUnited States, Apr 12-15 2015.\nhttps://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing\n-"
+  ]
 }

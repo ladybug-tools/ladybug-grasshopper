@@ -138,7 +138,7 @@ https://drive.google.com/file/d/0Bz2PwDvkjovJQVRTRHhMSXZWZjQ/view?usp=sharing
 
 ghenv.Component.Name = 'LB Thermal Shade Benefit'
 ghenv.Component.NickName = 'ThermalShadeBenefit'
-ghenv.Component.Message = '1.10.0'
+ghenv.Component.Message = '1.10.1'
 ghenv.Component.Category = 'Ladybug'
 ghenv.Component.SubCategory = '3 :: Analyze Geometry'
 ghenv.Component.AdditionalHelpFromDocStrings = '4'
@@ -241,11 +241,16 @@ if all_required_inputs(ghenv.Component) and _run:
         # between cells of different areas.
         # Also, divide the value by t_step_per_day such that the final unit is in
         # degree-days/model unit instead of degree-timesteps/model unit.
-        shd_help = ((f_help / face_area) / t_step_per_day) * pt_div
-        shd_harm = ((f_harm / face_area) / t_step_per_day) * pt_div
-        shade_help.append(shd_help)
-        shade_harm.append(shd_harm)
-        shade_net.append(shd_help + shd_harm)
+        if face_area != 0:
+            shd_help = ((f_help / face_area) / t_step_per_day) * pt_div
+            shd_harm = ((f_harm / face_area) / t_step_per_day) * pt_div
+            shade_help.append(shd_help)
+            shade_harm.append(shd_harm)
+            shade_net.append(shd_help + shd_harm)
+        else:
+            shade_help.append(0)
+            shade_harm.append(0)
+            shade_net.append(0)
 
     # create the mesh and legend outputs
     graphic = GraphicContainer(shade_net, analysis_mesh.min, analysis_mesh.max, legend_par_)
